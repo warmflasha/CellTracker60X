@@ -1,7 +1,7 @@
 %% read file
-ff=readAndorDirectory('~/Desktop/scfishnotrt_20150325_60749 PM');
+ff=readAndorDirectory('.');
 %nuc = andorMaxIntensity(ff,0,0,1);
-fn=getAndorFileName(ff,0,0,6,1);
+fn=getAndorFileName(ff,9,0,0,0);
 nuc = imread(fn);
 nuc_o = nuc;
 %% preprocess
@@ -30,6 +30,7 @@ Iy = imfilter(double(normed_img), hy, 'replicate');
 Ix = imfilter(double(normed_img), hx, 'replicate');
 gradmag = sqrt(Ix.^2 + Iy.^2);
 %% circle find and display
+%[cc, rr, met]=imfindcircles(gradmag,[20 40],'Method','TwoStage','Sensitivity',0.95);
 [cc, rr, met]=imfindcircles(gradmag,[20 40],'Method','TwoStage','Sensitivity',0.95);
 %throw out circles with nothing inside
 cavg = zeros(length(rr),1);
@@ -42,12 +43,16 @@ cc(badinds,:)=[]; rr(badinds,:)=[];
 % convert circlees to cells (will merge close circles) 
 cen = circles2cells(cc,rr);
 %% display results
-figure; subplot(1,2,1); hold on; 
-imshow(nuc_o,[]); plot(cen(:,1),cen(:,2),'r*');
+figure; 
+ 
+imshow(nuc_o,[]);hold on; %plot(cen(:,1),cen(:,2),'r*');
 title('Original Image with cells identified');
-subplot(1,2,2); hold on;
-imshow(gradmag,[]);
-for ii=1:length(rr)
-    drawcircle(cc(ii,:),rr(ii),'m');
-end
-title('gradient image with circles');
+% 
+
+% figure; 
+% imshow(gradmag,[]);
+% hold on;
+% for ii=1:length(rr)
+%     drawcircle(cc(ii,:),rr(ii),'m');
+% end
+% title('gradient image with circles');
