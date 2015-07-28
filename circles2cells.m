@@ -1,6 +1,6 @@
 function cellCenters=circles2cells(centers,radii)
 
-ratio_cutoff = 1.4;
+ratio_cutoff = 2.0; %SC
 
 
 cc=centers;
