@@ -31,7 +31,7 @@ numberOfFolders = length(listOfFolderNames);
 
 sn = numberOfFolders - 1; % sn = no. of samples
 
-%mkdir(dir1, 'masks');
+mkdir(dir1, 'masks');
 
 %%
 % z = z range (assuming it to be the same for all samples)
@@ -56,9 +56,7 @@ for j = 2:numberOfFolders
      
      %i = 0;
      for i = st:l
-      
-         
-%         
+          
       [LcFull]=mask60XCT(ff,i);
      %[LcFull] = mask60Xall(ff,i); % colony as one cell/ cell information not separated. 
      
@@ -154,45 +152,4 @@ sn = 2;
 %dir1 = pwd;
 
 tabulatemRNAposfish(dir1, sn, n_ch, Nucmask, errorstr, nucfile, smadfile);
-
-%%
-%mmRNA bar plots
- 
- ncell = zeros(1,sn);
- mRNAch1 = zeros(1,sn);
-for i = 1:sn
-    
-    ncell(i) = 0;
-    mRNAch1(i) = 0;
-    
-    filen = sprintf('sample%dresults', i);
-    filen2 = strcat(dir1, '/', filen);
-    filen3 = dir(filen2);
-    
-    n_output = size(filen3,1);
-    
-    for j = 3:n_output
-        filen4 = strcat(filen2, '/', filen3(j).name);
-        load(filen4);
-        
-        
-        ncell(i) = ncell(i) + size(peaks,1);
-        
-        mRNAch1(i) = mRNAch1(i) + sum(peaks(:,3));
-        
-    end
-            
-       
-end
-
-%%
-figure; 
-
-bar(mRNAch1, 0.5);
-xlab = {'MP', 'Control'};
-set(gca, 'XTickLabel', xlab, 'XTick', 1:numel(xlab));
-
-title('Nodal Channel mRNAs identified', 'FontWeight', 'Bold');
-
-
 

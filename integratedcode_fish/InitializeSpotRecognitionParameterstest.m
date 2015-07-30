@@ -50,7 +50,7 @@ sr.seg.multiz_mask           = false;                                % whether e
 sr.spotrec.gf.size           = 3;                                    % strel size used to apply gaussian low pass filter
 sr.spotrec.gf.sigma          = 1;                                    % sigma of gaussian ditribution (pixels)
 sr.spotrec.peak.connectivity = 8;                                    % local conectivity used to assess peaks
-sr.spotrec.peak.threshold    = 450;                                  % threshold to consider something a peak
+sr.spotrec.peak.threshold    = 300;                                  % threshold to consider something a peak
 sr.spotrec.discard_spots     = true;                                 % use or not spots from outside cells
 sr.spotrec.output            = [ outputfolder '/spotrec/'];
 

@@ -1,4 +1,4 @@
-function tabulatemRNAposfish (dir1, sn, ch, Imgfiles)
+function tabulatemRNAposfish (dir1, sn, ch, Nucmask, errorstr, nucfile, smadfile)
 %sn: no. of samples
 %n_ch = Channels to be analysed
 
@@ -6,8 +6,6 @@ function tabulatemRNAposfish (dir1, sn, ch, Imgfiles)
 %%
 imno = 1;
 dir = dir1;
-%mkdir ([dir '/results']);
-%mkdir([dir '/imginfo']);
 
 for i = 1:length(ch)
 file  =  sprintf('/spots_quantify_t7ntch%d/data/FISH_spots_data_new.mat', ch(i));
@@ -113,10 +111,10 @@ end
      
      peaks = newmat{j};
      
-     imgfiles = Imgfiles{imno};
-     
-     
-     
+     imgfiles.compressNucMask = Nucmask{imno};
+     imgfiles.errorstr = errorstr{imno};
+     imgfiles.nucfile = nucfile{imno};
+     imgfiles.smadfile = smadfile{imno};
      save(filenews, 'peaks','imgfiles');
      imno = imno+1;
      iinf = iinf + 1;
