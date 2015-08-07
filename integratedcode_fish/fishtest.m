@@ -46,7 +46,7 @@ m = 1; % variable that stores mask numbers for each frame, m = 1 for frame 0, m 
 for j = 2:numberOfFolders
 
     clear ff;
-    ff = readAndorDirectorymont(listOfFolderNames{j});
+     ff = readAndorDirectorymont(listOfFolderNames{j});
      pos(j-1) = length(ff.p);  %%saving parameters
      z1(j-1) = length(ff.z);
      sname{j-1} = ff.prefix;
@@ -57,13 +57,16 @@ for j = 2:numberOfFolders
      %i = 0;
      for i = st:l
       
-         
-%         
-      [LcFull]=mask60XCT(ff,i);
+        
+        filen1 = sprintf('fishseg%02d.mat', m);
+        filen = strcat(dir1, '/', 'masks/', filen1);
+        load(filen);
+        
+      %[LcFull]=mask60XCT(ff,i);
      %[LcFull] = mask60Xall(ff,i); % colony as one cell/ cell information not separated. 
      
-      save(fn,'LcFull');
-      close all;
+%       save(fn,'LcFull');
+%       close all;
     
      % Saving imagefiles to the output variable
       Nucmask{m} = compressBinaryImg(LcFull, size(LcFull));
@@ -130,11 +133,11 @@ nch = 2; %channel to be analysed
 RunSpotRecognitiontest(dir1, z1, pos, sn, nch, sname);
 %%
 nch = 1;
-negperc = 55;
-negsamp = 2;
-z1 = [25 25];
-pos = [12 12];
-sn = 2;
+negperc = 93;
+negsamp = 1;
+z1 = [11 11 11];
+pos = [2 3 7];
+sn = 3;
 dir1 = '.';
 
 for i = 1:sn
@@ -150,26 +153,30 @@ GroupCellSpotsTest(dir1, z1, pos, sn, nch, sname);
 
 %%
 n_ch = [1 2 3]; % Channels that are analysed and need to be tabulated. List out all the channels that need to be tabulated.
-sn = 2;
+sn = 3;
 %dir1 = pwd;
 
 tabulatemRNAposfish(dir1, sn, n_ch, Nucmask, errorstr, nucfile, smadfile);
 
 %%
 %mmRNA bar plots
- 
+ sn = 3;
+ dir1 = '.';
  ncell = zeros(1,sn);
  mRNAch1 = zeros(1,sn);
+ m = 1;
+ 
 for i = 1:sn
     
     ncell(i) = 0;
-    mRNAch1(i) = 0;
+    mRNAch1(m) = 0;
     
     filen = sprintf('sample%dresults', i);
     filen2 = strcat(dir1, '/', filen);
     filen3 = dir(filen2);
     
     n_output = size(filen3,1);
+    
     
     for j = 3:n_output
         filen4 = strcat(filen2, '/', filen3(j).name);
@@ -178,7 +185,8 @@ for i = 1:sn
         
         ncell(i) = ncell(i) + size(peaks,1);
         
-        mRNAch1(i) = mRNAch1(i) + sum(peaks(:,3));
+        mRNAch1(m) =  sum(peaks(:,5));
+        m = m+1;
         
     end
             
@@ -188,11 +196,11 @@ end
 %%
 figure; 
 
-bar(mRNAch1, 0.5);
-xlab = {'MP', 'Control'};
+bar(mRNAch1);
+xlab = { 'NC', 'NC','MP1', 'MP1', 'MP1', 'MP2', 'MP2', 'MP2', 'MP2', 'MP2', 'MP2', 'MP2'};
 set(gca, 'XTickLabel', xlab, 'XTick', 1:numel(xlab));
 
-title('Nodal Channel mRNAs identified', 'FontWeight', 'Bold');
+title('lefty', 'FontWeight', 'Bold', 'FontSize', 18);
 
 
 

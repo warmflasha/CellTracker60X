@@ -12,12 +12,12 @@
 ff = readAndorDirectorymont('.');
 st = ff.p(1);
 l = length (ff.p)-1; %% l: reference to the last position 
+m = 13;
 
-  
-
-
-%i = 2;
-for i = st:l
+ i = 2;
+ 
+%i = 11;
+%for i = st:l
 nuc = andorMaxIntensity(ff,i,0,0);
 nuc_o = nuc;
 
@@ -67,7 +67,15 @@ cen = circles2cells(cc,rr);
 
 figure;
 showImg({nuc_o});hold on; plot(cen(:,1),cen(:,2),'r*');
-end
+
+center1{m} = cen;
+%m = m+1;
+
+%close all;
+
+%end
+
+
 % title('Original Image with cells identified');
 % 
 % cid = getframe(gca);
@@ -81,4 +89,5 @@ end
 % close all;
 % 
 
+ 
 

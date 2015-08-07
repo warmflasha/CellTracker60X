@@ -1,4 +1,4 @@
-function tabulatemRNAposfish (dir1, sn, ch, Nucmask, errorstr, nucfile, smadfile)
+function tabulatemRNAposfish (dir1, sn, ch, Nucmask, errorstr, nucfile, smadfile, cen)
 %sn: no. of samples
 %n_ch = Channels to be analysed
 
@@ -15,13 +15,16 @@ csi{i} = enlistcell_new;
 om{i} = One_mRNA;
 end
 
+mresultfold = mkdir([dir '/results']);
+
 
 %%
+%sno = 1;
 for sno = 1:sn
 clear finalmat csi_ch csi_f;   
 
 resultfold = sprintf('/sample%dresults', sno);
-mkdir([dir resultfold]);
+mkdir([dir mresultfold resultfold]);
 iinf = 0;
 
 
@@ -75,7 +78,7 @@ for j1 = jstart:jlim
   s = regionprops(LcFull, 'Centroid');
 
 for i = fmstart:k
-    
+
     finalmat(i,col_no:col_no+1) = s(finalmat(i,2)).Centroid;
    
 end
@@ -122,6 +125,6 @@ end
     end
 end
         
-
+centercentroid(cen, dir1, pos, sn);
 
 
