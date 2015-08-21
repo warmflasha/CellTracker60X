@@ -6,13 +6,12 @@
 %The file to be read should be in the current path. 
 
 % i = position
-
 %clear all;
 
 ff = readAndorDirectorymont('.');
 st = ff.p(1);
 l = length (ff.p)-1; %% l: reference to the last position 
-m = 13;
+m = 1;
 
  i = 2;
  
@@ -65,8 +64,8 @@ cen = circles2cells(cc,rr);
 
 %%
 
-figure;
-showImg({nuc_o});hold on; plot(cen(:,1),cen(:,2),'r*');
+%figure;
+hold on; showImg({nuc_o});hold on; plot(cen(:,1),cen(:,2),'r*');
 
 center1{m} = cen;
 %m = m+1;

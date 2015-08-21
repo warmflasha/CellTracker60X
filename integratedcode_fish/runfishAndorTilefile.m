@@ -60,7 +60,7 @@ for j = 2:numberOfFolders
      %[LcFull] = mask60Xall(ff,i); % colony as one cell/ cell information not separated. 
      filen = sprintf('fishseg%02d.mat', m);
      
-      save(fn,'LcFull', cen);
+      save(filen,'LcFull', cen);
       close all;
     
      % Saving imagefiles to the output variable

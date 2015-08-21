@@ -46,7 +46,7 @@ m = 1; % variable that stores mask numbers for each frame, m = 1 for frame 0, m 
 for j = 2:numberOfFolders
 
     clear ff;
-     ff = readAndorDirectorymont(listOfFolderNames{j});
+     ff = readAndorDirectory(listOfFolderNames{j});
      pos(j-1) = length(ff.p);  %%saving parameters
      z1(j-1) = length(ff.z);
      sname{j-1} = ff.prefix;
@@ -57,16 +57,20 @@ for j = 2:numberOfFolders
      %i = 0;
      for i = st:l
       
+     
         
-        filen1 = sprintf('fishseg%02d.mat', m);
-        filen = strcat(dir1, '/', 'masks/', filen1);
-        load(filen);
+        
+        %load(filen);
         
       %[LcFull]=mask60XCT(ff,i);
      %[LcFull] = mask60Xall(ff,i); % colony as one cell/ cell information not separated. 
+     filen1 = sprintf('fishseg%02d.mat', m);
+     filen = strcat(dir1, '/', 'masks/', filen1);
      
-%       save(fn,'LcFull');
-%       close all;
+      %save(filen,'LcFull');
+      %close all;
+      
+      load(filen, 'LcFull');
     
      % Saving imagefiles to the output variable
       Nucmask{m} = compressBinaryImg(LcFull, size(LcFull));
@@ -83,9 +87,10 @@ end
 % Making a new folder with just fluorescent images of each channel
 % Channel for calculating mRNA 
 
- 
+ imch = 3;
  imc=[1:imch]; % Channel no. to be analyzed
 
+ %imc = 3;
  for im = 1:length(imc)
  imf =sprintf('images%02d', imc(im)); 
  mkdir(dir1, imf);
@@ -126,17 +131,18 @@ end
 % run.
 % 
 %Spatzcell code begins!
-
+tic;
 nch = 2; %channel to be analysed
 
 %TestSpotThreshold(dir1, z1, pos, sn, nch, sname); % to determine appropriate threshold
 RunSpotRecognitiontest(dir1, z1, pos, sn, nch, sname);
+toc;
 %%
-nch = 1;
+nch = 3;
 negperc = 93;
-negsamp = 1;
-z1 = [11 11 11];
-pos = [2 3 7];
+negsamp = 2;
+z1 = [15 15 15];
+pos = [5 5 5];
 sn = 3;
 dir1 = '.';
 
@@ -144,7 +150,8 @@ for i = 1:sn
     sname{i} = sprintf('sample%d', i);
 end
     
-
+%%
+negperc = 65;
 GroupSpotsAndPeakHistsTest(dir1, z1, pos, sn, nch, negsamp, sname, negperc);
 
 GetSingleMrnaIntTest(dir1, z1, pos, sn, nch, sname);
@@ -152,7 +159,7 @@ GetSingleMrnaIntTest(dir1, z1, pos, sn, nch, sname);
 GroupCellSpotsTest(dir1, z1, pos, sn, nch, sname);
 
 %%
-n_ch = [1 2 3]; % Channels that are analysed and need to be tabulated. List out all the channels that need to be tabulated.
+n_ch = [1 3]; % Channels that are analysed and need to be tabulated. List out all the channels that need to be tabulated.
 sn = 3;
 %dir1 = pwd;
 

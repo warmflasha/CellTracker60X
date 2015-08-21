@@ -2,7 +2,7 @@ function tabulatemRNAposfish (dir1, sn, ch, Nucmask, errorstr, nucfile, smadfile
 %sn: no. of samples
 %n_ch = Channels to be analysed
 
-
+cen = [];
 %%
 imno = 1;
 dir = dir1;
@@ -15,7 +15,8 @@ csi{i} = enlistcell_new;
 om{i} = One_mRNA;
 end
 
-mresultfold = mkdir([dir '/results']);
+mresultfold = ([dir '/results']);
+mkdir(mresultfold);
 
 
 %%
@@ -24,7 +25,7 @@ for sno = 1:sn
 clear finalmat csi_ch csi_f;   
 
 resultfold = sprintf('/sample%dresults', sno);
-mkdir([dir mresultfold resultfold]);
+mkdir([mresultfold resultfold]);
 iinf = 0;
 
 
@@ -109,7 +110,7 @@ end
         end
         
      filennew = sprintf('output%02d.mat', iinf);  
-     filenews = strcat(dir,resultfold,'/', filennew);
+     filenews = strcat(mresultfold,resultfold,'/', filennew);
      
      
      peaks = newmat{j};
@@ -125,6 +126,6 @@ end
     end
 end
         
-centercentroid(cen, dir1, pos, sn);
+%centercentroid(cen, dir1, pos, sn);
 
 
