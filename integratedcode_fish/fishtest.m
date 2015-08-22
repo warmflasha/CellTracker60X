@@ -134,8 +134,8 @@ end
 tic;
 nch = 2; %channel to be analysed
 
-%TestSpotThreshold(dir1, z1, pos, sn, nch, sname); % to determine appropriate threshold
-RunSpotRecognitiontest(dir1, z1, pos, sn, nch, sname);
+TestSpotThreshold(dir1, z1, pos, sn, nch, sname); % to determine appropriate threshold
+%RunSpotRecognitiontest(dir1, z1, pos, sn, nch, sname);
 toc;
 %%
 nch = 3;
