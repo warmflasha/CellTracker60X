@@ -1,4 +1,4 @@
-function tabulatemRNAposfish (dir1, sn, ch, Nucmask, errorstr, nucfile, smadfile, cen)
+function tabulatemRNAfishnotile (dir1, sn, ch)
 %sn: no. of samples
 %n_ch = Channels to be analysed
 
@@ -115,17 +115,14 @@ end
      
      peaks = newmat{j};
      
-     imgfiles.compressNucMask = Nucmask{imno};
-     imgfiles.errorstr = errorstr{imno};
-     imgfiles.nucfile = nucfile{imno};
-     imgfiles.smadfile = smadfile{imno};
-     save(filenews, 'peaks','imgfiles');
+     
+     save(filenews, 'peaks');
      imno = imno+1;
      iinf = iinf + 1;
      
     end
 end
         
-%centercentroid(cen, dir1, pos, sn);
+
 
 

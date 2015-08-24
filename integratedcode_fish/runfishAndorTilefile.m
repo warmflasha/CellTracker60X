@@ -9,8 +9,7 @@
 
 
 clear all;
-dir1 = '.';
-%dir1 = '/Users/sapnac18/Desktop/150712fishmp/imagess1/Test Sample FISH';
+dir1 = '/Users/sapnac18/Desktop/150712fishmp/imagess1/Test Sample FISH';
 
 allSubFolders = genpath(dir1);
 
@@ -31,7 +30,7 @@ numberOfFolders = length(listOfFolderNames);
 
 sn = numberOfFolders - 1; % sn = no. of samples
 
-mkdir(dir1, 'masks');
+%mkdir(dir1, 'masks');
 
 %%
 % z = z range (assuming it to be the same for all samples)
@@ -57,10 +56,11 @@ for j = 2:numberOfFolders
      %i = 0;
      for i = st:l
           
-      [LcFull]=mask60XCT(ff,i);
+      [LcFull, cen{m}]=mask60XCT(ff,i);
      %[LcFull] = mask60Xall(ff,i); % colony as one cell/ cell information not separated. 
+     filen = sprintf('fishseg%02d.mat', m);
      
-      save(fn,'LcFull');
+      save(filen,'LcFull', cen);
       close all;
     
      % Saving imagefiles to the output variable
@@ -113,8 +113,6 @@ end
  end
  
 
- 
-
 
 %% Quantifying mRNA 
 % Note: each section below can be run only after the previous one has been
@@ -124,22 +122,11 @@ end
 
 nch = 2; %channel to be analysed
 
+tic;
 %TestSpotThreshold(dir1, z1, pos, sn, nch, sname); % to determine appropriate threshold
 RunSpotRecognitiontest(dir1, z1, pos, sn, nch, sname);
+toc;
 %%
-nch = 1;
-negperc = 55;
-negsamp = 2;
-z1 = [25 25];
-pos = [12 12];
-sn = 2;
-dir1 = '.';
-
-for i = 1:sn
-    sname{i} = sprintf('sample%d', i);
-end
-    
-
 GroupSpotsAndPeakHistsTest(dir1, z1, pos, sn, nch, negsamp, sname, negperc);
 
 GetSingleMrnaIntTest(dir1, z1, pos, sn, nch, sname);
@@ -151,5 +138,8 @@ n_ch = [1 2 3]; % Channels that are analysed and need to be tabulated. List out 
 sn = 2;
 %dir1 = pwd;
 
-tabulatemRNAposfish(dir1, sn, n_ch, Nucmask, errorstr, nucfile, smadfile);
+tabulatemRNAposfish(dir1, sn, n_ch, Nucmask, errorstr, nucfile, smadfile, cen, pos);
+
+%%
+AndorMontageTile(listOfFolderNames, sn, pos);
 
