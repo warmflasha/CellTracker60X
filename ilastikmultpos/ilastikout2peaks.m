@@ -1,6 +1,6 @@
-function ilastikout2peaks(segfilepath)
+function ilastikout2peaks(segfilepath,samplepath)
 % making ilastik output compatible with rest of the output
-samplepath = '/Users/sapnac18/Desktop/train_ilastik/multtif/';
+%samplepath = '/Users/sapnac18/Desktop/train_ilastik/multtif/';
 dirinfo = dir(segfilepath);
 startpos = postart(segfilepath);
 
@@ -69,7 +69,7 @@ peaks{time} = peaks2;
 
 end    
 
-fname = sprintf('/npeaks/file%01d.mat', sampleno);
+fname = sprintf('/npeaks/fileseg%01d.mat', sampleno);
 fname = strcat(segfilepath, fname);
 save(fname, 'peaks');
 
@@ -77,6 +77,3 @@ sampleno = sampleno + 1;
 samplepos = samplepos + 1;
 
 end
-
-
-
