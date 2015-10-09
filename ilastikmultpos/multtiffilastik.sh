@@ -9,6 +9,8 @@ prjtpath=/Users/warmflash2/Desktop/train_ilastik/multitiffpxlclass_2.ilp
 
 savepath=/Users/warmflash2/Desktop/train_ilastik/seglabel.h5
 
+segchannel=1
+
 mkdir $ndir
 
 samplepath=/Users/warmflash2/Desktop/train_ilastik/multtif/;
@@ -31,7 +33,7 @@ done
 export PATH=/Applications/MATLAB_R2015a.app/bin:$PATH
 
 
-matlab -nodesktop -nosplash -r ilastikout2peaks\(\'$ndir\',\'$samplepath\'\); 
+matlab -nodesktop -nosplash -r ilastikout2peaks\(\'$ndir\',\'$samplepath\',$segchannel\); 
 
 exit;
 
