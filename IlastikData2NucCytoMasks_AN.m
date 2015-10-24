@@ -1,16 +1,19 @@
-function IlastikData2NucCytoMasks_AN(ilastikfile,direc,flag)
+function [ratios, cellsinframe] = IlastikData2NucCytoMasks_AN(ilastikfile,ilastikfilecyto,pos,zplane,direc,flag)
 % direc shoule be the one from where you get the images to apply the masks
-% to
-% substract the background before sticking the image for analysis with
-% ilastik masks
+% ilastikfile = h5 file containing the masks of all nuclei( expoted from
+% the ilastik )
+% ilastikfilecyto=h5 file containing the masks of all cytoplasms( expoted from
+% the ilastik )
+% pos= the position for which the segmentation was done
+% zplane= the relevant plane to use out of z stack
+% flag= if 1, then will show the objects segmented in color  
+% 
+% 
 
-% read the datafile from ilastik
-direc = '/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/SingleCellSignalingAN_20150805_123245 PM';
+%direc = '/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/SingleCellSignalingAN_20150805_123245 PM';
 %I2 = imread('SingleCellSignalingAN_t0000_f0019_z0003_w0001.tif');% gfp channel (gfp-smad4 cells)
 % I = imread('SingleCellSignalingAN_t0000_f0019_z0003_w0000.tif');% nuc chan
 ff=readAndorDirectory(direc);
-%pos = ilastikfile name portion;
-pos = 00;
 chan = ff.w;
 
 areanuclow = 700;
@@ -27,34 +30,33 @@ userParam.backdiskrad = 300;
 
 info = h5info(ilastikfile);
 infocyto = h5info(ilastikfilecyto);
-info.Datasets
-infocyto.Datasets
+info.Datasets;                                         % check these to make sure the dataset name is correct for the 'h5read' function
+infocyto.Datasets;
 
 data = h5read(ilastikfile,'/exported_data');
 datacyto = h5read(ilastikfilecyto,'/exported_datacyto');
 
 data = squeeze(data);
 datacyto = squeeze(datacyto);
-time = size(data,3);
+time = size(data,3);                                   % how many time frames were expoted ( depends on the dataset, set in ilastik)
 Lnuc = {};
 Lcyto = {};
-for k=1:time
+for k=3:time
     
-Lnuc{k} = data(:,:,k) < 2; % HERE  STILL NEED TO ROTATE THE IMAGES CORRECTLY, SOMEHOW THEY ARE WRONG ORIENTATION COMING FROM ILASTIK
-Lnuc{k} =  bwareafilt(Lnuc{k},[areanuclow areanuchi]);
+Lnuc{k} = data(:,:,k) >1;                             % need to leave only the nuclei masks and make the image binary
+Lnuc{k} =  bwareafilt(Lnuc{k}',[areanuclow areanuchi]);%need to transpose the image matrix since for some reason the masks come out rotated from ilastik
 
-Lcyto{k} = datacyto(:,:,k) < 2; 
-Lcyto{k} =  bwareafilt(Lcyto{k},[areacytolow areacytohi]);%
-Lcytofin{k} = Lcyto{k} & ~ Lnuc{k};
+Lcyto{k} = datacyto(:,:,k) >1; 
+Lcyto{k} =  bwareafilt(Lcyto{k}',[areacytolow areacytohi]);%transposed for the same reason
+Lcytofin{k} = Lcyto{k} & ~ Lnuc{k};                        % cyto masks initially include both nuclei+cyto, so need to eliminate nuc
 Lcytofin{k} =  bwareafilt(Lcytofin{k},[areacytolow areacytohi]);%
 
-%Lcyto = bwlabel(Lcyto,8); % convert back to the label matrix in order to match the correct nuc to the correct cyto
-%Lnuc{k} = bwlabel(Lnuc{k},8); 
-
+Lnuc{k} = bwlabel(Lnuc{k},8);                             % convert back to the label matrix in order to match the correct nuc to the correct cyto
+Lcytofin{k} = bwlabel(Lcytofin{k},8); 
 
 % subtract the background from the original grayscale image
 % preprocess
-filename = getAndorFileName(ff,pos,ff.t(k),ff.z(4),chan(2)); % has to be channel 2 since all the masks should be applied to the gfp channel
+filename = getAndorFileName(ff,pos,ff.t(k),ff.z(zplane),chan(2)); % has to be channel 2 since all the masks should be applied to the gfp channel
 I2 = imread(filename);
 % I2 = imopen(I2,strel('disk',userParam.small_rad)); % remove small bright stuff
 % I2 = smoothImage(I2,userParam.gaussRadius,userParam.gaussSigma); %smooth
@@ -79,16 +81,16 @@ ycyto = aa(2:2:end);
 
 nucmeanInt{k}  = [statsnuc{k}.MeanIntensity]; %k is the index over images!!!!! statsnuc is a cell array
 cytomeanInt{k}  = [statscyto{k}.MeanIntensity];
-end
+
 
 % To show which objects are labeled in the final watershed segmentation in nuc
 % lear and cyto channels; also show the final foreground markers
 if flag == 1
     Lrgb = label2rgb(Lnuc{k}, 'jet', 'k', 'shuffle');
-    figure,subplot(1,2,1),imshow(I,[]);hold on
+    figure,subplot(1,2,1),imshow(I2,[]);hold on
     h = imshow(Lrgb);
     h.AlphaData = 0.3;
-    Lrgbcyto = label2rgb(Lcyto, 'jet', 'k', 'shuffle');
+    Lrgbcyto = label2rgb(Lcytofin{k}, 'jet', 'k', 'shuffle');
     subplot(1,2,2),imshow(I2,[]);hold on
     h = imshow(Lrgbcyto);
     h.AlphaData = 0.3;
@@ -96,25 +98,34 @@ end
 
 % plot the results
 
-ratios{time}(:,1) = nucmeanInt./cytomeanInt;
-ratios{time}(:,2) = time;
-meanRa(time) = mean(ratios{time}(:,1));
+ratios{k}(:,1) = nucmeanInt{k}./cytomeanInt{k};
+ratios{k}(:,2) = k;
+cellsinframe{k} = size(statsnuc{k},1);% need to put this as a label next to each datapoint
+meanRa{k} = mean(ratios{k}(:,1));
 
-vect = (1:framestorun);
-figure(3),plot(vect,meanRa,'r--*','Markersize',10);hold on
+%vect = (1:time);
+figure(4),plot(k,meanRa{k},'r--*','Markersize',15);hold on
 %ylim([0 1.7]);
-xlim([0 framestorun+1]);
+xlim([0 time+1]);
 xlabel('time, frames');
 ylabel('nuc/cyto mean for cells in the frame');
 title('GFPsmad4RFPh2b cells, 10ng/ml bmp4 added after frame 16');
-figure(4),plot(vect,meanRanormed,'b--*','Markersize',10);
-%ylim([0 2.5]);
-xlim([0 framestorun+1]);
-xlabel('time, frames');
-ylabel('nuc/cyto mean for cells in the frame, normalized to Area');
-title('GFPsmad4RFPh2b cells, 10ng/ml bmp4 added after frame 16');
 
 
+ %twocellcol(k) = mean(ratios{k}(2:3,1));
+ onecellcol1{k} = ratios{k}(1,1);
+ onecellcol2{k} = ratios{k}(2,1); 
+
+hold on
+plot(k,onecellcol1{k},'b--*');
+plot(k,onecellcol2{k}, 'm--*');
+ylim([0.6 1.2]);
+legend('all two cells','1-cell colony(1)','1-cell colony(2)') ;
+
+%  save('Frame0_nuc2cyto_ratios','ratios','meanRa','onecellcol1','onecellcol2');
+%  savefig('Cellraces.fig');
+
+end
 
 
 
