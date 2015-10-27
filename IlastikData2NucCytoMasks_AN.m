@@ -19,7 +19,7 @@ chan = ff.w;
 areanuclow = 700;
 areanuchi = 9000;
 areacytolow = 2000;
-areacytohi = 20000;
+areacytohi = 40000;
 global userParam;
 userParam.gaussRadius = 10;
 userParam.gaussSigma = 3;
@@ -43,7 +43,7 @@ Lnuc = {};
 Lcyto = {};
 for k=3:time
     
-Lnuc{k} = data(:,:,k) >1;                             % need to leave only the nuclei masks and make the image binary
+Lnuc{k} = data(:,:,k) <2;                             % need to leave only the nuclei masks and make the image binary
 Lnuc{k} =  bwareafilt(Lnuc{k}',[areanuclow areanuchi]);%need to transpose the image matrix since for some reason the masks come out rotated from ilastik
 
 Lcyto{k} = datacyto(:,:,k) >1; 
@@ -58,9 +58,9 @@ Lcytofin{k} = bwlabel(Lcytofin{k},8);
 % preprocess
 filename = getAndorFileName(ff,pos,ff.t(k),ff.z(zplane),chan(2)); % has to be channel 2 since all the masks should be applied to the gfp channel
 I2 = imread(filename);
-% I2 = imopen(I2,strel('disk',userParam.small_rad)); % remove small bright stuff
-% I2 = smoothImage(I2,userParam.gaussRadius,userParam.gaussSigma); %smooth
-% I2 =presubBackground_self(I2);
+I2 = imopen(I2,strel('disk',userParam.small_rad)); % remove small bright stuff
+I2 = smoothImage(I2,userParam.gaussRadius,userParam.gaussSigma); %smooth
+I2 =presubBackground_self(I2);
 
 
 cc_nuc{k} = bwconncomp(Lnuc{k},8);
@@ -100,34 +100,43 @@ end
 
 ratios{k}(:,1) = nucmeanInt{k}./cytomeanInt{k};
 ratios{k}(:,2) = k;
+ratios{k}(:,3) = xnuc';
+ratios{k}(:,4) = ynuc';
 cellsinframe{k} = size(statsnuc{k},1);% need to put this as a label next to each datapoint
 meanRa{k} = mean(ratios{k}(:,1));
 
 %vect = (1:time);
 figure(4),plot(k,meanRa{k},'r--*','Markersize',15);hold on
-%ylim([0 1.7]);
+ylim([0.4 1.4]);
 xlim([0 time+1]);
 xlabel('time, frames');
 ylabel('nuc/cyto mean for cells in the frame');
 title('GFPsmad4RFPh2b cells, 10ng/ml bmp4 added after frame 16');
+legend('Mean over all cells in frame') ;
 
 
- %twocellcol(k) = mean(ratios{k}(2:3,1));
+ twocellcol{k} = mean(ratios{k}(2:3,1));
  onecellcol1{k} = ratios{k}(1,1);
- onecellcol2{k} = ratios{k}(2,1); 
+ onecellcol2{k} = ratios{k}(4,1); % 
 
-hold on
-plot(k,onecellcol1{k},'b--*');
-plot(k,onecellcol2{k}, 'm--*');
-ylim([0.6 1.2]);
-legend('all two cells','1-cell colony(1)','1-cell colony(2)') ;
 
-%  save('Frame0_nuc2cyto_ratios','ratios','meanRa','onecellcol1','onecellcol2');
-%  savefig('Cellraces.fig');
+figure(5),plot(k,twocellcol{k},'b--*');hold on
+plot(k,onecellcol1{k}, 'm--*');
+plot(k,onecellcol2{k}, 'g--*');
+ylim([0.2 1.5]);
+xlabel('time, frames');
+ylabel('nuc/cyto mean for cells in the frame');
+title('GFPsmad4RFPh2b cells, 10ng/ml bmp4 added after frame 16');
+legend('two-cell colony','1-cell colony(1)','1-cell colony(2)') ;
+
+
+ 
 
 end
+% figure(4), savefig('MeanDynamics.fig');
+% figure(5),savefig('CellTraces.fig');
 
-
+save('Frame19_Analysis');
 
 end
 
