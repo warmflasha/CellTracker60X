@@ -29,15 +29,15 @@ fr19col2 = cell2mat(onecellcol2)';
    vect = 1:length(fr0col2); 
     plot(fr0col2,'g--*'),hold on
    vect = 1:length(fr10col1); 
-    plot(vect,fr10col1,'b--*'),hold on
+    plot(k,fr10col1{k},'b--*'),hold on
    vect = 1:length(fr10col2); 
-    plot(vect,fr10col2,'y--*'),hold on
-   vect = 1:length(fr10col3); 
-    plot(vect,fr10col3,'m--*'),hold on
-    vect = 1:length(fr19col1);
-    plot(vect,fr19col1,'k--*'),hold on
-    vect = 1:length(fr19col2);
-    plot(vect,fr19col2,'b--*');hold on
+    plot(k,fr10col2{k},'y--*'),hold on
+   vect = 1:length(fr0col1); 
+    plot(k,fr10col3{k},'m--*'),hold on
+    vect = 1:length(fr0col1);
+    plot(k,fr19col1{k},'k--*'),hold on
+    vect = 1:length(fr0col1);
+    plot(k,fr19col2{k},'b--*');hold on
     
 ylim([0.1 1.9]);
 
@@ -45,8 +45,6 @@ xlabel('time, frames');
  ylabel('nuc/cyto mean for cells in the frame');
  title('GFPsmad4RFPh2b cells, 10ng/ml bmp4 added after frame 16, ~ 9 hours imaging time');
 
- 
- 
 % hold on
 % plot(fr13col1,'*y');
 % hold on
