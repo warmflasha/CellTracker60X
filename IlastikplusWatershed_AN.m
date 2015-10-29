@@ -38,7 +38,7 @@ Lcyto = WatershedsegmCytoplasm_AW(Lnuc,I2);% get the cyto mask using watershed
 
 LcytoIl = datacyto(:,:,img) >1; 
 LcytoIl = (LcytoIl');
-LcytoIl = LcytoIl & ~ Lnuc;                        % cyto masks initially include both nuclei+cyto, so need to eliminate nuc
+LcytoIl = LcytoIl & ~ Lnuc;    % cyto masks initially include both nuclei+cyto, so need to eliminate nuc
 Lcytofin = LcytoIl & Lcyto; 
 
 % at this point should have an array of nuc and cyto masks(from ilastik
@@ -73,10 +73,6 @@ cytomeanInt = [statscyto.MeanIntensity]';
 
 outdatnuc = [xnuc ynuc anuc nucmeanInt ];
 outdatcyto = [xcyto ycyto acyto cytomeanInt];
-% ind = find(outdatnuc(:,5)<1700);
-% if ~ isempty(ind); 
-% outdatnuc(ind,:)= [];
-% end
 
   if flag == 1
       figure, subplot(1,3,1),imshow(I2proc,[]);hold on

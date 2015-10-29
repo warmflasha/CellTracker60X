@@ -42,7 +42,6 @@ alldat=zeros(totcells,ncol+1);
 % end
 % pts=alldat(:,1:2);
     pts = [peaks{img}(:,1) peaks{img}(:,2)];
-    alldat = peaks{img};
 % pts should be the cells in the current image
    
     allinds=NewColoniesAW(pts);
@@ -52,7 +51,7 @@ alldat=zeros(totcells,ncol+1);
     %Make colony structure for the single cell algorythm
     for ii=1:ngroups;
         cellstouse=allinds==ii;
-        colonies(ii)=colony(alldat(cellstouse,:));%[1024 1344]
+        colonies(ii)=colony(alldat(cellstouse,:),[],[1 1],[2048 2048],pp.NucMasks{img});%[1024 1344]
     end
     
     %put data back into peaks
@@ -60,9 +59,7 @@ alldat=zeros(totcells,ncol+1);
         cellstouse=alldat(:,end-1)==ii;
         peaks{ii}=[peaks{ii} alldat(cellstouse,end-1:end)];
     end
-    
-    %peaks{img}=[peaks{img} alldat(cellstouse,end-1:end)];
-    
 end
 
 
+end

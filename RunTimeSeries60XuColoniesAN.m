@@ -27,11 +27,10 @@ end
 NucMasks{k} = Lnuc;
 CytoMasks{k} = Lcytofin;
 
-% also need to group them by colonies after peaks cell array is obtained
-
 end
 dims = size(peaks);
-% save('OutfileFrame4','peaks','NucMasks','CytoMasks','dims');
+
+ %save('OutfileFrame1','peaks','NucMasks','CytoMasks','dims');
 
 end
 
