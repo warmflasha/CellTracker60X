@@ -1,13 +1,15 @@
 %% read file
-ff=readAndorDirectory('.');
-%nuc = andorMaxIntensity(ff,0,0,1);
-fn=getAndorFileName(ff,9,0,0,0);
-nuc = imread(fn);
+% ff=readAndorDirectory('.');
+% %nuc = andorMaxIntensity(ff,0,0,1);
+% fn=getAndorFileName(ff,9,0,0,0);
+% nuc = imread(fn);
+nuc = imread('SingleCellSignalingAN_t0000_f0000_z0003_w0000.tif');
+%nuc = I;
 nuc_o = nuc;
 %% preprocess
 global userParam;
-userParam.gaussRadius = 1;
-userParam.gaussSigma = 1;
+userParam.gaussRadius = 10;
+userParam.gaussSigma = 3;
 userParam.small_rad = 3;
 userParam.presubNucBackground = 1;
 userParam.backdiskrad = 300;
@@ -31,7 +33,12 @@ Ix = imfilter(double(normed_img), hx, 'replicate');
 gradmag = sqrt(Ix.^2 + Iy.^2);
 %% circle find and display
 %[cc, rr, met]=imfindcircles(gradmag,[20 40],'Method','TwoStage','Sensitivity',0.95);
-[cc, rr, met]=imfindcircles(gradmag,[20 40],'Method','TwoStage','Sensitivity',0.95);
+[cc, rr, met]=imfindcircles(gradmag,[20 40],'Method','TwoStage','Sensitivity',0.999);
+figure; imshow(nuc,[]); hold;
+for ii=1:length(cc)
+    drawcircle(cc(ii,:),rr(ii),'m');
+end
+
 %throw out circles with nothing inside
 cavg = zeros(length(rr),1);
 for ii=1:length(rr)
@@ -45,7 +52,7 @@ cen = circles2cells(cc,rr);
 %% display results
 figure; 
  
-imshow(nuc_o,[]);hold on; %plot(cen(:,1),cen(:,2),'r*');
+imshow(nuc_o,[]);hold on; plot(cen(:,1),cen(:,2),'r*');
 title('Original Image with cells identified');
 % 
 
