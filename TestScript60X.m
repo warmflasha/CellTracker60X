@@ -21,4 +21,3 @@ img = 1;
 % 
 [peaks,dims,NucMasks,CytoMasks] = RunTimeSeries60XuColoniesAN(ilastikfile,ilastikfilecyto,pos,zplane,direc,flag);
 
-for k=1:length(peaks)

@@ -1,5 +1,5 @@
 
-function PlotCellTraces_AN(peaks, col)
+function [alldata] = PlotCellTraces_AN(peaks, col)
 
 % plot lie cell analysis results
 ncell = size(peaks{10},1);
@@ -30,5 +30,7 @@ end
 
 figure(4), hold on
 plot(alldata(:,k),'-*','color',colors{k});
+ylim([0 1.5]);
 end
+
 end

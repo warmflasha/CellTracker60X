@@ -1,17 +1,18 @@
 
 % to get the colonies and put them in plate1 object
-function [plate1] = GetMicroColonies(matfile)
+function [colonies] = GetMicroColonies(matfile)
 
-pp = load(matfile,'peaks','NucMasks','dims');
+pp = load(matfile,'peaks','NucMasks');
 peaks=pp.peaks;
 dims = size(peaks);
 
 
-for j=1:dims(2)
+for j=4:dims(2)
     
-colonies(j)=peaksToMicroColoniesAN(matfile,j);
+colonies=peaksToMicroColoniesAN(matfile,j);
+%plate1=plate(colonies,dims,[],ff.w,[],[], matfile);
 end
-plate1=plate(colonies(j),dims,[],ff.w,[],[], matfile);
+
 
 
 end

@@ -2,8 +2,9 @@ function [colonies]=peaksToMicroColoniesAN(matfile,img)
 
  pp=load(matfile,'peaks','NucMasks','dims'); % AN
 % 
- peaks=pp.peaks;
- dims = size(peaks);
+peaks=pp.peaks;
+if ~isempty(peaks{img}) 
+ %dims = size(peaks);
 
 if ~exist('mm','var')
     mm=1;
@@ -42,7 +43,7 @@ end
 %         cellstouse=alldat(:,end-1)==ii;
 %         peaks{img}=[peaks{img} alldat(cellstouse,end-1:end)];
 %     end
-
+end
 
 end
 

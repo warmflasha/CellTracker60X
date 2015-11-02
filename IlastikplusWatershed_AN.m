@@ -9,7 +9,7 @@ userParam.gaussSigma = 3;
 userParam.small_rad = 3;
 userParam.presubNucBackground = 1;
 userParam.backdiskrad = 300;
-areanuclow = 900;
+areanuclow = 1100;
 areanuchi = 9000;
 
 info = h5info(ilastikfile);
@@ -46,6 +46,7 @@ LcytoIl = (LcytoIl');
 LcytoIl = LcytoIl & ~ Lnuc;    % cyto masks initially include both nuclei+cyto, so need to eliminate nuc
 Lcytofin = LcytoIl & Lcyto; 
 
+
 % at this point should have an array of nuc and cyto masks(from ilastik
 % and watershed respectively)
 
@@ -66,6 +67,11 @@ statsnucw0(badinds2) = [];
 % xnuc = aa(1:2:end)';
 % ynuc = aa(2:2:end)';
 % nucmeanIntw0 = [statsnucw0.MeanIntensity]';
+
+% if 
+%     1 == size(statsnuc.PixelIdxList,2) ;
+%     Lcytofin = LcytoIl;
+% end
 
 %get the cytoplasmic mean intensity for each labeled object
 cc_cyto = bwconncomp(Lcytofin);

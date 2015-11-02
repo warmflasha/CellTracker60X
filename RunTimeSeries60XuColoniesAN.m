@@ -26,7 +26,7 @@ CytoMasks{k} = Lcytofin;
 end
 dims = size(peaks);
 
- %save('OutfileFrame19','peaks','NucMasks','CytoMasks','dims');
+ %save('OutfileFrame10','peaks','NucMasks','CytoMasks','dims');
 
 end
 
