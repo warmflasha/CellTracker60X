@@ -37,7 +37,7 @@ for ii=1:ngroups;
     colonies{k}(ii)=colony(alldat(cellstouse,:));%[1024 1344]
 end
     
- %save('OutfileFrame1','peaks','NucMasks','CytoMasks','colonies');
+ %save('OutfileFrame10','colonies');
  
 % put data back into peaks NEED TO ADJUST for 60X microcolonies
 
