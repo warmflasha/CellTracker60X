@@ -1,6 +1,8 @@
 
-function [alldata] = PlotCellTraces_AN(matfile, col)
+function [alldata] = PlotCellTraces_AN(matfile, col,N)
 % plot live cell analysis results
+% col = which column of peaks you want to analyze
+% N = the size of the colonies you want to look at
 pp=load(matfile,'peaks','NucMasks','colonies'); % AN
 peaks=pp.peaks;
 
@@ -10,14 +12,14 @@ nc = size(colonies{3},2);% number of colonies found in the image
 sz = size(colonies{3},1);% size of the colonies found in the image
 %colors = colorcube(ncell);
 alldata = zeros(length(colonies),nc);
-alldata2 = zeros(length(colonies),nc);
-colors = {'r','g','b','m'};
+%alldata2 = zeros(length(colonies),nc);
+colors = {'r','b'};
 nlines=zeros(length(colonies),nc);
     for k=1:nc
 
 
 for ii=1:length(colonies)
-    if ~isempty(colonies{ii})
+    if ~isempty(colonies{ii})&& colonies{ii}(k).ncells == N
                 nlines(ii,k)=size(colonies{ii}(k),1);
     end
 end
@@ -39,9 +41,7 @@ for ii=1:length(colonies)
             alldata(q:(q+nlines(ii)-1),k)=colonies{ii}(k).data(:,col);%make a single column vector from all the data (normalized intensity of col.6 in peaks to dapi (col. 5) in peaks
         else
             alldata(q:(q+nlines(ii)-1),k)=mean(colonies{ii}(k).data(:,col(1)))./mean(colonies{ii}(k).data(:,col(2)));
-%             if colonies{ii}(k).ncells == 2
-%             alldata2(q:(q+nlines(ii)-1),k)=mean(colonies{ii}(k).data(:,col(1)))./mean(colonies{ii}(k).data(:,col(2)));
-%             end
+%             
         end
         q=q+nlines(ii);
     end
