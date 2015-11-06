@@ -1,4 +1,4 @@
-function LcFull = mask60XCT (ff, i)
+function [LcFull, cen] = mask60XCT (ff, i)
 
 
 %% Creating masks for 60X images
@@ -6,6 +6,7 @@ function LcFull = mask60XCT (ff, i)
 %% read file
 % find the z position with maximum intensity.
 % i = position to be analysed
+
 
 nuc = andorMaxIntensity(ff,i,0,0);
 nuc_o = nuc;
@@ -81,7 +82,7 @@ end
 
 
 
- fim = getframe(gca);
+fim = getframe(gca);
 
 fim = frame2im(fim);
 bfim = im2bw(fim); % converting to binary image

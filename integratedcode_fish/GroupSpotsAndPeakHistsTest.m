@@ -93,7 +93,8 @@ for n_sample = ip.exp.sampleList
     
     if ~isempty(spotlist_new{n_sample})
         
-        subplot(2,ceil(max(ip.exp.sampleList)/2),iplot,'XScale','log','FontSize',8) ;
+        %subplot(2,ceil(max(ip.exp.sampleList)/2),iplot,'XScale','log','FontSize',8) ;
+        subplot(1,3,iplot,'XScale','log','FontSize',8) ;
         box on ; 
         hold all ;
         
