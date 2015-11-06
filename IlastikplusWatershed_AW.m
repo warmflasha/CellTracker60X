@@ -76,7 +76,7 @@ xcyto = aa(1:2:end)';
 ycyto = aa(2:2:end)';
 cytomeanInt = [statscyto.MeanIntensity]';
 
-
+% datacell=[xy(:,1) xy(:,2) nuc_areaw0 placeholder nuc_avrw0 nuc_avrw1 cyto_avrw1 cyto_area];
 outdatnuc = [xnuc ynuc anuc nucmeanInt ];
 outdatcyto = [xcyto ycyto acyto cytomeanInt];
 

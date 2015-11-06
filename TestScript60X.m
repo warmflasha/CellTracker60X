@@ -14,11 +14,11 @@ img = 1;
 
 %to run img = 1,first image
 
-<<<<<<< HEAD
- [datacell,Lnuc,Lcytofin] = IlastikplusWatershed_AN(ilastikfile,ilastikfilecyto,pos,zplane,direc,img,flag);
-=======
+% <<<<<<< HEAD
+%  %[datacell,Lnuc,Lcytofin] = IlastikplusWatershed_AN(ilastikfile,ilastikfilecyto,pos,zplane,direc,img,flag);
+% =======
  [outdatnuc,outdatcyto,Lnuc,Lcytofin] = IlastikplusWatershed_AW(ilastikfile,ilastikfilecyto,pos,zplane,direc,img,flag);
->>>>>>> fedcdee89cb4b13450b3a4e7f0bd2632f495751c
+% >>>>>>> fedcdee89cb4b13450b3a4e7f0bd2632f495751c
 
 
 % to run all time points
