@@ -17,11 +17,11 @@ img = 1;
 % <<<<<<< HEAD
 %  %[datacell,Lnuc,Lcytofin] = IlastikplusWatershed_AN(ilastikfile,ilastikfilecyto,pos,zplane,direc,img,flag);
 % =======
- [outdatnuc,outdatcyto,Lnuc,Lcytofin] = IlastikplusWatershed_AW(ilastikfile,ilastikfilecyto,pos,zplane,direc,img,flag);
+% [outdatnuc,outdatcyto,Lnuc,Lcytofin] = IlastikplusWatershed_AW(ilastikfile,ilastikfilecyto,pos,zplane,direc,img,flag);
 % >>>>>>> fedcdee89cb4b13450b3a4e7f0bd2632f495751c
 
 
 % to run all time points
 % 
-%[peaks,dims,NucMasks,CytoMasks] = RunTimeSeries60XuColoniesAN(ilastikfile,ilastikfilecyto,pos,zplane,direc,flag);
+[peaks,dims,NucMasks,CytoMasks] = RunTimeSeries60XuColoniesAN(ilastikfile,ilastikfilecyto,pos,zplane,direc,flag);
 
