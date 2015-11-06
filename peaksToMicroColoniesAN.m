@@ -1,8 +1,8 @@
-function [colonies]=peaksToMicroColoniesAN(matfile)
+function [colonies]=peaksToMicroColoniesAN(peaks)
 
- pp=load(matfile,'peaks','NucMasks'); % AN
+ %pp=load(matfile,'peaks','NucMasks'); % AN
 
-peaks=pp.peaks;
+%peaks=pp.peaks;
 % colonies = cell(length(peaks));
 if ~exist('mm','var')
     mm=1;

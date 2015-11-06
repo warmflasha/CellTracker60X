@@ -4,7 +4,8 @@
 
 direccurr = ('.');
 cd(direccurr);
-direc = ('/Volumes/data/Anastasia/LiveCellImagingGFPs4RFPh2b/SingleCellSignalingAN_20150805_123245 PM');
+direc = ('Z:\Anastasia\LiveCellImagingGFPs4RFPh2b\SingleCellSignalingAN_20150805_123245 PM');
+%direc = ('/Volumes/data/Anastasia/LiveCellImagingGFPs4RFPh2b/SingleCellSignalingAN_20150805_123245 PM');
 flag = 0;
 ilastikfile = 'NucMask0001batch.h5';
 ilastikfilecyto = 'CytoMask0001batch.h5';
@@ -14,11 +15,8 @@ img = 1;
 
 %to run img = 1,first image
 
-% <<<<<<< HEAD
-%  %[datacell,Lnuc,Lcytofin] = IlastikplusWatershed_AN(ilastikfile,ilastikfilecyto,pos,zplane,direc,img,flag);
-% =======
-% [outdatnuc,outdatcyto,Lnuc,Lcytofin] = IlastikplusWatershed_AW(ilastikfile,ilastikfilecyto,pos,zplane,direc,img,flag);
-% >>>>>>> fedcdee89cb4b13450b3a4e7f0bd2632f495751c
+
+ [datacell,Lnuc,Lcytofin] = IlastikplusWatershed_AW(ilastikfile,ilastikfilecyto,pos,zplane,direc,img,flag);
 
 
 % to run all time points
