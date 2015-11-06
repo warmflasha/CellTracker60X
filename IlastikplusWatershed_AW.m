@@ -1,4 +1,4 @@
-function [outdatnuc,outdatcyto,Lnuc,Lcytofin] = IlastikplusWatershed_AN(ilastikfile,ilastikfilecyto,pos,zplane,direc,img,flag)
+function [datacell,Lnuc,Lcytofin] = IlastikplusWatershed_AW(ilastikfile,ilastikfilecyto,pos,zplane,direc,img,flag)
 
 ff=readAndorDirectory(direc);
 chan = ff.w;
@@ -39,8 +39,9 @@ yy=xy(2:2:end);
 vImg = mkVoronoiImageFromPts([xx' yy'],[1024 1024]);
 
 filename = getAndorFileName(ff,pos,ff.t(img),ff.z(zplane),chan(2)); % has to be channel 2 since all the masks should be applied to the gfp channel
+filename2 = getAndorFileName(ff,pos,ff.t(img),ff.z(zplane),chan(1)); % to get info from the nuc channel
 I2 = imread(filename);
-
+Inuc = imread(filename2);
 
 LcytoIl = datacyto(:,:,img) >1; 
 LcytoIl = (LcytoIl');
@@ -54,31 +55,81 @@ I2proc = imopen(I2,strel('disk',userParam.small_rad)); % remove small bright stu
 I2proc = smoothImage(I2proc,userParam.gaussRadius,userParam.gaussSigma); %smooth
 I2proc = presubBackground_self(I2proc);
 
+% %get the NUCLEAR mean intensity for each labeled object
+% cc_nuc = bwconncomp(Lnuc,8);
+% statsnuc = regionprops(cc_nuc,I2proc,'Area','Centroid','PixelIdxList','MeanIntensity');
+% badinds = [statsnuc.Area] < 200; 
+% statsnuc(badinds) = [];
+% anuc = [statsnuc.Area]';
+% aa = [statsnuc.Centroid];
+% xnuc = aa(1:2:end)';
+% ynuc = aa(2:2:end)';
+% nucmeanInt = [statsnuc.MeanIntensity]';
+% 
+% %get the cytoplasmic mean intensity for each labeled object
+% cc_cyto = bwconncomp(Lcytofin);
+% statscyto = regionprops(cc_cyto,I2proc,'Area','Centroid','PixelIdxList','MeanIntensity');
+% badinds = [statscyto.Area] < 200; 
+% statscyto(badinds) = [];
+% acyto = [statscyto.Area]';
+% aa = [statscyto.Centroid];
+% xcyto = aa(1:2:end)';
+% ycyto = aa(2:2:end)';
+% cytomeanInt = [statscyto.MeanIntensity]';
+% 
+% % datacell=[xy(:,1) xy(:,2) nuc_areaw0 placeholder nuc_avrw0 nuc_avrw1 cyto_avrw1 cyto_area];
+% outdatnuc = [xnuc ynuc anuc nucmeanInt ];
+% outdatcyto = [xcyto ycyto acyto cytomeanInt];
+
 %get the NUCLEAR mean intensity for each labeled object
 cc_nuc = bwconncomp(Lnuc,8);
 statsnuc = regionprops(cc_nuc,I2proc,'Area','Centroid','PixelIdxList','MeanIntensity');
-badinds = [statsnuc.Area] < 200; 
+statsnucw0 = regionprops(cc_nuc,Inuc,'Area','Centroid','PixelIdxList','MeanIntensity');% these are the stats for the actual nuclear image(rfp)
+badinds = [statsnuc.Area] < 1000; 
+badinds2 = [statsnucw0.Area] < 1000;
 statsnuc(badinds) = [];
-anuc = [statsnuc.Area]';
-aa = [statsnuc.Centroid];
-xnuc = aa(1:2:end)';
-ynuc = aa(2:2:end)';
-nucmeanInt = [statsnuc.MeanIntensity]';
+statsnucw0(badinds2) = [];
+% anuc = [statsnuc.Area]';
+% aa = [statsnuc.Centroid];
+% xnuc = aa(1:2:end)';
+% ynuc = aa(2:2:end)';
+% nucmeanIntw0 = [statsnucw0.MeanIntensity]';
+
+% if 
+%     1 == size(statsnuc.PixelIdxList,2) ;
+%     Lcytofin = LcytoIl;
+% end
 
 %get the cytoplasmic mean intensity for each labeled object
 cc_cyto = bwconncomp(Lcytofin);
 statscyto = regionprops(cc_cyto,I2proc,'Area','Centroid','PixelIdxList','MeanIntensity');
-badinds = [statscyto.Area] < 200; 
+badinds = [statscyto.Area] < 1000; 
 statscyto(badinds) = [];
-acyto = [statscyto.Area]';
-aa = [statscyto.Centroid];
-xcyto = aa(1:2:end)';
-ycyto = aa(2:2:end)';
-cytomeanInt = [statscyto.MeanIntensity]';
+% acyto = [statscyto.Area]';
+% aa = [statscyto.Centroid];
+% xcyto = aa(1:2:end)';
+% ycyto = aa(2:2:end)';
+% cytomeanInt = [statscyto.MeanIntensity]';
 
-% datacell=[xy(:,1) xy(:,2) nuc_areaw0 placeholder nuc_avrw0 nuc_avrw1 cyto_avrw1 cyto_area];
-outdatnuc = [xnuc ynuc anuc nucmeanInt ];
-outdatcyto = [xcyto ycyto acyto cytomeanInt];
+% outdatnuc = [xnuc ynuc anuc nucmeanInt ];
+% outdatcyto = [xcyto ycyto acyto cytomeanInt];
+
+% ncells = length(statsN);
+ xy = stats2xy(statsnucw0);
+ nuc_avrw0  = [statsnucw0.MeanIntensity]';%[statsN.NuclearAvr];
+ nuc_areaw0  = [statsnucw0.Area]';%[statsN.NuclearArea];
+ nuc_avrw1 = [statsnuc.MeanIntensity]';
+ cyto_area  = [statscyto.Area]';
+ cyto_avrw1  = round([statscyto.MeanIntensity]');
+ placeholder = -round(ones(length(xy(:,1)),1));
+ % 
+% nuc_marker_avr = zeros(ncells, 1);
+% for i = 1:ncells
+%     data = imgR(statsN(i).PixelIdxList);
+%     nuc_marker_avr = round(mean(data) );
+%
+
+     datacell=[xy(:,1) xy(:,2) nuc_areaw0 placeholder nuc_avrw0 nuc_avrw1 cyto_avrw1 cyto_area];
 
   if flag == 1
       figure, subplot(1,3,1),imshow(I2proc,[]);hold on
