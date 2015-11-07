@@ -4,14 +4,12 @@
 % the output is a number of outall files, containing the peaks and colonies
 % 
 
-function RunFullTimeSerias60X_AN(ilastikfile,ilastikfilecyto,pos,zplane,direc,flag)
+function [peaks,dims,NucMasks,CytoMasks,colonies] = RunFullTimeSerias60X_AN(dir,zplane,direc,flag)
 
-% pos should correspond to the name of the ilatikfile
-% dir = ('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/AnalysisResults_Imaging1(earlyAugust2015)/IlastikDataFiles/');
-% cd(dir);
-% 
- dir = ('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/AnalysisResults_Imaging1(earlyAugust2015)/IlastikDataFIles/');
-% 
+
+ %dir = ('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/AnalysisResults_Imaging1(earlyAugust2015)/IlastikDataFIles/');
+ cd(dir);
+
  %dirinfo = dir('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/AnalysisResults_Imaging1(earlyAugust2015)/IlastikDataFIles');
 % numfiles = size(dirinfo,1);
 % filename = cell(1,numfiles);
@@ -20,18 +18,20 @@ function RunFullTimeSerias60X_AN(ilastikfile,ilastikfilecyto,pos,zplane,direc,fl
 % filename{i} = dirinfo(i).name;
 % end
 % end
+
 [nums, filescyto]=folderFilesFromKeyword(dir,'Cyto');
 [~, filesnuc]=folderFilesFromKeyword(dir,'Nuc');
 
-for j = 1:length(nums)
+for j = 1;%1:length(nums)
         
 ilastikfile = filesnuc(j).name;
 ilastikfilecyto= filescyto(j).name;
     
-[peaks,dims,NucMasks,CytoMasks,colonies] = RunTimeSeries60XuColoniesAN(ilastikfile,ilastikfilecyto,pos,zplane,direc,flag);
+[peaks,dims,NucMasks,CytoMasks,colonies] = RunTimeSeries60XuColoniesAN(ilastikfile,ilastikfilecyto,nums(j),zplane,direc,flag);
 
-% check how the colonies array is returned
-save(Outfile,'peaks','NucMasks','CytoMasks','colonies');
+
+
 end
+%save(Outfile,'peaks','NucMasks','CytoMasks','colonies');
 end
 % end up with a number of outall files for each position(all time points)
