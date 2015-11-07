@@ -1,4 +1,4 @@
-function [peaks,dims,NucMasks,CytoMasks, colonies] = RunTimeSeries60XuColoniesAN(ilastikfile,ilastikfilecyto,pos,zplane,direc,flag)
+function [peaks,dims,NucMasks,CytoMasks] = RunTimeSeries60XuColoniesAN(ilastikfile,ilastikfilecyto,pos,zplane,direc,flag)
 
 info = h5info(ilastikfile);
 info.Datasets;   
@@ -18,17 +18,17 @@ for k=1:time
 
 peaks{k} = datacell;
 
-%colonies=peaksToMicroColoniesAN(matfile,k);
+%colonies=peaksToMicroColoniesAN(peaks{k});
 %plate1=plate(colonies,dims,[],ff.w,[],[], matfile);
 
 NucMasks{k} = Lnuc;
 CytoMasks{k} = Lcytofin;
 
-end
+
 dims = size(peaks);
 
-colonies=peaksToMicroColoniesAN(peaks);% fro each time frame % here the coonies is a cell array : each cell is a colony object
-
+%colonies=peaksToMicroColoniesAN(peaks{k});% for each time frame % here the colonies is a cell array : each cell is a colony object
+end
  %save('Outfile','peaks','NucMasks','CytoMasks','colonies');
 
  

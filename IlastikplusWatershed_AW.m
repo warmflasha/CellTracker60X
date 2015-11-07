@@ -9,6 +9,7 @@ userParam.gaussSigma = 3;
 userParam.small_rad = 3;
 userParam.presubNucBackground = 1;
 userParam.backdiskrad = 300;
+userParam.colonygrouping = 120;
 areanuclow = 1300;
 areanuchi = 9000;
 
@@ -30,7 +31,9 @@ Lcytofin = [];
     
 Lnuc = data(:,:,img) <2;  % need to leave only the nuclei masks and make the image binary
 Lnuc =  bwareafilt(Lnuc',[areanuclow areanuchi]);
-
+%Lnuc = imopen(Lnuc,strel('disk',22));
+% need to add this step in case the nuclei are touching, the size of the
+% strel is probably not generic
 stats = regionprops(Lnuc,'Centroid');
 xy = [stats.Centroid];
 xx = xy(1:2:end);
@@ -103,7 +106,7 @@ statsnucw0(badinds2) = [];
 %get the cytoplasmic mean intensity for each labeled object
 cc_cyto = bwconncomp(Lcytofin);
 statscyto = regionprops(cc_cyto,I2proc,'Area','Centroid','PixelIdxList','MeanIntensity');
-badinds = [statscyto.Area] < 1000; 
+badinds = [statscyto.Area] < 1400; 
 statscyto(badinds) = [];
 % acyto = [statscyto.Area]';
 % aa = [statscyto.Centroid];
@@ -130,6 +133,7 @@ statscyto(badinds) = [];
 %
 
      datacell=[xy(:,1) xy(:,2) nuc_areaw0 placeholder nuc_avrw0 nuc_avrw1 cyto_avrw1 cyto_area];
+     %datacell = cyto_area;
 
   if flag == 1
       figure, subplot(1,3,1),imshow(I2proc,[]);hold on

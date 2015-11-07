@@ -1,6 +1,8 @@
 function [colonies]=peaksToMicroColoniesAN(peaks)
 
  %pp=load(matfile,'peaks','NucMasks'); % AN
+global userParam;
+userParam.colonygrouping = 120;
 
 %peaks=pp.peaks;
 % colonies = cell(length(peaks));
