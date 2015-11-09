@@ -12,7 +12,7 @@ peaks=pp.peaks;
 
 colonies = pp.colonies;
 
-nc = size(colonies{1},2);% number of colonies found in the image NEED TO GET THE MAX NUMBER OF COLONIES IN THE IMAGE
+nc = size(colonies,2);% number of colonies found in the image NEED TO GET THE MAX NUMBER OF COLONIES IN THE IMAGE
 %sz = size(colonies{1},1);% size of the colonies found in the image
 %colors = colorcube(ncell);
 alldata = zeros(length(colonies),nc);

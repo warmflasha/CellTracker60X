@@ -22,7 +22,7 @@ function [peaks,dims,NucMasks,CytoMasks,colonies] = RunFullTimeSerias60X_AN(dir,
 [nums, filescyto]=folderFilesFromKeyword(dir,'Cyto');
 [~, filesnuc]=folderFilesFromKeyword(dir,'Nuc');
 
-for j = 1;%1:length(nums)
+for j = 1:length(nums)
         
 ilastikfile = filesnuc(j).name;
 ilastikfilecyto= filescyto(j).name;
@@ -30,8 +30,8 @@ ilastikfilecyto= filescyto(j).name;
 [peaks,dims,NucMasks,CytoMasks,colonies] = RunTimeSeries60XuColoniesAN(ilastikfile,ilastikfilecyto,nums(j),zplane,direc,flag);
 
 
-
+save(['Outfile_' num2str(nums(j)) ],'peaks','NucMasks','CytoMasks','colonies');
 end
-%save(Outfile,'peaks','NucMasks','CytoMasks','colonies');
+
 end
 % end up with a number of outall files for each position(all time points)
