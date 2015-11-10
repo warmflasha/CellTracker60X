@@ -150,9 +150,9 @@ if length(xy) < length(cyto_xy)|| length(xy) > length(cyto_xy)
  %
  matchind = zeros(length(cyto_xy),length(xynew));
  
- for k=4  
+ for k=1:length(xynew)  
  for j=1:length(cyto_xy)
- if cyto_xy(j,:) - xynew(k,:) < 25;
+ if norm(cyto_xy(j,:) - xynew(k,:)) < 25;
  matchind=[j k];
  end
  end
