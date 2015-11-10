@@ -149,7 +149,7 @@ if length(xy) < length(cyto_xy)|| length(xy) > length(cyto_xy)
  end
  cc_cyto = bwconncomp(Lcytofin);
 statscyto = regionprops(cc_cyto,I2proc,'Area','Centroid','PixelIdxList','MeanIntensity');
-badinds = [statscyto.Area] < 1600; 
+badinds = [statscyto.Area] < 1100; 
 statscyto(badinds) = [];
  %update the stats
  cyto_xy  = stats2xy(statscyto);
