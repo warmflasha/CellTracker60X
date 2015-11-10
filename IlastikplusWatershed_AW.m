@@ -115,9 +115,6 @@ statscyto(badinds) = [];
 % ycyto = aa(2:2:end)';
 % cytomeanInt = [statscyto.MeanIntensity]';
 
-% cc_all = bwconncomp(Lcytofin+Lnuc);
-% stats_all = regionprops(cc_all,I2proc,'Area','Centroid','PixelIdxList','MeanIntensity');
-% 
 
 % ncells = length(statsN);
  xy = stats2xy(statsnucw0);
@@ -138,9 +135,31 @@ if isempty(statscyto)
     cyto_area = zeros(length(nuc_avrw1),1);
     cyto_avrw1 = cyto_area;
 end
-
+% mechanism to remove random relatively lerge stuff from cyto channel (if
+% it's size is comparable to the size of the cyto area of a small cell
+% and couldn't be removed by area filtering
+if length(xy) < length(cyto_xy)|| length(xy) > length(cyto_xy)
+ I = im2bw(Lcytofin+Lnuc);
+ t = imopen(I,strel('disk',25));
+ cc_all = bwconncomp(t);
+ stats_all = regionprops(cc_all,I2proc,'Area','Centroid','PixelIdxList','MeanIntensity');
+ xynew= stats2xy(stats_all);
+ if length(xynew)== length(xy) ;
+ Lcytofin = t&Lcytofin;
+ end
+ cc_cyto = bwconncomp(Lcytofin);
+statscyto = regionprops(cc_cyto,I2proc,'Area','Centroid','PixelIdxList','MeanIntensity');
+badinds = [statscyto.Area] < 1600; 
+statscyto(badinds) = [];
+ %update the stats
+ cyto_xy  = stats2xy(statscyto);
+ cyto_area  = [statscyto.Area]';
+ cyto_avrw1  = round([statscyto.MeanIntensity]');
+ placeholder = -round(ones(length(xy(:,1)),1));
+end
+%
      datacell=[xy(:,1) xy(:,2) nuc_areaw0 placeholder nuc_avrw0 nuc_avrw1 cyto_avrw1 cyto_area];
-     %datacell = cyto_area;
+     
 
   if flag == 1
       figure, subplot(1,3,1),imshow(I2proc,[]);hold on
