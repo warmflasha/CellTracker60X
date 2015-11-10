@@ -1,4 +1,4 @@
-function [peaks,dims,NucMasks,CytoMasks,colonies,imgfiles] = RunTimeSeries60XuColoniesAN(ilastikfile,ilastikfilecyto,pos,zplane,direc,flag)
+function [peaks,dims,NucMasks,CytoMasks,colonies] = RunTimeSeries60XuColoniesAN(ilastikfile,ilastikfilecyto,pos,zplane,direc,flag)
 
 info = h5info(ilastikfile);
 info.Datasets;   
@@ -12,16 +12,14 @@ peaks = cell(1,time);
 peakscyto = cell(1,time);
 NucMasks = cell(1,time);
 CytoMasks = cell(1,time);
-imgfiles = struct([]);
 for k=1:time
     
 [datacell,Lnuc,Lcytofin] = IlastikplusWatershed_AW(ilastikfile,ilastikfilecyto,pos,zplane,direc,k,flag);
-
+imgfiles(k).compressNucMask = %compressBinaryImg(Lnuc, size(nuc) );
 peaks{k} = datacell;
 
 %colonies=peaksToMicroColoniesAN(peaks{k});
 %plate1=plate(colonies,dims,[],ff.w,[],[], matfile);
-imgfiles(k).compressNucMask = compressBinaryImg(Lnuc, size(Lnuc) );
 
 NucMasks{k} = Lnuc;
 CytoMasks{k} = Lcytofin;

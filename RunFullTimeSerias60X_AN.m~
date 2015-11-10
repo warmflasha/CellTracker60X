@@ -27,10 +27,12 @@ for j = 1:length(nums)
 ilastikfile = filesnuc(j).name;
 ilastikfilecyto= filescyto(j).name;
     
-[peaks,dims,NucMasks,CytoMasks,colonies,imgfiles] = RunTimeSeries60XuColoniesAN(ilastikfile,ilastikfilecyto,nums(j),zplane,direc,flag);
+[peaks,dims,NucMasks,CytoMasks,colonies] = RunTimeSeries60XuColoniesAN(ilastikfile,ilastikfilecyto,nums(j),zplane,direc,flag);
 
-%save(['Outfile_' num2str(nums(j)) ],'peaks','NucMasks','CytoMasks','colonies','imgfiles');
-%save('Outfile1','peaks','NucMasks','CytoMasks','colonies','imgfiles');
+%imgfiles = struct('NucMasks',NucMasks{1},'size',);
+%imgfiles = cell2struct(NucMasks,fields,dim);
+
+%save(['Outfile_' num2str(nums(j)) ],'peaks','imgfiles','CytoMasks','colonies');
 end
 
 end
