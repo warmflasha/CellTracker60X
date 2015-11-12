@@ -46,8 +46,7 @@ Inuc = imread(filename2);
 
 LcytoIl = datacyto(:,:,img) >1; 
 LcytoIl = (LcytoIl');
-LcytoIl = imdilate(LcytoIl,strel('disk',3));
-
+LcytoIl = imclose(LcytoIl,strel('disk',10));
 % mechanism to remove random relatively large stuff from cyto channel (if
 % it's size is comparable to the size of the cyto area of a small cell
 % and couldn't be removed by area filtering

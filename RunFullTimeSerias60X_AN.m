@@ -30,7 +30,7 @@ ilastikfilecyto= filescyto(j).name;
 [peaks,dims,NucMasks,CytoMasks,colonies,imgfiles] = RunTimeSeries60XuColoniesAN(ilastikfile,ilastikfilecyto,nums(j),zplane,direc,flag);
 
 %save(['Outfile_' num2str(nums(j)) ],'peaks','NucMasks','CytoMasks','colonies','imgfiles');
-%save('Outfile1','peaks','NucMasks','CytoMasks','colonies','imgfiles');
+%save('Outfile_10','peaks','NucMasks','CytoMasks','colonies','imgfiles');
 end
 
 end

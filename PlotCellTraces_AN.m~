@@ -1,16 +1,16 @@
 
 function [alldata] = PlotCellTraces_AN(matfile, col,N)
+% plot live cell analysis results for a given colony size
+% col = which column of peaks you want to analyze
+% N = the size of the colonies you want to look at
+% matfile = outall file, separate for each position(but all time points are
+% included)
 
-%plot cell traces for specific colonies using the output from the runTracker
-%EDS
-% in that output last column of peaks = has the trajectory number that the
-% cell belongs to
-% in the colonies cell array( saved in the otfile) the last column is the
-% number of colony within that frma that the cells belong to
 
-pp=load(matfile,'peaks','NucMasks','colonies'); % AN
-peaks=pp.peaks;
-colonies = pp.colonies;
+
+
+
+
 
 
 
