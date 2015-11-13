@@ -8,11 +8,11 @@ direc = ('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImagi
 %direc = ('/Volumes/data/Anastasia/LiveCellImagingGFPs4RFPh2b/SingleCellSignalingAN_20150805_123245 PM');
 %direc = ('Z:\Anastasia\LiveCellImagingGFPs4RFPh2b/SingleCellSignalingAN_20150805_123245 PM');
 flag = 0;
-ilastikfile = 'NucMask0010batch.h5';
-ilastikfilecyto = 'CytoMask0010batch.h5';
-pos = 10;
+ilastikfile = 'NucMask0004batch.h5';
+ilastikfilecyto = 'CytoMask0004batch.h5';
+pos = 4;
 zplane = 4;
-img = 18;
+img = 2;
 
 %to run img = 1,first image
 

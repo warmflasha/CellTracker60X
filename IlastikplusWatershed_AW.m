@@ -29,8 +29,12 @@ datacyto = squeeze(datacyto);
 Lnuc = [];
 Lcytofin = [];
     
-Lnuc = data(:,:,img) <2;  % need to leave only the nuclei masks and make the image binary
+Lnuc = data(:,:,img) <2;  % <2 need to leave only the nuclei masks and make the image binary
 Lnuc =  bwareafilt(Lnuc',[areanuclow areanuchi]);
+
+% while isempty(Lnuc) == 0
+%       continue
+%  end
 
 stats = regionprops(Lnuc,'Centroid');
 xy = [stats.Centroid];
@@ -46,7 +50,9 @@ Inuc = imread(filename2);
 
 LcytoIl = datacyto(:,:,img) >1; 
 LcytoIl = (LcytoIl');
+Lcytonondil = LcytoIl;
 LcytoIl = imdilate(LcytoIl,strel('disk',3));
+
 
 % mechanism to remove random relatively large stuff from cyto channel (if
 % it's size is comparable to the size of the cyto area of a small cell
@@ -75,7 +81,7 @@ for i=1:length(goodindsfin)
                 goodstats(i).PixelIdxList = st(goodindsfin(i)).PixelIdxList ;
 end
 
-
+ 
 % here need to leave the PixelIds of the goodinds and then convert back to the binary image by using ind2sub subtract the
 % Lnuc to get the final mask of the cytoplasms
 %
@@ -85,7 +91,12 @@ Inew(onebiglist) = true;
 % open the image a little bit
 
 LcytoIl = (Inew & ~ Lnuc & ~vImg);    % cyto masks initially include both nuclei+cyto, so need to eliminate nuc, use voronoi to divide;
+% return back to the non-dilated cyto masks
+LcytoIl = bwlabel(LcytoIl,8); 
+LcytoIl(Lcytonondil ==0)=0;
 Lcytofin = LcytoIl; 
+
+
 
 % at this point should have an array of nuc and cyto masks(from ilastik
 % and watershed respectively)
@@ -107,10 +118,11 @@ statsnucw0(badinds2) = [];
 
 
 %get the cytoplasmic mean intensity for each labeled object
-cc_cyto = bwconncomp(Lcytofin);
-statscyto = regionprops(cc_cyto,I2proc,'Area','Centroid','PixelIdxList','MeanIntensity');
-badinds = [statscyto.Area] < 1000; 
+%cc_cyto = bwconncomp(Lcytofin);
+statscyto = regionprops(Lcytofin,I2proc,'Area','Centroid','PixelIdxList','MeanIntensity');
+badinds = [statscyto.Area] < 1000; % 
 statscyto(badinds) = [];
+
 
 % ncells = length(statsN);
  xy = stats2xy(statsnucw0);
@@ -128,7 +140,7 @@ if isempty(statscyto)
     cyto_avrw1 = cyto_area;
 end
 
-datacell=[xy(:,1) xy(:,2) nuc_areaw0 placeholder nuc_avrw0 nuc_avrw1 cyto_avrw1 cyto_area];
+datacell=[xy(:,1) xy(:,2) nuc_areaw0 placeholder nuc_avrw0 nuc_avrw1 cyto_avrw1];%cyto_area
      
 
   if flag == 1
