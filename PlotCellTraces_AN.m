@@ -8,6 +8,14 @@ function [alldata] = PlotCellTraces_AN(matfile, col,N)
 % in the colonies cell array( saved in the otfile) the last column is the
 % number of colony within that frma that the cells belong to
 
+% 1. read in the files in the directory, find the ones that have the
+% 'outfile' srting in them
+% 2. setup a loop to precess each file (it's peaks colonies and cells
+% 3. group the output based on cell belonging to the same trajectory and
+% the a colony of size N ( add the number of cells within the colony to the
+% cells structure.
+% plot the output for different colony sizes
+
 pp=load(matfile,'peaks','NucMasks','colonies'); % AN
 peaks=pp.peaks;
 colonies = pp.colonies;

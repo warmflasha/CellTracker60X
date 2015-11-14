@@ -32,16 +32,19 @@ Lcytofin = [];
 Lnuc = data(:,:,img) <2;  % <2 need to leave only the nuclei masks and make the image binary
 Lnuc =  bwareafilt(Lnuc',[areanuclow areanuchi]);
 
-% while isempty(Lnuc) == 0
-%       continue
-%  end
+if sum(sum(Lnuc)) == 0
+    datacell = [];
+    Lcytofin =zeros(size(Lnuc));
+    return;
+end
 
-stats = regionprops(Lnuc,'Centroid');
+stats = regionprops(Lnuc,'Centroid','PixelIdxList');
 xy = [stats.Centroid];
 xx = xy(1:2:end);
 yy=xy(2:2:end);
 
 vImg = mkVoronoiImageFromPts([xx' yy'],[1024 1024]);
+
 
 filename = getAndorFileName(ff,pos,ff.t(img),ff.z(zplane),chan(2)); % has to be channel 2 since all the masks should be applied to the gfp channel
 filename2 = getAndorFileName(ff,pos,ff.t(img),ff.z(zplane),chan(1)); % to get info from the nuc channel
@@ -80,7 +83,6 @@ goodstats = struct();
 for i=1:length(goodindsfin)
                 goodstats(i).PixelIdxList = st(goodindsfin(i)).PixelIdxList ;
 end
-
  
 % here need to leave the PixelIds of the goodinds and then convert back to the binary image by using ind2sub subtract the
 % Lnuc to get the final mask of the cytoplasms
