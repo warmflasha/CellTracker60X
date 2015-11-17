@@ -2,17 +2,17 @@
 % test the watershed + ilastik analysis of 60X data
 
 
-direccurr = ('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/AnalysisResults_Imaging1(earlyAugust2015)/Frame0018');
+direccurr = ('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/AnalysisResults_Imaging1(earlyAugust2015)/IlastikDataFiles');
 cd(direccurr);
 direc = ('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/SingleCellSignalingAN_20150805_123245 PM');
 %direc = ('/Volumes/data/Anastasia/LiveCellImagingGFPs4RFPh2b/SingleCellSignalingAN_20150805_123245 PM');
 %direc = ('Z:\Anastasia\LiveCellImagingGFPs4RFPh2b/SingleCellSignalingAN_20150805_123245 PM');
 flag = 0;
-ilastikfile = 'NucMask0004batch.h5';
-ilastikfilecyto = 'CytoMask0004batch.h5';
-pos = 4;
+ilastikfile = 'NucMask0000batch.h5';
+ilastikfilecyto = 'CytoMask0000batch.h5';
+pos = 0;
 zplane = 4;
-img = 2;
+img = 1;
 
 %to run img = 1,first image
 
@@ -22,5 +22,23 @@ img = 2;
 
 % to run all time points
 % 
-%[peaks,dims,NucMasks,CytoMasks,colonies,imgfiles] = RunTimeSeries60XuColoniesAN(ilastikfile,ilastikfilecyto,pos,zplane,direc,flag);
+% [peaks,dims,imgfilescyto,imgfiles] = RunTimeSeries60XuColoniesAN(ilastikfile,ilastikfilecyto,pos,zplane,direc,flag);
+%%
+% 
+[nums, files]=folderFilesFromKeyword(dir,'Outfile_');
 
+
+for j=1:length(nums)
+
+matfile = files(j).name;
+load(matfile,'peaks');
+colonies=peaksToMicroColoniesAN(peaks);% for each time frame % here the colonies is a cell array : each cell is a colony object
+
+save(['Outfile_' num2str(nums(j)) ],'peaks','dims','imgfiles','imgfilescyto','colonies');
+
+% setTrackParamEDS;
+% runTrackerEDS(matfile);
+
+
+
+end

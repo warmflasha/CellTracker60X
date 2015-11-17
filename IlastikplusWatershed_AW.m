@@ -29,17 +29,31 @@ datacyto = squeeze(datacyto);
 Lnuc = [];
 Lcytofin = [];
     
-Lnuc = data(:,:,img) <2;  % need to leave only the nuclei masks and make the image binary
+%     mask = immask(segchannel,:,:,time);
+%     mask_s = squeeze(mask);
+%     thresh = graythresh(mask_s); 
+%     mask_b = im2bw(mask_s, thresh); % cells:1, background:2
+
+Lnuc = data(:,:,img) >1;  % <2 need to leave only the nuclei masks and make the image binary
 Lnuc =  bwareafilt(Lnuc',[areanuclow areanuchi]);
-%Lnuc = imopen(Lnuc,strel('disk',22));
-% need to add this step in case the nuclei are touching, the size of the
-% strel is probably not generic
-stats = regionprops(Lnuc,'Centroid');
+if sum(sum(Lnuc)) == 0
+    Lnuc = data(:,:,img) <2;
+    Lnuc =  bwareafilt(Lnuc',[areanuclow areanuchi]);
+end
+
+if sum(sum(Lnuc)) == 0
+    datacell = [];
+    Lcytofin =zeros(size(Lnuc));
+    return;
+end
+
+stats = regionprops(Lnuc,'Centroid','PixelIdxList');
 xy = [stats.Centroid];
 xx = xy(1:2:end);
 yy=xy(2:2:end);
 
 vImg = mkVoronoiImageFromPts([xx' yy'],[1024 1024]);
+
 
 filename = getAndorFileName(ff,pos,ff.t(img),ff.z(zplane),chan(2)); % has to be channel 2 since all the masks should be applied to the gfp channel
 filename2 = getAndorFileName(ff,pos,ff.t(img),ff.z(zplane),chan(1)); % to get info from the nuc channel
@@ -48,8 +62,52 @@ Inuc = imread(filename2);
 
 LcytoIl = datacyto(:,:,img) >1; 
 LcytoIl = (LcytoIl');
-LcytoIl = LcytoIl & ~ Lnuc & ~vImg;    % cyto masks initially include both nuclei+cyto, so need to eliminate nuc, use voronoi to divide;
+Lcytonondil = LcytoIl;
+LcytoIl = imdilate(LcytoIl,strel('disk',5));
+
+
+% mechanism to remove random relatively large stuff from cyto channel (if
+% it's size is comparable to the size of the cyto area of a small cell
+% and couldn't be removed by area filtering
+
+cc = bwconncomp(LcytoIl+Lnuc & ~vImg);%& ~vImg
+cnuc = bwconncomp(Lnuc);
+st = regionprops(cc,'PixelIdxList');
+stnuc = regionprops(cnuc,'PixelIdxList');
+goodinds = zeros(length(st),1);
+
+for i = 1:length(stnuc)
+    x =stnuc(i).PixelIdxList;
+    for k=1:length(st)
+        y = st(k).PixelIdxList;
+        in = intersect(x,y);
+        if ~isempty(in)
+            goodinds(k,1) = k;
+        end
+    end
+end
+goodindsfin = nonzeros(goodinds);
+goodstats = struct();
+
+for i=1:length(goodindsfin)
+                goodstats(i).PixelIdxList = st(goodindsfin(i)).PixelIdxList ;
+end
+ 
+% here need to leave the PixelIds of the goodinds and then convert back to the binary image by using ind2sub subtract the
+% Lnuc to get the final mask of the cytoplasms
+%
+onebiglist = cat(1,goodstats.PixelIdxList);
+Inew = zeros(1024,1024);
+Inew(onebiglist) = true;
+% open the image a little bit
+
+LcytoIl = (Inew & ~ Lnuc & ~vImg);    % cyto masks initially include both nuclei+cyto, so need to eliminate nuc, use voronoi to divide;
+% return back to the non-dilated cyto masks
+LcytoIl = bwlabel(LcytoIl,8); 
+LcytoIl(Lcytonondil ==0)=0;
 Lcytofin = LcytoIl; 
+
+
 
 % at this point should have an array of nuc and cyto masks(from ilastik
 % and watershed respectively)
@@ -58,31 +116,6 @@ I2proc = imopen(I2,strel('disk',userParam.small_rad)); % remove small bright stu
 I2proc = smoothImage(I2proc,userParam.gaussRadius,userParam.gaussSigma); %smooth
 I2proc = presubBackground_self(I2proc);
 
-% %get the NUCLEAR mean intensity for each labeled object
-% cc_nuc = bwconncomp(Lnuc,8);
-% statsnuc = regionprops(cc_nuc,I2proc,'Area','Centroid','PixelIdxList','MeanIntensity');
-% badinds = [statsnuc.Area] < 200; 
-% statsnuc(badinds) = [];
-% anuc = [statsnuc.Area]';
-% aa = [statsnuc.Centroid];
-% xnuc = aa(1:2:end)';
-% ynuc = aa(2:2:end)';
-% nucmeanInt = [statsnuc.MeanIntensity]';
-% 
-% %get the cytoplasmic mean intensity for each labeled object
-% cc_cyto = bwconncomp(Lcytofin);
-% statscyto = regionprops(cc_cyto,I2proc,'Area','Centroid','PixelIdxList','MeanIntensity');
-% badinds = [statscyto.Area] < 200; 
-% statscyto(badinds) = [];
-% acyto = [statscyto.Area]';
-% aa = [statscyto.Centroid];
-% xcyto = aa(1:2:end)';
-% ycyto = aa(2:2:end)';
-% cytomeanInt = [statscyto.MeanIntensity]';
-% 
-% % datacell=[xy(:,1) xy(:,2) nuc_areaw0 placeholder nuc_avrw0 nuc_avrw1 cyto_avrw1 cyto_area];
-% outdatnuc = [xnuc ynuc anuc nucmeanInt ];
-% outdatcyto = [xcyto ycyto acyto cytomeanInt];
 
 %get the NUCLEAR mean intensity for each labeled object
 cc_nuc = bwconncomp(Lnuc,8);
@@ -93,27 +126,13 @@ badinds = [statsnuc.Area] < 1000;
 badinds2 = [statsnucw0.Area] < 1000;
 statsnuc(badinds) = [];
 statsnucw0(badinds2) = [];
-% anuc = [statsnuc.Area]';
-% aa = [statsnuc.Centroid];
-% xnuc = aa(1:2:end)';
-% ynuc = aa(2:2:end)';
-% nucmeanIntw0 = [statsnucw0.MeanIntensity]';
 
-% if 
-%     1 == size(statsnuc.PixelIdxList,2) ;
-%     Lcytofin = LcytoIl;
-% end
 
 %get the cytoplasmic mean intensity for each labeled object
-cc_cyto = bwconncomp(Lcytofin);
-statscyto = regionprops(cc_cyto,I2proc,'Area','Centroid','PixelIdxList','MeanIntensity');
-badinds = [statscyto.Area] < 1400; 
+%cc_cyto = bwconncomp(Lcytofin);
+statscyto = regionprops(Lcytofin,I2proc,'Area','Centroid','PixelIdxList','MeanIntensity');
+badinds = [statscyto.Area] < 1000; % 
 statscyto(badinds) = [];
-% acyto = [statscyto.Area]';
-% aa = [statscyto.Centroid];
-% xcyto = aa(1:2:end)';
-% ycyto = aa(2:2:end)';
-% cytomeanInt = [statscyto.MeanIntensity]';
 
 
 % ncells = length(statsN);
@@ -126,54 +145,16 @@ statscyto(badinds) = [];
  cyto_avrw1  = round([statscyto.MeanIntensity]');
  placeholder = -round(ones(length(xy(:,1)),1));
  % 
-% nuc_marker_avr = zeros(ncells, 1);
-% for i = 1:ncells
-%     data = imgR(statsN(i).PixelIdxList);
-%     nuc_marker_avr = round(mean(data) );
-%
+
 if isempty(statscyto)
     cyto_area = zeros(length(nuc_avrw1),1);
     cyto_avrw1 = cyto_area;
 end
-% mechanism to remove random relatively lerge stuff from cyto channel (if
-% it's size is comparable to the size of the cyto area of a small cell
-% and couldn't be removed by area filtering
-if length(xy) < length(cyto_xy)|| length(xy) > length(cyto_xy)
- I = im2bw(Lcytofin+Lnuc);
- t = imopen(I,strel('disk',25));
- cc_all = bwconncomp(t);
- stats_all = regionprops(cc_all,I2proc,'Area','Centroid','PixelIdxList','MeanIntensity');
- xynew= stats2xy(stats_all);
- if length(xynew)== length(xy) ;
- %Lcytofin = t&Lcytofin;% t&I;
- 
- %
- matchind = zeros(length(cyto_xy),length(xynew));
- 
- for k=1:length(xynew)  
- for j=1:length(cyto_xy)
- if norm(cyto_xy(j,:) - xynew(k,:)) < 25;
- matchind=[j k];
- end
- end
- end
- %cyto_xy(matchind,:);
- 
- %
- end
-%  cc_cyto = bwconncomp(Lcytofin);
-% statscyto = regionprops(cc_cyto,I2proc,'Area','Centroid','PixelIdxList','MeanIntensity');
-% badinds = [statscyto.Area] < 1400; 
-% statscyto(badinds) = [];
+<<<<<<< HEAD
 
-%  %update the stats
- cyto_xy  = stats2xy(statscyto);
- cyto_area  = [statscyto.Area]';
- cyto_avrw1  = round([statscyto.MeanIntensity]');
- placeholder = -round(ones(length(xy(:,1)),1));
-end
-%
-     datacell=[xy(:,1) xy(:,2) nuc_areaw0 placeholder nuc_avrw0 nuc_avrw1 cyto_avrw1 cyto_area];
+
+datacell=[xy(:,1) xy(:,2) nuc_areaw0 placeholder nuc_avrw0 nuc_avrw1 cyto_avrw1];%cyto_area
+>>>>>>> origin
      
 
   if flag == 1
