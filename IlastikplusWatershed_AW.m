@@ -29,8 +29,17 @@ datacyto = squeeze(datacyto);
 Lnuc = [];
 Lcytofin = [];
     
-Lnuc = data(:,:,img) <2;  % <2 need to leave only the nuclei masks and make the image binary
+%     mask = immask(segchannel,:,:,time);
+%     mask_s = squeeze(mask);
+%     thresh = graythresh(mask_s); 
+%     mask_b = im2bw(mask_s, thresh); % cells:1, background:2
+
+Lnuc = data(:,:,img) >1;  % <2 need to leave only the nuclei masks and make the image binary
 Lnuc =  bwareafilt(Lnuc',[areanuclow areanuchi]);
+if sum(sum(Lnuc)) == 0
+    Lnuc = data(:,:,img) <2;
+    Lnuc =  bwareafilt(Lnuc',[areanuclow areanuchi]);
+end
 
 if sum(sum(Lnuc)) == 0
     datacell = [];
@@ -54,7 +63,7 @@ Inuc = imread(filename2);
 LcytoIl = datacyto(:,:,img) >1; 
 LcytoIl = (LcytoIl');
 Lcytonondil = LcytoIl;
-LcytoIl = imdilate(LcytoIl,strel('disk',3));
+LcytoIl = imdilate(LcytoIl,strel('disk',5));
 
 
 % mechanism to remove random relatively large stuff from cyto channel (if

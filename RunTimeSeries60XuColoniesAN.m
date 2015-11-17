@@ -1,4 +1,4 @@
-function [peaks,dims,imgfilescyto,colonies,imgfiles] = RunTimeSeries60XuColoniesAN(ilastikfile,ilastikfilecyto,pos,zplane,direc,flag)
+function [peaks,dims,imgfilescyto,imgfiles] = RunTimeSeries60XuColoniesAN(ilastikfile,ilastikfilecyto,pos,zplane,direc,flag)
 
 info = h5info(ilastikfile);
 info.Datasets;   
@@ -28,12 +28,9 @@ imgfilescyto(k).compressNucMask = compressBinaryImg(Lcytofin, size(Lcytofin) );
 %NucMasks{k} = Lnuc;
 %CytoMasks{k} = Lcytofin;
 
-
-dims = size(peaks);
-
 end
-
-[colonies]=peaksToMicroColoniesAN(peaks);% for each time frame % here the colonies is a cell array : each cell is a colony object
+dims = size(peaks);
+%colonies=peaksToMicroColoniesAN(peaks);% for each time frame % here the colonies is a cell array : each cell is a colony object
 
  %save('Outfile','peaks','NucMasks','CytoMasks','colonies');
 
