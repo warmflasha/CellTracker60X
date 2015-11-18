@@ -34,8 +34,8 @@ matfile = files(j).name;
 load(matfile,'peaks');
 colonies=peaksToMicroColoniesAN(peaks);% for each time frame % here the colonies is a cell array : each cell is a colony object
 
-save(['Outfile_' num2str(nums(j)) ],'peaks','dims','imgfiles','imgfilescyto','colonies');
-
+%save(['Outfile_' num2str(nums(j)) ],'peaks','dims','imgfiles','imgfilescyto','colonies');
+save('Outfile_4','peaks','dims','imgfiles','imgfilescyto','colonies');
 % setTrackParamEDS;
 % runTrackerEDS(matfile);
 

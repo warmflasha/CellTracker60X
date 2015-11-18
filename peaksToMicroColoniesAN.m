@@ -41,7 +41,7 @@ end
  
 % put data back into peaks NEED TO ADJUST for 60X microcolonies
 
-%     for ii=1:size(peaks{img},1)
+%     for ii=1:length(peaks{img},1)
 %         cellstouse=alldat(:,end-1)==ii;
 %         peaks{img}=[peaks{img} alldat(cellstouse,end-1:end)];
 %     end
