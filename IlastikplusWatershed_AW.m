@@ -150,8 +150,11 @@ if isempty(statscyto)
     cyto_area = zeros(length(nuc_avrw1),1);
     cyto_avrw1 = cyto_area;
 end
+<<<<<<< HEAD
+
 
 datacell=[xy(:,1) xy(:,2) nuc_areaw0 placeholder nuc_avrw0 nuc_avrw1 cyto_avrw1];%cyto_area
+>>>>>>> origin
      
 
   if flag == 1
