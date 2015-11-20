@@ -29,7 +29,8 @@ load(matfile,'peaks','colonies','cells'); % AN
 % same trajectories
 % 
 
-
+% to do: the number of trajectories has to match the number of cells in
+% peaks: one trajectory per cell
  trN = max(peaks{1}(:,4)); % number of trajectories within the frame
  trN =(1:trN);
 
@@ -65,6 +66,18 @@ for xx = 1:length(trN)
 end
 
 datcell{j} = alldata;
+end
+
+
+for j=1:length(datcell)
+    for k=1:size(datcell{j},2)
+        if ~isempty(datcell{j}(:,k))
+            plot(datcell{j}(:,k),'-*');
+            hold on
+        end
+    end
+    ylim([0 2])
+    title(['CellTraces for colonies of size ' num2str(N) ]);
 end
 
 %save(['CellTraces_' num2str(N) ],'datcell');
