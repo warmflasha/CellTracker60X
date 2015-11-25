@@ -73,6 +73,7 @@ for j=1:length(datcell)
     for k=1:size(datcell{j},2)
         if ~isempty(datcell{j}(:,k))
             plot(datcell{j}(:,k),'-*');
+            
             hold on
         end
     end
