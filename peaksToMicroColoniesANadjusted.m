@@ -1,5 +1,6 @@
 function [colonies,peaks]=peaksToMicroColoniesANadjusted(peaks)
-
+% peaks must have 8 columns and be supplied to this function directly after
+% runtrackereds
 
 
 global userParam;
