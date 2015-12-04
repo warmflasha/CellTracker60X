@@ -26,22 +26,4 @@ img = 1;
 % [peaks,dims,imgfilescyto,imgfiles] = RunTimeSeries60XuColoniesAN(ilastikfile,ilastikfilecyto,pos,zplane,direc,dt);
 %%
 % 
-[nums, files]=folderFilesFromKeyword(dir,'Outfile_');
 
-
-for j=1:length(nums)
-
-matfile = files(j).name;
-load(matfile,'peaks');
-% runTrackerEDS(matfile,'newTrackParam');
-% load(matfile);
-
-colonies=peaksToMicroColoniesAN(peaks);% for each time frame % here the colonies is a cell array : each cell is a colony object
-
- %save(['Outfile_' num2str(nums(j)) ],'peaks','dims','imgfiles','imgfilescyto','colonies','cells');
- %save('Outfile_15','peaks','dims','imgfiles','imgfilescyto','colonies','cells');
-
-
-
-
-end

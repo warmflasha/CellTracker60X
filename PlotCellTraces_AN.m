@@ -1,20 +1,13 @@
 
-function [datcell] = PlotCellTraces_AN(dir, col ,N )
+function [datcell] = PlotCellTraces_AN(dir,col,N,fr_stim)
 
 %plot cell traces for specific colonies using the output from the runTracker
-%EDS
+%EDS and runcolonygrouping
 % in that output last column of peaks = has the trajectory number that the
 % cell belongs to
-% in the colonies cell array( saved in the otfile) the last column is the
-% number of colony within that frma that the cells belong to
-
-% 1. read in the files in the directory, find the ones that have the
-% 'outfile' srting in them
-% 2. setup a loop to precess each file (it's peaks colonies and cells
-% 3. group the output based on cell belonging to the same trajectory and
-% the a colony of size N ( add the number of cells within the colony to the
-% cells structure.
-% plot the output for different colony sizes
+% for this peaks should have 9 columns: 9th has the size of the colony that
+% the cell belongs to
+% 
 
 [nums, files]=folderFilesFromKeyword(dir,'Outfile_');
 
@@ -23,62 +16,59 @@ for j=1:length(nums)
 
 matfile = files(j).name;
 
-load(matfile,'peaks','colonies','cells'); % AN
+load(matfile,'peaks','cells'); % AN
 
-% check the number of trajectories withn the frame and add the loop over
-% same trajectories
-% 
+for k=1:length(peaks)
+if ~isempty(peaks{k})
+trN(k) = max(peaks{k}(:,8));
+end
+end
+trN = max(trN);
+trN =(1:trN);
 
-% to do: the number of trajectories has to match the number of cells in
-% peaks: one trajectory per cell
- trN = max(peaks{1}(:,4)); % number of trajectories within the frame
- trN =(1:trN);
+ %trN = max(peaks{1}(:,4)); % number of trajectories within the frame
 
-
-alldata=zeros(length(peaks),size(peaks{1},1));%length(trN)
+alldata=zeros(length(peaks),length(trN));%length(trN)
  
 for xx = 1:length(trN)
     
-    %q=1;
-    for k=1:length(colonies)
-        
-        if ~isempty(colonies{k})
-            nc = size(colonies{k},2);% number of colonies found within each frame k
+    for k=1:length(peaks)
+        if ~isempty(peaks{k})
+            
+            nc = size(peaks{k},1);% number of cells found within each frame k
             for i=1:nc
-                if N == 1
-                    if colonies{k}(i).ncells == N && colonies{k}(i).data(:,8) == trN(xx);% 
-                        alldata(k,xx) = colonies{k}(i).data(:,col(1))./colonies{k}(i).data(:,col(2));
-                        
-                    end
-                end
-                if N > 1
-                    if colonies{k}(i).ncells == N && colonies{k}(i).data(i,8) == trN(xx);
-                        alldata(k,xx) = colonies{k}(i).data(i,col(1))./colonies{k}(i).data(i,col(2));
-                        
-                    end
+                
+                if peaks{k}(i,9) == N && peaks{k}(i,8) == trN(xx);%
+                    alldata(k,xx) = peaks{k}(i,col(1))./peaks{k}(i,col(2));
+                    
                 end
                 
             end
-            %q=q+nlines(k);
+            
         end
     end
-    
 end
+
 
 datcell{j} = alldata;
 end
 
-
+bkgsign = zeros(length(datcell),3);
 for j=1:length(datcell)
     for k=1:size(datcell{j},2)
         if ~isempty(datcell{j}(:,k))
             plot(datcell{j}(:,k),'-*');
-            
             hold on
+            bkgsign(j,1) = mean(datcell{j}(1:fr_stim,k));% mean signaling before stimulation
+            bkgsign(j,2) = mean(datcell{j}(fr_stim:end,k));% mean signaling after stimulation
+            bkgsign(j,3) = abs(datcell{j}(fr_stim-1,k)-max(datcell{j}(fr_stim:end,k)));% value of the jump upon stimulation
+            %bkgsign(j,3) = abs(bkgsign(j,1)-bkgsign(j,2));
         end
     end
-    ylim([0 2])
+    ylim([0 2.4])
     title(['CellTraces for colonies of size ' num2str(N) ]);
+    
+    
 end
 
 %save(['CellTraces_' num2str(N) ],'datcell');

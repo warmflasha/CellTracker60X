@@ -13,6 +13,7 @@ peakscyto = cell(1,time);
 
 imgfiles = struct([]);
 imgfilescyto = struct([]);
+%lblobjects = struct([]);
 if dt == 0
 ff=readAndorDirectory(direc);
 timegroups = size(ff.t,2);
@@ -37,16 +38,9 @@ end
 
 imgfiles(k).compressNucMask = compressBinaryImg(Lnuc, size(Lnuc) );
 imgfilescyto(k).compressNucMask = compressBinaryImg(Lcytofin, size(Lcytofin) );
-
-%NucMasks{k} = Lnuc;
-%CytoMasks{k} = Lcytofin;
-
+%lblobjects(k).lblobj = a;
 end
 dims = size(peaks);
-%colonies=peaksToMicroColoniesAN(peaks);% for each time frame % here the colonies is a cell array : each cell is a colony object
-
- %save('Outfile_test','peaks','dims','imgfiles','imgfilescyto');
-
- 
-end
+ %save('Outfile_test2','peaks','dims','imgfiles','imgfilescyto','colonies');
+ end
 

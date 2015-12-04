@@ -10,7 +10,7 @@ userParam.small_rad = 3;
 userParam.presubNucBackground = 1;
 userParam.backdiskrad = 300;
 userParam.colonygrouping = 120;
-areanuclow = 1000;
+areanuclow = 1100;
 areanuchi = 15000;
 
 info = h5info(ilastikfile);
@@ -34,16 +34,26 @@ Lcytofin = [];
     % data(:,:,img) >1)
    data = h5read(ilastikfile,'/exported_data');
     
-   data = data(1,:,:,img);
-   data = squeeze(data);
-   Lnuc = data<1;
+   data = squeeze(data);    %if really  exporting segmentation
+   data = data(:,:,img);
+   Lnuc = data>1;
    Lnuc =  bwareafilt(Lnuc',[areanuclow areanuchi]);
+   
+%    data = data(1,:,:,img);% data = data(:,:,img);after squeeze, if really  exporting segmentation
+%    data = squeeze(data);
+%    Lnuc = data<1;
+%    Lnuc =  bwareafilt(Lnuc',[areanuclow areanuchi]);
 
    datacyto = h5read(ilastikfilecyto,'/exported_data');
     
-   datacyto = datacyto(1,:,:,img);
-   datacyto = squeeze(datacyto);
-   LcytoIl = datacyto<1;
+   datacyto = squeeze(datacyto);    %if really  exporting segmentation
+   datacyto = datacyto(:,:,img);
+   LcytoIl = datacyto>1; 
+   
+   
+%    datacyto = datacyto(1,:,:,img);
+%    datacyto = squeeze(datacyto);
+%    LcytoIl = datacyto<1;
    
 % Lnuc = data(:,:,img) >1;  % <2 need to leave only the nuclei masks and make the image binary
 % Lnuc =  bwareafilt(Lnuc',[areanuclow areanuchi]);
@@ -129,14 +139,18 @@ end
 onebiglist = cat(1,goodstats.PixelIdxList);
 Inew = zeros(1024,1024);
 Inew(onebiglist) = true;
-% open the image a little bit
 
-LcytoIl = (Inew & ~ Lnuc & ~vImg);    % cyto masks initially include both nuclei+cyto, so need to eliminate nuc, use voronoi to divide;
+% erode nuclei a little since sometimes causes problems
+t = imerode(Lnuc,strel('disk',7));
+
+LcytoIl = (Inew & ~ t & ~vImg);    % cyto masks initially include both nuclei+cyto, so need to eliminate nuc, use voronoi to divide;
 % return back to the non-dilated cyto masks
+% and non-eroded nuc mask
 LcytoIl = bwlabel(LcytoIl,8); 
 LcytoIl(Lcytonondil ==0)=0;
+LcytoIl(Lnuc ==1)=0;
 Lcytofin = LcytoIl; 
-%a = label2rgb(Lcytofin);
+a = label2rgb(Lcytofin);
 
 
 % at this point should have an array of nuc and cyto masks(from ilastik
@@ -162,7 +176,7 @@ statsnucw0(badinds2) = [];
 %get the cytoplasmic mean intensity for each labeled object
 %cc_cyto = bwconncomp(Lcytofin);
 statscyto = regionprops(Lcytofin,I2proc,'Area','Centroid','PixelIdxList','MeanIntensity');
-badinds = [statscyto.Area] < 1000; % 
+badinds = [statscyto.Area] < 1000; 
 statscyto(badinds) = [];
 
 
