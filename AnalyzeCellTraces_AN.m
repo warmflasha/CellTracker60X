@@ -75,6 +75,7 @@ for j=1:length(datcell)
             mean_after{j} =  mean(datcell{j}(fr_stim+1,:));
             figure(2),subplot(1,2,1),plot(nonzeros(mean_before{j}(:)),'*','color',c{j});hold on
             ylim([0 2.4])
+            legend(['bmp4 added at ' num2str(p) 'hours']);
             figure(2),subplot(1,2,2),plot(nonzeros(mean_after{j}(:)),'*','color',c{j});hold on
             legend(['bmp4 added at ' num2str(p) 'hours']);
             ylim([0 2.4])
@@ -87,27 +88,8 @@ end
     ylabel('nuc/cyto raio');
     xlabel('Time, hours');
     ylim([0 2.4])
-    if flag == 1
     
-    figure(2),subplot(1,3,2),plot(bkgsign(:,2),'b*');
-    legend('After Stimulation');
-    title(['MicroCol Size ' num2str(N) ]);
-    ylabel('Mean nuc/cyto raio');
-    xlabel('Frames');
-    ylim([0 2.4])
-    figure(2),subplot(1,3,3),plot(bkgsign(:,3),'g-*');
-    legend('Upon Stimulation');
-    title(['MicroCol Size ' num2str(N) ]);
-    ylabel('Mean nuc/cyto raio');
-    xlabel('Frames');
-    ylim([0 2.4])
-    end
-% for jj=1:size(mean_before,2)
-%     
-%     mean_before_new=cat(2,nonzeros(mean_before{jj}));
-% end
-
-   
+  
 %save(['CellTraces_' num2str(N) ],'datcell','vect','bkgsign');
 
 
