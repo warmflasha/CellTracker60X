@@ -201,6 +201,8 @@ end
 datacell=[xy(:,1) xy(:,2) nuc_areaw0 placeholder nuc_avrw0 nuc_avrw1 cyto_avrw1];%cyto_area
 
 
+
+
 %   if flag == 1
 %       figure, subplot(1,3,1),imshow(I2proc,[]);hold on
 %       subplot(1,3,2),imshow(Lcytofin);hold on
