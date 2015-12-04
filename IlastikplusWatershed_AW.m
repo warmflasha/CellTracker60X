@@ -1,4 +1,4 @@
-function [datacell,Lnuc,Lcytofin] = IlastikplusWatershed_AW(ilastikfile,ilastikfilecyto,pos,zplane,direc,img,flag)
+function [datacell,Lnuc,Lcytofin] = IlastikplusWatershed_AW(ilastikfile,ilastikfilecyto,pos,zplane,direc,img,dt,tg,imgs,imgs_nuc)
 
 ff=readAndorDirectory(direc);
 chan = ff.w;
@@ -10,8 +10,8 @@ userParam.small_rad = 3;
 userParam.presubNucBackground = 1;
 userParam.backdiskrad = 300;
 userParam.colonygrouping = 120;
-areanuclow = 1300;
-areanuchi = 9000;
+areanuclow = 1100;
+areanuchi = 15000;
 
 info = h5info(ilastikfile);
 info.Datasets;   
@@ -20,26 +20,47 @@ infocyto.Datasets ;
 
 % check these to make sure the dataset name is correct for the 'h5read' function
 
-data = h5read(ilastikfile,'/exported_data');
-data = squeeze(data);
+%data = h5read(ilastikfile,'/exported_data');
+%data = squeeze(data);
 
-datacyto = h5read(ilastikfilecyto,'/exported_data');
-datacyto = squeeze(datacyto);
-%time = size(data,3);   
+%datacyto = h5read(ilastikfilecyto,'/exported_data');
+%datacyto = squeeze(datacyto);
+   
 Lnuc = [];
 Lcytofin = [];
+    % lines 32-43 had to be added to replace processign of h5 files that
+    % was dome before since the new version of ilastik 1.1.8 returns the
+    % data with dimension of 4D rather than 3 ( so cannot do this:
+    % data(:,:,img) >1)
+   data = h5read(ilastikfile,'/exported_data');
     
-%     mask = immask(segchannel,:,:,time);
-%     mask_s = squeeze(mask);
-%     thresh = graythresh(mask_s); 
-%     mask_b = im2bw(mask_s, thresh); % cells:1, background:2
+   data = squeeze(data);    %if really  exporting segmentation
+   data = data(:,:,img);
+   Lnuc = data>1;
+   Lnuc =  bwareafilt(Lnuc',[areanuclow areanuchi]);
+   
+%    data = data(1,:,:,img);% data = data(:,:,img);after squeeze, if really  exporting segmentation
+%    data = squeeze(data);
+%    Lnuc = data<1;
+%    Lnuc =  bwareafilt(Lnuc',[areanuclow areanuchi]);
 
-Lnuc = data(:,:,img) >1;  % <2 need to leave only the nuclei masks and make the image binary
-Lnuc =  bwareafilt(Lnuc',[areanuclow areanuchi]);
-if sum(sum(Lnuc)) == 0
-    Lnuc = data(:,:,img) <2;
-    Lnuc =  bwareafilt(Lnuc',[areanuclow areanuchi]);
-end
+   datacyto = h5read(ilastikfilecyto,'/exported_data');
+    
+   datacyto = squeeze(datacyto);    %if really  exporting segmentation
+   datacyto = datacyto(:,:,img);
+   LcytoIl = datacyto>1; 
+   
+   
+%    datacyto = datacyto(1,:,:,img);
+%    datacyto = squeeze(datacyto);
+%    LcytoIl = datacyto<1;
+   
+% Lnuc = data(:,:,img) >1;  % <2 need to leave only the nuclei masks and make the image binary
+% Lnuc =  bwareafilt(Lnuc',[areanuclow areanuchi]);
+% if sum(sum(Lnuc)) == 0
+%     Lnuc = data(:,:,img) <2;
+%     Lnuc =  bwareafilt(Lnuc',[areanuclow areanuchi]);
+% end
 
 if sum(sum(Lnuc)) == 0
     datacell = [];
@@ -53,14 +74,33 @@ xx = xy(1:2:end);
 yy=xy(2:2:end);
 
 vImg = mkVoronoiImageFromPts([xx' yy'],[1024 1024]);
-
-
+ 
+% this type of reading in the images is useful only is the time points are
+% all saved separately
+if dt == 1
 filename = getAndorFileName(ff,pos,ff.t(img),ff.z(zplane),chan(2)); % has to be channel 2 since all the masks should be applied to the gfp channel
 filename2 = getAndorFileName(ff,pos,ff.t(img),ff.z(zplane),chan(1)); % to get info from the nuc channel
 I2 = imread(filename);
 Inuc = imread(filename2);
+end
+% the following is used if the images are not split by time points, but are
+% split by z and positions
+if dt == 0
+  timegroups = size(ff.t,2);
+                              % tg = number of the time group that the image is in, likely will be part
+                              % of the input arguments tg = 1 correcponds to ff.t(1) = 0;
+% filename = getAndorFileName(ff,pos,ff.t(tg),ff.z(zplane),ff.w(2)); % has to be channel 2 since all the masks should be applied to the gfp channel
+% filename2 = getAndorFileName(ff,pos,ff.t(tg),ff.z(zplane),ff.w(1)); % to get info from the nuc channel
+% imgs = bfopen(filename);
+% imgs_nuc = bfopen(filename2);
 
-LcytoIl = datacyto(:,:,img) >1; 
+fnm = imgs{1}{img,1};% fnm is an actual image , specified by pos, zplane, ff.w(2) and the real frame number is k
+fnm_nuc = imgs_nuc{1}{img,1};
+I2 = (fnm);
+Inuc = (fnm_nuc);
+end
+
+%LcytoIl = datacyto(:,:,img) >1; %
 LcytoIl = (LcytoIl');
 Lcytonondil = LcytoIl;
 LcytoIl = imdilate(LcytoIl,strel('disk',5));
@@ -99,14 +139,18 @@ end
 onebiglist = cat(1,goodstats.PixelIdxList);
 Inew = zeros(1024,1024);
 Inew(onebiglist) = true;
-% open the image a little bit
 
-LcytoIl = (Inew & ~ Lnuc & ~vImg);    % cyto masks initially include both nuclei+cyto, so need to eliminate nuc, use voronoi to divide;
+% erode nuclei a little since sometimes causes problems
+t = imerode(Lnuc,strel('disk',7));
+
+LcytoIl = (Inew & ~ t & ~vImg);    % cyto masks initially include both nuclei+cyto, so need to eliminate nuc, use voronoi to divide;
 % return back to the non-dilated cyto masks
+% and non-eroded nuc mask
 LcytoIl = bwlabel(LcytoIl,8); 
 LcytoIl(Lcytonondil ==0)=0;
+LcytoIl(Lnuc ==1)=0;
 Lcytofin = LcytoIl; 
-
+a = label2rgb(Lcytofin);
 
 
 % at this point should have an array of nuc and cyto masks(from ilastik
@@ -115,6 +159,7 @@ Lcytofin = LcytoIl;
 I2proc = imopen(I2,strel('disk',userParam.small_rad)); % remove small bright stuff
 I2proc = smoothImage(I2proc,userParam.gaussRadius,userParam.gaussSigma); %smooth
 I2proc = presubBackground_self(I2proc);
+% NOTE, the nuclear channel is not pre processed...
 
 
 %get the NUCLEAR mean intensity for each labeled object
@@ -131,7 +176,7 @@ statsnucw0(badinds2) = [];
 %get the cytoplasmic mean intensity for each labeled object
 %cc_cyto = bwconncomp(Lcytofin);
 statscyto = regionprops(Lcytofin,I2proc,'Area','Centroid','PixelIdxList','MeanIntensity');
-badinds = [statscyto.Area] < 1000; % 
+badinds = [statscyto.Area] < 1000; 
 statscyto(badinds) = [];
 
 
@@ -139,7 +184,7 @@ statscyto(badinds) = [];
  xy = stats2xy(statsnucw0);
  nuc_avrw0  = [statsnucw0.MeanIntensity]';%[statsN.NuclearAvr];
  nuc_areaw0  = [statsnucw0.Area]';%[statsN.NuclearArea];
- nuc_avrw1 = [statsnuc.MeanIntensity]';
+ nuc_avrw1 = round([statsnuc.MeanIntensity]');
  cyto_xy  = stats2xy(statscyto);
  cyto_area  = [statscyto.Area]';
  cyto_avrw1  = round([statscyto.MeanIntensity]');
@@ -150,18 +195,19 @@ if isempty(statscyto)
     cyto_area = zeros(length(nuc_avrw1),1);
     cyto_avrw1 = cyto_area;
 end
-<<<<<<< HEAD
+
 
 
 datacell=[xy(:,1) xy(:,2) nuc_areaw0 placeholder nuc_avrw0 nuc_avrw1 cyto_avrw1];%cyto_area
->>>>>>> origin
-     
 
-  if flag == 1
-      figure, subplot(1,3,1),imshow(I2proc,[]);hold on
-      subplot(1,3,2),imshow(Lcytofin);hold on
-      subplot(1,3,3),imshow(Lnuc);hold on
-  end
+
+
+
+%   if flag == 1
+%       figure, subplot(1,3,1),imshow(I2proc,[]);hold on
+%       subplot(1,3,2),imshow(Lcytofin);hold on
+%       subplot(1,3,3),imshow(Lnuc);hold on
+%   end
  
   
 end
