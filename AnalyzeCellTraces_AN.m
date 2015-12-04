@@ -1,5 +1,5 @@
 
-function [datcell,bkgsign] = AnalyzeCellTraces_AN(dir,col,N,fr_stim,delta_t,flag)
+function [datcell,mean_before,mean_after] = AnalyzeCellTraces_AN(dir,col,N,fr_stim,delta_t,flag)
 
 % plot cell traces for specific colonies using the output from the runTracker
 % EDS and runcolonygrouping
@@ -65,17 +65,20 @@ end
 p = fr_stim*delta_t/60;
 %bkgsign = zeros(length(datcell),3);
 for j=1:length(datcell)
+    
     for k=1:size(datcell{j},2)
-        if ~isempty(datcell{j}(:,k))%&& size(datcell{j}(:,k),1)==length(vect{j})
+        if  length(nonzeros(datcell{j}(:,k)))>20
             figure(1),plot(vect{j},datcell{j}(:,k),'*','color',c{j});
             legend(['bmp4 added at ' num2str(p) 'hours']);
             hold on
-            
-            bkgsign(j,1) = mean(datcell{j}(1:fr_stim,k));hold on% mean signaling before stimulation
-            bkgsign(j,2) = mean(datcell{j}(fr_stim:end,k));hold on% mean signaling after stimulation
-            %bkgsign(j,3) = abs(datcell{j}(fr_stim-1,k)-mean(datcell{j}(fr_stim:(fr_stim+4),k)));% value of the jump upon stimulation
-            bkgsign(j,3) = abs(bkgsign(j,1)-bkgsign(j,2));
-            
+            mean_before{j} = mean(datcell{j}(1:fr_stim,:));
+            mean_after{j} =  mean(datcell{j}(fr_stim+1,:));
+            figure(2),subplot(1,2,1),plot(nonzeros(mean_before{j}(:)),'*','color',c{j});hold on
+            ylim([0 2.4])
+            figure(2),subplot(1,2,2),plot(nonzeros(mean_after{j}(:)),'*','color',c{j});hold on
+            legend(['bmp4 added at ' num2str(p) 'hours']);
+            ylim([0 2.4])
+                          
         end
     end
 end
@@ -85,13 +88,8 @@ end
     xlabel('Time, hours');
     ylim([0 2.4])
     if flag == 1
-    figure(2),subplot(1,2,1),plot(bkgsign(:,1),'r-*');
-    legend('Before Stimulation');
-    title(['MicroCol Size ' num2str(N) ]);
-    ylabel('Mean nuc/cyto raio');
-    xlabel('Frames');
-    ylim([0 2.4])
-    figure(2),subplot(1,2,2),plot(bkgsign(:,2),'b-*');
+    
+    figure(2),subplot(1,3,2),plot(bkgsign(:,2),'b*');
     legend('After Stimulation');
     title(['MicroCol Size ' num2str(N) ]);
     ylabel('Mean nuc/cyto raio');
@@ -104,9 +102,13 @@ end
     xlabel('Frames');
     ylim([0 2.4])
     end
+% for jj=1:size(mean_before,2)
+%     
+%     mean_before_new=cat(2,nonzeros(mean_before{jj}));
+% end
 
-    
-save(['CellTraces_' num2str(N) ],'datcell','vect','bkgsign');
+   
+%save(['CellTraces_' num2str(N) ],'datcell','vect','bkgsign');
 
 
 end
