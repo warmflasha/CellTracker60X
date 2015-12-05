@@ -1,5 +1,5 @@
 
-function [datcell,mean_before,mean_after] = AnalyzeCellTraces_AN(dir,col,N,fr_stim,delta_t,flag)
+function [datcell,mean_before,mean_after] = AnalyzeCellTraces_AN(dir,col,N,fr_stim,delta_t)
 
 % plot cell traces for specific colonies using the output from the runTracker
 % EDS and runcolonygrouping
@@ -67,30 +67,45 @@ p = fr_stim*delta_t/60;
 for j=1:length(datcell)
     
     for k=1:size(datcell{j},2)
-        if  length(nonzeros(datcell{j}(:,k)))>20
+        if  length(nonzeros(datcell{j}(:,k)))>30
             figure(1),plot(vect{j},datcell{j}(:,k),'*','color',c{j});
             legend(['bmp4 added at ' num2str(p) 'hours']);
             hold on
-            mean_before{j} = mean(datcell{j}(1:fr_stim,:));
-            mean_after{j} =  mean(datcell{j}(fr_stim+1,:));
-            figure(2),subplot(1,2,1),plot(nonzeros(mean_before{j}(:)),'*','color',c{j});hold on
-            ylim([0 2.4])
-            legend(['bmp4 added at ' num2str(p) 'hours']);
-            figure(2),subplot(1,2,2),plot(nonzeros(mean_after{j}(:)),'*','color',c{j});hold on
-            legend(['bmp4 added at ' num2str(p) 'hours']);
-            ylim([0 2.4])
-                          
+                        
         end
+        
     end
+    mean_before{j} = mean(nonzeros(datcell{j}(1:fr_stim,:)));
+    mean_after{j} =  mean(nonzeros(datcell{j}((fr_stim+1):end,:)));  
+    %amplitude{j} =  datcell{j}((fr_stim+1):end,:))
 end
+
     ylim([0 2.4])
     figure(1),title(['CellTraces for colonies of size ' num2str(N) ],'fontsize',20);
     ylabel('nuc/cyto raio');
     xlabel('Time, hours');
-    ylim([0 2.4])
     
-  
-%save(['CellTraces_' num2str(N) ],'datcell','vect','bkgsign');
+    mean_before = cell2mat(mean_before);
+    mean_after = cell2mat(mean_after);
+    
+    figure(2),subplot(1,2,1),plot(mean_before,'b*','markersize',20);
+    hold on
+    ylim([0 2.4]);
+    xlim([0 length(datcell)]);
+     legend(['bmp4 added at ' num2str(p) 'hours']);
+     ylabel('nuc/cyto raio, mean over time');
+    xlabel('Positions');
+    title(['microCol of size ' num2str(N) ],'fontsize',15);
+     figure(2),subplot(1,2,2),plot(mean_after,'m*','markersize',20);
+    hold on
+    legend(['bmp4 added at ' num2str(p) 'hours']);
+     ylim([0 2.4])
+    xlim([0 length(datcell)]);
+    ylabel('nuc/cyto raio, mean over time');
+    xlabel('Positions');
+    title(['microCol of size ' num2str(N) ],'fontsize',15);
+    
+save(['CellTraces_' num2str(N) ],'datcell','mean_before','mean_after');
 
 
 end
