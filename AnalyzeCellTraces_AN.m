@@ -16,7 +16,7 @@ function [datcell,mean_before,mean_after] = AnalyzeCellTraces_AN(dir,col,N,fr_st
 % the cell belongs to
 % 
 
-[nums, files]=folderFilesFromKeyword(dir,'Outfile_00');%['Outfile_000' num2str(pos) '_t']
+[nums, files]=folderFilesFromKeyword(dir,'Outfile_');%['Outfile_000' num2str(pos) '_t']
 
 
 for j=1:length(nums)
@@ -90,22 +90,22 @@ end
     
     figure(2),subplot(1,2,1),plot(mean_before,'b*','markersize',20);
     hold on
-    ylim([0 2.4]);
+    ylim([0 1.8]);
     xlim([0 length(datcell)]);
-     legend(['bmp4 added at ' num2str(p) 'hours']);
+     legend('before');
      ylabel('nuc/cyto raio, mean over time');
     xlabel('Positions');
     title(['microCol of size ' num2str(N) ],'fontsize',15);
      figure(2),subplot(1,2,2),plot(mean_after,'m*','markersize',20);
     hold on
-    legend(['bmp4 added at ' num2str(p) 'hours']);
-     ylim([0 2.4])
+    legend('after');
+     ylim([0 1.8])
     xlim([0 length(datcell)]);
     ylabel('nuc/cyto raio, mean over time');
     xlabel('Positions');
     title(['microCol of size ' num2str(N) ],'fontsize',15);
     
-save(['CellTraces_' num2str(N) ],'datcell','mean_before','mean_after');
+%save(['CellTraces_' num2str(N) ],'datcell','mean_before','mean_after');
 
 
 end
