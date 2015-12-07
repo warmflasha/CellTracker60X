@@ -51,11 +51,11 @@ for k=fr_stim+1:length(peaks)             % to ensure that the tracker gets inpu
         shift = [diffx,diffy];
         
         %            %here need to introduce the shift
-        peaks{k}(:,1) = round(peaks{k}(:,1)+shift(1)); % zero the point where there was shift
+        peaks{k}(:,1) = round(peaks{k}(:,1)+shift(1)); 
         peaks{k}(:,2) = round(peaks{k}(:,2)+shift(2));
         
     end
-    peaks{fr_stim} = [];
+    peaks{fr_stim} = []; % zero the point where there was shift
 end
 end
 

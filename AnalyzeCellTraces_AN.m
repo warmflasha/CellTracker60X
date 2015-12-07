@@ -16,7 +16,7 @@ function [datcell,mean_before,mean_after] = AnalyzeCellTraces_AN(dir,col,N,fr_st
 % the cell belongs to
 % 
 
-[nums, files]=folderFilesFromKeyword(dir,'Outfile_');%['Outfile_000' num2str(pos) '_t']
+[nums, files]=folderFilesFromKeyword(dir,'Outfile_0016');%['Outfile_000' num2str(pos) '_tps']
 
 
 for j=1:length(nums)
@@ -26,10 +26,12 @@ matfile = files(j).name;
 pp = load(matfile,'peaks','cells'); % AN
 peaks = pp.peaks;
 vect{j} = 1:length(peaks);
+%found_cells{j} = cell(1,length(peaks));
 vect{j} = (vect{j}.*delta_t)./60;% x axis in units of hours  
 
 for k=1:length(peaks)
 if ~isempty(peaks{k})
+%found_cells(:,1) = size(peaks{k},1);% how many cells within each frame were found    
 trN(k) = max(peaks{k}(:,8));
 end
 end

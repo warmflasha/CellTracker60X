@@ -10,7 +10,7 @@ userParam.small_rad = 3;
 userParam.presubNucBackground = 1;
 userParam.backdiskrad = 300;
 userParam.colonygrouping = 120;
-areanuclow = 1100;
+areanuclow = 1200;
 areanuchi = 15000;
 
 info = h5info(ilastikfile);
