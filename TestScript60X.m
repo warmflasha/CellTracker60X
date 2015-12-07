@@ -2,22 +2,28 @@
 % test the watershed + ilastik analysis of 60X data
 
 
-direccurr = ('.');
+direccurr = ('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/AnalysisResults_Imaging1(earlyAugust2015)/IlastikDataFiles');
 cd(direccurr);
-direc = ('/Volumes/data/Anastasia/LiveCellImagingGFPs4RFPh2b/SingleCellSignalingAN_20150805_123245 PM');
+direc = ('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/SingleCellSignalingAN_20150805_123245 PM');
+direc = ('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/ANmicrocoloniesNov12(4)_20151116_102334AM');
+%direc = ('/Volumes/data/Anastasia/LiveCellImagingGFPs4RFPh2b/SingleCellSignalingAN_20150805_123245 PM');
+%direc = ('Z:\Anastasia\LiveCellImagingGFPs4RFPh2b/SingleCellSignalingAN_20150805_123245 PM');
 flag = 0;
-ilastikfile = 'NucMask0001batch.h5';
-ilastikfilecyto = 'CytoMask0001batch.h5';
-pos = 1;
+ilastikfile = 'NucMask0000batch.h5';
+ilastikfilecyto = 'CytoMask0000batch.h5';
+pos = 0;
 zplane = 4;
 img = 1;
 
-% to run img = 1,first image
+%to run img = 1,first image
 
- [outdatnuc,outdatcyto,Lnuc,Lcytofin] = IlastikplusWatershed_AW(ilastikfile,ilastikfilecyto,pos,zplane,direc,img,flag);
+
+ [datacell,Lnuc,Lcytofin] = IlastikplusWatershed_AW(ilastikfile,ilastikfilecyto,pos,zplane,direc,img,dt,tg,imgs,imgs_nuc);
 
 
 % to run all time points
 % 
-[peaks,dims,NucMasks,CytoMasks] = RunTimeSeries60XuColoniesAN(ilastikfile,ilastikfilecyto,pos,zplane,direc,flag);
+% [peaks,dims,imgfilescyto,imgfiles] = RunTimeSeries60XuColoniesAN(ilastikfile,ilastikfilecyto,pos,zplane,direc,dt);
+%%
+% 
 
