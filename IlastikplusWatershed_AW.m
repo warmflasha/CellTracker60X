@@ -141,7 +141,7 @@ Inew = zeros(1024,1024);
 Inew(onebiglist) = true;
 
 % erode nuclei a little since sometimes causes problems
-t = imerode(Lnuc,strel('disk',7));
+t = imerode(Lnuc,strel('disk',10));
 
 LcytoIl = (Inew & ~ t & ~vImg);    % cyto masks initially include both nuclei+cyto, so need to eliminate nuc, use voronoi to divide;
 % return back to the non-dilated cyto masks
@@ -195,21 +195,14 @@ if isempty(statscyto)
     cyto_area = zeros(length(nuc_avrw1),1);
     cyto_avrw1 = cyto_area;
 end
-
-
+if size(cyto_area,1) < size(nuc_areaw0,1) ||  size(cyto_area,1) > size(nuc_areaw0,1)
+datacell = [];
+return;
+end
 
 datacell=[xy(:,1) xy(:,2) nuc_areaw0 placeholder nuc_avrw0 nuc_avrw1 cyto_avrw1];%cyto_area
 
 
-
-
-%   if flag == 1
-%       figure, subplot(1,3,1),imshow(I2proc,[]);hold on
-%       subplot(1,3,2),imshow(Lcytofin);hold on
-%       subplot(1,3,3),imshow(Lnuc);hold on
-%   end
- 
-  
 end
 
 

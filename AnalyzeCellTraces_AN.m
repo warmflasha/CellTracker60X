@@ -16,7 +16,7 @@ function [datcell,mean_before,mean_after,found_cells,amplitude] = AnalyzeCellTra
 % the cell belongs to
 % 
 
-[nums, files]=folderFilesFromKeyword(dir,'Outfile_');%['Outfile_000' num2str(pos) '_tps']
+[nums, files]=folderFilesFromKeyword(dir,'Outfile_0000_tps');%['Outfile_000' num2str(pos) '_tps']
 
 %found_cells = cell(length(peaks),1);
 for j=1:length(nums)
@@ -32,7 +32,7 @@ vect{j} = (vect{j}.*delta_t)./60;% x axis in units of hours
 for k=1:length(peaks)
 if ~isempty(peaks{k})
  
-trN(k) = max(peaks{k}(:,8));
+trN(k) = max(peaks{k}(:,4));% col 4 and 8 should have the same info: BUG
 end
 end
 trN = max(trN);
@@ -51,7 +51,7 @@ for xx = 1:length(trN)
             nc = size(peaks{k},1);% number of cells found within each frame k
             for i=1:nc
                 
-                if peaks{k}(i,9) == N && peaks{k}(i,8) == trN(xx);%
+                if peaks{k}(i,9) == N && peaks{k}(i,4) == trN(xx);% cols 4 and 8 should be the same in peaks and correspont to the trajectory number
                     alldata(k,xx) = peaks{k}(i,col(1))./peaks{k}(i,col(2));
                     found_cells{j}(k,1) = size(peaks{k},1);% how many cells within each frame were found  
                 end
@@ -70,7 +70,7 @@ p = fr_stim*delta_t/60;
 for j=1:length(datcell)
     
     for k=1:size(datcell{j},2)
-        if  length(nonzeros(datcell{j}(:,k)))>30%40
+        if  length(nonzeros(datcell{j}(:,k)))>35%40
             figure(1),plot(vect{j},datcell{j}(:,k),'*','color',colors(j,:));
             avgsign(j) = mean(datcell{j}(:,k));
             legend(['bmp4 added at ' num2str(p) 'hours']);
@@ -82,7 +82,7 @@ for j=1:length(datcell)
     
     mean_before{j} = mean(nonzeros(datcell{j}(1:fr_stim,:)));
     mean_after{j} =  mean(nonzeros(datcell{j}((fr_stim+1):end,:)));  
-    amplitude{j}(:,:) = abs(mean(nonzeros(datcell{j}((fr_stim-1),:)))- mean(nonzeros(datcell{j}((fr_stim+3),:))));%5 for 5min delta_t
+    amplitude{j}(:,:) = abs(mean(nonzeros(datcell{j}((fr_stim-1),:)))- mean(nonzeros(datcell{j}((fr_stim+5),:))));%5 for 5min delta_t
    % amplitude{j} = mean_before{j}-mean_after{j};
 end
 
@@ -102,7 +102,7 @@ end
      ylabel('nuc/cyto ratio, mean over time');
     xlabel('Positions');
    % title(['microCol of size ' num2str(N) ' ,all subplots'],'fontsize',15);
-     figure(2),subplot(1,3,2),plot(mean_after,'*','color',colors((j-1),:),'markersize',20);
+     figure(2),subplot(1,3,2),plot(mean_after,'*','color',colors((j),:),'markersize',20);
     hold on
     legend('after');
      ylim([0 1.8])
@@ -110,7 +110,7 @@ end
     ylabel('nuc/cyto ratio, mean over time');
     xlabel('Positions');
     title(['microCol of size ' num2str(N) ' ,all subplots'],'fontsize',15);
-    figure(2),subplot(1,3,3),plot(amplitude,'*','color',colors((j-2),:),'markersize',20);
+    figure(2),subplot(1,3,3),plot(amplitude,'*','color',colors((j),:),'markersize',20);
     hold on
     legend('amplitude');
      ylim([0 0.5])
