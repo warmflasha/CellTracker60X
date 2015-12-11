@@ -5,8 +5,8 @@
 dir = '.';
 %direc =  ('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/ANmicrocoloniesNov12(4)_20151116_102334AM');
 direc2 = ('/Volumes/Seagate Backup Plus Drive/RICE_Research_databackup/ANmicrocoloniesPluri42hr_20151129_95830 AM');
-pos = 0;
-zplane = 4; % for dataset from november 12 zplne = 4; for dataset from nov 25(pluri_42hr) zplane = 3;
+pos = 4;
+zplane = 3; % for dataset from november 12 zplne = 4; for dataset from nov 25(pluri_42hr) zplane = 3;
 dt = 0;
 tg = [1 2 3]; % for dataset from november 12 4 time groups; for dataset from nov 25(pluri_42hr) 3 time groups;
 fr_stim = [];

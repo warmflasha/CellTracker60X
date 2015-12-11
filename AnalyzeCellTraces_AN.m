@@ -16,7 +16,7 @@ function [datcell,mean_before,mean_after,found_cells,amplitude] = AnalyzeCellTra
 % the cell belongs to
 % 
 
-[nums, files]=folderFilesFromKeyword(dir,'Outfile_0000_tps');%['Outfile_000' num2str(pos) '_tps']
+[nums, files]=folderFilesFromKeyword(dir,'Outfile_0003_tps');%['Outfile_000' num2str(pos) '_tps']
 
 %found_cells = cell(length(peaks),1);
 for j=1:length(nums)
@@ -40,7 +40,7 @@ trN =(1:trN);
 
  %trN = max(peaks{1}(:,4)); % number of trajectories within the frame
 %c = {'r','g','b','k','m','c','m','k'};
-colors = jet(length(nums));
+colors = jet(2*length(nums));
 alldata=zeros(length(peaks),length(trN));%length(trN)
  
 for xx = 1:length(trN)
@@ -51,7 +51,7 @@ for xx = 1:length(trN)
             nc = size(peaks{k},1);% number of cells found within each frame k
             for i=1:nc
                 
-                if peaks{k}(i,9) == N && peaks{k}(i,4) == trN(xx);% cols 4 and 8 should be the same in peaks and correspont to the trajectory number
+                if peaks{k}(i,9) == N && peaks{k}(i,4) == trN(xx) && ~(trN(xx)== -1);% cols 4 and 8 should be the same in peaks and correspont to the trajectory number
                     alldata(k,xx) = peaks{k}(i,col(1))./peaks{k}(i,col(2));
                     found_cells{j}(k,1) = size(peaks{k},1);% how many cells within each frame were found  
                 end
@@ -68,9 +68,9 @@ end
 p = fr_stim*delta_t/60;
 %bkgsign = zeros(length(datcell),3);
 for j=1:length(datcell)
-    
+    %colors2 = jet(length(datcell));
     for k=1:size(datcell{j},2)
-        if  length(nonzeros(datcell{j}(:,k)))>35%40
+        if  length(nonzeros(datcell{j}(:,k)))>50%40
             figure(1),plot(vect{j},datcell{j}(:,k),'*','color',colors(j,:));
             avgsign(j) = mean(datcell{j}(:,k));
             legend(['bmp4 added at ' num2str(p) 'hours']);
