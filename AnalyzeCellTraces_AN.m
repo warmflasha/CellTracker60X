@@ -16,7 +16,7 @@ function [datcell,mean_before,mean_after,found_cells,amplitude] = AnalyzeCellTra
 % the cell belongs to
 % 
 
-[nums, files]=folderFilesFromKeyword(dir,'Outfile_0003_tps');%['Outfile_000' num2str(pos) '_tps']
+[nums, files]=folderFilesFromKeyword(dir,'Outfile_0011_tps');%['Outfile_000' num2str(pos) '_tps']
 
 %found_cells = cell(length(peaks),1);
 for j=1:length(nums)
@@ -68,11 +68,12 @@ end
 p = fr_stim*delta_t/60;
 %bkgsign = zeros(length(datcell),3);
 for j=1:length(datcell)
-    %colors2 = jet(length(datcell));
+    
     for k=1:size(datcell{j},2)
+        colors2 = hot(size(datcell{j},2));
         if  length(nonzeros(datcell{j}(:,k)))>50%40
-            figure(1),plot(vect{j},datcell{j}(:,k),'*','color',colors(j,:));
-            avgsign(j) = mean(datcell{j}(:,k));
+            figure(1),plot(vect{j},datcell{j}(:,k),'-*','color',colors2(k,:));
+           % avgsign(j) = mean(datcell{j}(:,k));
             legend(['bmp4 added at ' num2str(p) 'hours']);
             hold on
                       
@@ -82,8 +83,8 @@ for j=1:length(datcell)
     
     mean_before{j} = mean(nonzeros(datcell{j}(1:fr_stim,:)));
     mean_after{j} =  mean(nonzeros(datcell{j}((fr_stim+1):end,:)));  
-    amplitude{j}(:,:) = abs(mean(nonzeros(datcell{j}((fr_stim-1),:)))- mean(nonzeros(datcell{j}((fr_stim+5),:))));%5 for 5min delta_t
-   % amplitude{j} = mean_before{j}-mean_after{j};
+    %amplitude{j}(:,:) = abs(mean(nonzeros(datcell{j}((fr_stim-1),:)))- mean(nonzeros(datcell{j}((fr_stim+5),:))));%5 for 5min delta_t
+    amplitude{j} = abs(mean_before{j}-mean_after{j});
 end
 
     ylim([0 2.4])
@@ -102,7 +103,7 @@ end
      ylabel('nuc/cyto ratio, mean over time');
     xlabel('Positions');
    % title(['microCol of size ' num2str(N) ' ,all subplots'],'fontsize',15);
-     figure(2),subplot(1,3,2),plot(mean_after,'*','color',colors((j),:),'markersize',20);
+     figure(2),subplot(1,3,2),plot(mean_after,'*','color',colors(j,:),'markersize',20);
     hold on
     legend('after');
      ylim([0 1.8])
@@ -110,7 +111,7 @@ end
     ylabel('nuc/cyto ratio, mean over time');
     xlabel('Positions');
     title(['microCol of size ' num2str(N) ' ,all subplots'],'fontsize',15);
-    figure(2),subplot(1,3,3),plot(amplitude,'*','color',colors((j),:),'markersize',20);
+    figure(2),subplot(1,3,3),plot(amplitude,'*','color',colors(j,:),'markersize',20);
     hold on
     legend('amplitude');
      ylim([0 0.5])
