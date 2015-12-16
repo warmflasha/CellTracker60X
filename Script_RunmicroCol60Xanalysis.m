@@ -21,4 +21,4 @@ delta_t = 5; % imaging was done every 5 minutes for the nov 12 dataset(diff cond
 [colonies] = runMicroColonyGrouping(dir,fr_stim,pos,isshift);
 % need to be with the folder with the final outfiles for each position (
 % outfile_pos_tps.mat (tps = time points)
-[datcell,mean_before,mean_after,found_cells,amplitude] = AnalyzeCellTraces_AN(dir,col,2,fr_stim,delta_t);
+[datcell] = AnalyzeCellTraces_AN(dir,col,2,fr_stim,delta_t,flag);

@@ -195,6 +195,9 @@ if isempty(statscyto)
     cyto_area = zeros(length(nuc_avrw1),1);
     cyto_avrw1 = cyto_area;
 end
+%this is done for whne all the previous clean up failed and still there is
+%a mismatch between the nuc and cyto number of elements , only then remove
+%that datapoint
 if size(cyto_area,1) < size(nuc_areaw0,1) ||  size(cyto_area,1) > size(nuc_areaw0,1)
 datacell = [];
 return;

@@ -1,5 +1,5 @@
 
-function [datcell,mean_before,mean_after,found_cells,amplitude] = AnalyzeCellTraces_AN(dir,col,N,fr_stim,delta_t)
+function [datcell] = AnalyzeCellTraces_AN(dir,col,N,fr_stim,delta_t,flag)
 
 % plot cell traces for specific colonies using the output from the runTracker
 % EDS and runcolonygrouping
@@ -7,16 +7,14 @@ function [datcell,mean_before,mean_after,found_cells,amplitude] = AnalyzeCellTra
 % delta_t = interval between the frames , in minuted (converted to hours in
 % the code)
 % N = size of the colonies that you want to look at
-% col = [6 7] ratio taken as 6/7: columns of the peaks with data -> 6 -
-% mean intensity in the nucleus, 7 - in cyto (all taken from gfp channel)
+% col = [2 3] ratio taken as 2/3: columns of the cell().fdata  -> 2 -
+% mean intensity in the nucleus, 3 - in cyto (all taken from gfp channel)
 % region
-% flag = if 1, then additional stats will be calculated and plotted (NEED
-% TO WORK ON, NOT FINAL)
+% flag = if 1, then additional stats will be calculated and plotted 
 % for this peaks should have 9 columns: 9th has the size of the colony that
 % the cell belongs to
 % 
-
-[nums, files]=folderFilesFromKeyword(dir,'Outfile_0011_tps');%['Outfile_000' num2str(pos) '_tps']
+[nums, files]=folderFilesFromKeyword(dir,'Outfile_19totest');%['Outfile_000' num2str(pos) '_tps']
 
 %found_cells = cell(length(peaks),1);
 for j=1:length(nums)
@@ -25,17 +23,12 @@ matfile = files(j).name;
 
 pp = load(matfile,'peaks','cells'); % AN
 peaks = pp.peaks;
+cells = pp.cells;
 vect{j} = 1:length(peaks);
 
 vect{j} = (vect{j}.*delta_t)./60;% x axis in units of hours  
 
-for k=1:length(peaks)
-if ~isempty(peaks{k})
- 
-trN(k) = max(peaks{k}(:,4));% col 4 and 8 should have the same info: BUG
-end
-end
-trN = max(trN);
+trN = size(cells,2);
 trN =(1:trN);
 
  %trN = max(peaks{1}(:,4)); % number of trajectories within the frame
@@ -44,29 +37,21 @@ colors = jet(2*length(nums));
 alldata=zeros(length(peaks),length(trN));%length(trN)
  
 for xx = 1:length(trN)
-    
-    for k=1:length(peaks)
-        if ~isempty(peaks{k})
-            
-            nc = size(peaks{k},1);% number of cells found within each frame k
-            for i=1:nc
-                
-                if peaks{k}(i,9) == N && peaks{k}(i,4) == trN(xx) && ~(trN(xx)== -1);% cols 4 and 8 should be the same in peaks and correspont to the trajectory number
-                    alldata(k,xx) = peaks{k}(i,col(1))./peaks{k}(i,col(2));
-                    found_cells{j}(k,1) = size(peaks{k},1);% how many cells within each frame were found  
-                end
-                
-            end
-            
+    nc = size(cells(xx).data,1);
+    for k=1:nc;
+        if cells(xx).data(k,5)==N && ~(cells(xx).data(k,4)== -1);
+            alldata(k,xx) = cells(xx).fdata(k,col(1))./cells(xx).fdata(k,col(2));
         end
+        
     end
 end
 
-
 datcell{j} = alldata;
 end
+
 p = fr_stim*delta_t/60;
 %bkgsign = zeros(length(datcell),3);
+if flag == 1
 for j=1:length(datcell)
     
     for k=1:size(datcell{j},2)
@@ -119,7 +104,7 @@ end
     ylabel('nuc/cyto ratio change, mean over cells in frame','fontsize',9);
     xlabel('Positions');
   %  title(['microCol of size ' num2str(N) ],'fontsize',15);
-    
+end 
 %save(['CellTraces_' num2str(N) ],'datcell','mean_before','mean_after','found_cells','amplitude');
 
 

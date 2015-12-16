@@ -58,8 +58,7 @@ for k=fr_stim+1:length(peaks)             % to ensure that the tracker gets inpu
     peaks{fr_stim} = []; % zero the point where there was shift
 end
 end
-%to do: here better to remove those empty points by skipping them, e.g.
-%paks{1},peaks{3}
+
 peaks = peaks(~cellfun(@isempty, peaks)); % to ensure that the tracker gets input all nonempty peaks (otherwise if any of the peaks is empty the tracker does not run
 
 save(['Outfile_000' num2str(pos) '_tps'],'peaks','dims','imgfiles','imgfilescyto');% saves the new matfile, containing peaks data for all the timepoints
@@ -71,8 +70,7 @@ save(['Outfile_000' num2str(pos) '_tps'],'peaks','dims','imgfiles','imgfilescyto
 matfile = ['Outfile_000' num2str(pos) '_tps'];  
 load(matfile);
 
-% then run tracker on peaks that already contain all time points and the
-% colony size info (this gets putinto the cell().data column 5
+% then run tracker on peaks that are alrea
 runTrackerEDS(matfile,'newTrackParam');
 save(['Outfile_000' num2str(pos) '_tps'],'peaks','dims','imgfiles','imgfilescyto','colonies','cells');
 % save('Outfile_0000_tps','peaks','dims','imgfiles','imgfilescyto','colonies','cells');
