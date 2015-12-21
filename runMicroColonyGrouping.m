@@ -55,7 +55,7 @@ for k=fr_stim+1:length(peaks)             % to ensure that the tracker gets inpu
         peaks{k}(:,2) = round(peaks{k}(:,2)+shift(2));
         
     end
-    peaks{fr_stim} = []; % zero the point where there was shift
+    peaks{fr_stim} = []; % zero the point where there was shift (only if there was a shift)
 end
 end
 %to do: here better to remove those empty points by skipping them, e.g.

@@ -78,5 +78,6 @@ for ii=1:length(peaks)
     end
 
 end
+%TO DO: add generic saving structure
  %save('OutfileFrame1','peaks','NucMasks','CytoMasks','colonies');% update
 end

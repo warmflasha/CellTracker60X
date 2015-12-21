@@ -56,7 +56,7 @@ for j=1:length(datcell)
     
     for k=1:size(datcell{j},2)
         colors2 = hot(size(datcell{j},2));
-        if  length(nonzeros(datcell{j}(:,k)))>50%40
+        if  length(nonzeros(datcell{j}(:,k)))>0%40 % this parameter should be eliminated
             figure(1),plot(vect{j},datcell{j}(:,k),'-*','color',colors2(k,:));
            % avgsign(j) = mean(datcell{j}(:,k));
             legend(['bmp4 added at ' num2str(p) 'hours']);
