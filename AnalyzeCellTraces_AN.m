@@ -14,7 +14,7 @@ function [datcell] = AnalyzeCellTraces_AN(dir,col,N,fr_stim,delta_t,flag)
 % for this peaks should have 9 columns: 9th has the size of the colony that
 % the cell belongs to
 % 
-[nums, files]=folderFilesFromKeyword(dir,'Outfile_19totest');%['Outfile_000' num2str(pos) '_tps']
+[nums, files]=folderFilesFromKeyword(dir,['Outfile_00' num2str(pos) '_tps']);%'Outfile_00');%
 
 %found_cells = cell(length(peaks),1);
 for j=1:length(nums)
@@ -39,7 +39,7 @@ alldata=zeros(length(peaks),length(trN));%length(trN)
 for xx = 1:length(trN)
     nc = size(cells(xx).data,1);
     for k=1:nc;
-        if cells(xx).data(k,5)==N && ~(cells(xx).data(k,4)== -1);
+        if cells(xx).data(k,5)==N %&& ~(cells(xx).data(k,4)== -1);
             alldata(k,xx) = cells(xx).fdata(k,col(1))./cells(xx).fdata(k,col(2));
         end
         
@@ -55,14 +55,14 @@ if flag == 1
 for j=1:length(datcell)
     
     for k=1:size(datcell{j},2)
-        colors2 = hot(size(datcell{j},2));
-        if  length(nonzeros(datcell{j}(:,k)))>0%40 % this parameter should be eliminated
+        colors2 = jet(size(datcell{j},2));
+       % if  length(nonzeros(datcell{j}(:,k)))>0%40 % this parameter should be eliminated
             figure(1),plot(vect{j},datcell{j}(:,k),'-*','color',colors2(k,:));
            % avgsign(j) = mean(datcell{j}(:,k));
             legend(['bmp4 added at ' num2str(p) 'hours']);
             hold on
                       
-        end
+       % end
         
     end
     
