@@ -2,19 +2,20 @@
 % need to be in the directory with ilastik-supplied masks 
 
 %necessary parameters :
-dir = ('/Users/warmflashlab/Dropbox/Warmflash Lab/Anastasiia/AN_liveCellOutfiles/TestTraces');
+dir = '.';
+%dir = ('/Users/warmflashlab/Dropbox/Warmflash Lab/Anastasiia/AN_liveCellOutfiles/TestTraces');
 %direc =  ('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/ANmicrocoloniesNov12(4)_20151116_102334AM');
-direc = ('/Volumes/data/Anastasia/LiveCellImagingGFPs4RFPh2b/ANmicrocoloniesNov12(4)_20151116_102334AM');
+direc = ('/Volumes/Seagate Backup Plus Drive/RICE_Research_databackup/ANmicrocoloniesPluri42hr_20151129_95830 AM');
 %direc = ('E:\RICE_Research_databackup\ANmicrocoloniesPluri42hr_20151129_95830 AM');
-pos = 12;
-zplane = 4; % for dataset from november 12 zplne = 4; for dataset from nov 25(pluri_42hr) zplane = 3;
+pos = 1;
+zplane = 2; % for dataset from november 12 zplne = 4; for dataset from nov 25(pluri_42hr) zplane = 2;
 dt = 0;
-tg = [1 2 3 4]; % for dataset from november 12 4 time groups; for dataset from nov 25(pluri_42hr) 3 time groups;
-fr_stim = 38;
-isshift = 1;
-col = [6 7];
+tg = [1 2 3]; % for dataset from november 12 4 time groups; for dataset from nov 25(pluri_42hr) 3 time groups;
+fr_stim = [];
+isshift = [];
+col = [2 3];
 N = 1;
-delta_t = 5; % imaging was done every 5 minutes for the nov 12 dataset(diff condition); im pluri, this number is 11 mins
+delta_t = 11; % imaging was done every 5 minutes for the nov 12 dataset(diff condition); im pluri, this number is 11 mins
 
 % after running, this function will save the outfile_pos_tps.mat (tps =
 % all time points for this position)
@@ -23,4 +24,4 @@ delta_t = 5; % imaging was done every 5 minutes for the nov 12 dataset(diff cond
 [colonies] = runMicroColonyGrouping(dir,fr_stim,pos,isshift);
 % need to be with the folder with the final outfiles for each position (
 % outfile_pos_tps.mat (tps = time points)
-[datcell] = AnalyzeCellTraces_AN(dir,col,2,fr_stim,delta_t,flag);
+[datcell] = AnalyzeCellTraces_AN(dir,col,2,fr_stim,delta_t,flag,pos);
