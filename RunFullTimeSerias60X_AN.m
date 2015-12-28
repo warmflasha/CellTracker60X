@@ -19,8 +19,8 @@ function [peaks,dims,imgfilescyto,imgfiles] = RunFullTimeSerias60X_AN(dir,zplane
  % number of time froups the data was devided into upon saving
  % TO DO: 
 
-[nums, filescyto]=folderFilesFromKeyword(dir,'Cyto',['{000' num2str(pos) '}']);% all cyto masks for the frame 0 ( four time groups)'Cyto','{0002}'['Outfile_000' num2str(pos) '_t']
-[~, filesnuc]=folderFilesFromKeyword(dir,'Nuc',['{000' num2str(pos) '}']);% all nuc masks for the frame 0 ( four time groups)
+[nums, filescyto]=folderFilesFromKeyword(dir,'Cyto',['{00' num2str(pos) '}']);% all cyto masks for the frame 0 ( four time groups)'Cyto','{0002}'['Outfile_000' num2str(pos) '_t']
+[~, filesnuc]=folderFilesFromKeyword(dir,'Nuc',['{00' num2str(pos) '}']);% all nuc masks for the frame 0 ( four time groups)
 
 for j = 1:length(nums)
         
@@ -30,7 +30,7 @@ ilastikfilecyto= filescyto(j).name;
 [peaks,dims,imgfilescyto,imgfiles] = RunTimeSeries60XuColoniesAN(ilastikfile,ilastikfilecyto,pos,zplane,direc,dt,tg(j));
 disp(['running position' num2str(nums(j)) ]);
 
-save(['Outfile_000' num2str(pos) '_t' num2str(nums(j))],'peaks','dims','imgfiles','imgfilescyto');
+save(['Outfile_00' num2str(pos) '_t' num2str(nums(j))],'peaks','dims','imgfiles','imgfilescyto');
 
 end
 
