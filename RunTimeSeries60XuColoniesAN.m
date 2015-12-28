@@ -18,7 +18,8 @@ if dt == 0
 ff=readAndorDirectory(direc);
 timegroups = size(ff.t,2);
 
-
+%here need to determine max projection plane and feed it into
+%getandorfilename and the rest as a zplane argument
 filename = getAndorFileName(ff,pos,ff.t(tg),ff.z(zplane),ff.w(2)); % has to be channel 2 since all the masks should be applied to the gfp channel
 filename2 = getAndorFileName(ff,pos,ff.t(tg),ff.z(zplane),ff.w(1)); % to get info from the nuc channel
 imgs = bfopen(filename);
@@ -28,7 +29,7 @@ nframes = size(imgs{1},1);
 time = nframes;
 end
 for k=1:time
-    
+%actually need to do this for earch time frame, so need to do within this function    
 [datacell,Lnuc,Lcytofin] = IlastikplusWatershed_AW(ilastikfile,ilastikfilecyto,pos,zplane,direc,k,dt,tg,imgs,imgs_nuc);
 
 peaks{k} = datacell;
