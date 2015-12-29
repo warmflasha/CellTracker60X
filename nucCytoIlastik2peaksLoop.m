@@ -1,21 +1,26 @@
 function peaks = nucCytoIlastik2peaksLoop(ilastikDirec,imageDirec,zplane,pos,chan,paramfile,outfile)
+% peaks = nucCytoIlastik2peaksLoop(ilastikDirec,imageDirec,zplane,pos,chan,paramfile,outfile)
+% ----------------------------------------------------------------------------
+% runs nucCytoIlastik2peaks in a loop on all images at a particular
+% position in a directory. Each image can have multiple time points but
+% must be z slices and channels must be saved in separate images. 
+% Inputs:
+%   -ilastikDirec - ilastik directory with masks, one mask file per image
+%   file
+%   -imageDirec - directory with images (assumes Andor format)
+%   -zplane - zplane to use (in Andor numbers, 0 possible)
+%   -pos - position to use (in Andor numbers, 0 possible)
+%   -chan - array of channels (1st is nuclear, 2nd to quantify, 0 possible)
+%   -paramfile - parameter file to use
+%   -outfile - output will be saved here
+% Outputs:
+%   -peaks - output segmentation in the usual format. also saved in outfile
 
-% dir - has the ilastik masks, the  .h5 files
-% dir = ('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/Nov12ImaginfResults/');
-% zplane =  need to specify which image in z plane from the raw data to take
-% direc =  directory with actual images from live-cell imaging experiment
-% pos = the number of frame processed TO DO: need to loop over those
-% dt =  data type: if 1 - means that all the deta is separate and the code
-% will not use bioformats to extract the images
-% if td = 0, the n the code will decompose gtouped data frames and extract
-% the correct images
-% tg = time group, this should be a vector, its length should be the
-% number of time froups the data was devided into upon saving
-% TO DO:
 
 [~, ilastikCytoAll]=folderFilesFromKeyword(ilastikDirec,'Cyto',['{00' num2str(pos) '}']);% all cyto masks for the frame 0 ( four time groups)'Cyto','{0002}'['Outfile_000' num2str(pos) '_t']
 [~, ilastikNucAll]=folderFilesFromKeyword(ilastikDirec,'Nuc',['{00' num2str(pos) '}']);% all nuc masks for the frame 0 ( four time groups)
 
+nTprev = 0;
 for j = 1:length(ilastikCytoAll)
     
     %get the ilastik masks
@@ -30,8 +35,8 @@ for j = 1:length(ilastikCytoAll)
     
     %get the image readers
     ff = readAndorDirectory(imageDirec);
-    filename1 = getAndorFileName(ff,pos,0,zplane,chan(1));
-    filename2 = getAndorFileName(ff,pos,0,zplane,chan(2));
+    filename1 = getAndorFileName(ff,pos,ff.t(j),zplane,chan(1));
+    filename2 = getAndorFileName(ff,pos,ff.t(j),zplane,chan(2));
     img_nuc_reader = bfGetReader(filename1);
     img_cyto_reader = bfGetReader(filename2);
     
@@ -47,11 +52,9 @@ for j = 1:length(ilastikCytoAll)
         
         outdat = nucCytoIlastik2peaks(nuc_mask_all(:,:,k),cyto_mask_all(:,:,k),nuc_img,nuc_cyto,paramfile);
         
-        peaks{k+(j-1)*nT} = outdat;
-        if k == 1 || mod(k,10) == 0
-            save(outfile,'peaks');
-        end
+        peaks{nTprev+nT} = outdat;
     end
+    nTprev = nTprev + nT;
     
     save(outfile,'peaks');
 end

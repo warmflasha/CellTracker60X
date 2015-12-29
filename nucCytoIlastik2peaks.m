@@ -1,4 +1,22 @@
 function [datacell,Lnuc,Lcytofin] = nucCytoIlastik2peaks(mask1,mask2,img_nuc,img_cyto,paramfile)
+% [datacell,Lnuc,Lcytofin] = nucCytoIlastik2peaks(mask1,mask2,img_nuc,img_cyto,paramfile)
+% --------------------------------------------------------------
+% takes masks produced by ilastik for two markers, and quantifies how much
+% of marker 2 is overlapping with marker 1 vs not. Use case is if marker 1
+% is nuclear marker while marker 2 is smad image. each case of marker 2
+% must have marker 1 inside. 
+%
+% Inputs:
+%   -mask1 - mask for marker 1
+%   -mask2 - mask for marker 2
+%   -img_nuc - actual image for marker 1
+%   -img_cyto - actual image for marker 2
+%   -paramfile - paramter file
+% Outputs:
+%   -datacell - output segmentation data in the usual format, one row per
+%   cell
+%   -Lnuc (final nuclear marker mask)
+%   -Lcyto (final cytoplasmic mask (exclusive with nuclear marker)
 
 global userParam;
 
