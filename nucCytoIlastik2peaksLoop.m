@@ -52,7 +52,7 @@ for j = 1:length(ilastikCytoAll)
         
         outdat = nucCytoIlastik2peaks(nuc_mask_all(:,:,k),cyto_mask_all(:,:,k),nuc_img,nuc_cyto,paramfile);
         
-        peaks{nTprev+nT} = outdat;
+        peaks{nTprev+k} = outdat;
     end
     nTprev = nTprev + nT;
     
