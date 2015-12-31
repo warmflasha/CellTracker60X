@@ -50,11 +50,13 @@ for j = 1:length(ilastikCytoAll)
         plane1 = img_cyto_reader.getIndex(0,0, k - 1) + 1;
         nuc_cyto = bfGetPlane(img_cyto_reader,plane1);
         
-        outdat = nucCytoIlastik2peaks(nuc_mask_all(:,:,k),cyto_mask_all(:,:,k),nuc_img,nuc_cyto,paramfile);
+        [outdat, Lnuc] = nucCytoIlastik2peaks(nuc_mask_all(:,:,k),cyto_mask_all(:,:,k),nuc_img,nuc_cyto,paramfile);
         
         peaks{nTprev+k} = outdat;
+        
+        imgfiles(nTprev+k).compressNucMask = compressBinaryImg(Lnuc);
     end
     nTprev = nTprev + nT;
     
-    save(outfile,'peaks');
+    save(outfile,'peaks','imgfiles');
 end
