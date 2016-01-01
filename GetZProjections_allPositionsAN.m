@@ -1,9 +1,9 @@
-function  GetZProjections_allPositionsAN(direc,direc2,tg,chan,Npos)
+function  GetZProjections_allPositionsAN(direc,direc2,Npos,tg,chan)
 
 % direc = directory with raw images
 % Npos = number of positions, need to know from experiment (or get from the
 % directory , line 15, need to debug
-% tg = time group
+% tg = time group, vector
 % chan = corresponds to ff.w(chan), e.g. ff.w(1) = nuclear channel
 % direc2 = where to save the output projections
 % tg = a vector with the number of separate time groups, need to know it
@@ -16,7 +16,7 @@ function  GetZProjections_allPositionsAN(direc,direc2,tg,chan,Npos)
 
 
 for j = 0:Npos;%length(nums)
-    GetZProjections_alltimesAN(direc,direc2,j,tg,chan)
+   MaxProjTimeGroupsAN(direc,direc2,j,tg,chan)
 end
 
 end
