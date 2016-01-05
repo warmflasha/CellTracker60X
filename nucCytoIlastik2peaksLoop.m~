@@ -63,6 +63,6 @@ for j = 1:length(ilastikCytoAll)
     nTprev = nTprev + nT;
     
    % save(outfile,'peaks','imgfiles');
-    save([ num2str(pos) '_' num2str(outfile)],'peaks','imgfiles');
+    save([ num2str(outfile)'outfile' num2str(pos)],'peaks','imgfiles');
         
 end

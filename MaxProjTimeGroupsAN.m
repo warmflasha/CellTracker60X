@@ -38,8 +38,15 @@ for k=1:nframes
         end
     end
     %imwrite(max_img,[direc2 'W' num2str(ff.w(chan)) '_maxprojection_' num2str(pos) '_t' num2str(k) '.tif'],'Compression','none');%'writemode','append',
+   if pos < 10
     imwrite(max_img,[direc2 'Maxprojection_f000' num2str(pos) '_t000' num2str(tg(xx)) '_w000' num2str(ff.w(chan)) '.tif'],'writemode','append','Compression','none');%
-    % the line above saves all the projections into a miltitif (suitable
+   end
+   if pos >= 10
+    imwrite(max_img,[direc2 'Maxprojection_f00' num2str(pos) '_t000' num2str(tg(xx)) '_w000' num2str(ff.w(chan)) '.tif'],'writemode','append','Compression','none');%
+   end
+   
+   
+   % the line above saves all the projections into a miltitif (suitable
     % for ilastik training )
     % Maxprojection_f0000_t0000_w000
 end
