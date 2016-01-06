@@ -24,17 +24,18 @@ cellsToDynColonies(outfile);
 %vect{j} = 1:length(peaks);
 %vect{j} = (vect{j}.*delta_t)./60;
 p = fr_stim*delta_t/60;
-colors = colorcube(30);
+colors = colorcube(50);
+for i = 1:size(colonies,2);
 ratio = cell(size(colonies(i).cells,2),1);
 tpt = cell(size(colonies(i).cells,2),1);
-for i = 1:size(colonies,2);
+
     for k=1:size(colonies(i).cells,2)
         ratio{k} = colonies(i).cells(k).fluorData(:,fldat(1))./colonies(i).cells(k).fluorData(:,fldat(2));
         tpt{k} =  (colonies(i).cells(k).onframes');
         tpt{k} =  (tpt{k}.*delta_t)./60;
     end
     for k=1:size(ratio,1)
-       figure(i), plot(tpt{k},ratio{k},'-*','color',colors(i,:));hold on
+       figure(i), plot(tpt{k},ratio{k},'-*','color',colors(k,:));hold on
         legend(['bmp4 added at ' num2str(p) 'hours']);
     end
     ylabel('nuc/cyto raio');

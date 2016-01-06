@@ -39,7 +39,7 @@ Lcytofin = [];
    Lnuc = data>1;
    Lnuc =  bwareafilt(Lnuc',[areanuclow areanuchi]);
    
-%    data = data(1,:,:,img);% data = data(:,:,img);after squeeze, if really  exporting segmentation
+%    data = data(1,:,:,img); % data = data(:,:,img);after squeeze, if really  exporting segmentation
 %    data = squeeze(data);
 %    Lnuc = data<1;
 %    Lnuc =  bwareafilt(Lnuc',[areanuclow areanuchi]);

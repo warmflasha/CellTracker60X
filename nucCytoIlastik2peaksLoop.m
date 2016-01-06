@@ -54,7 +54,16 @@ for j = 1:length(ilastikCytoAll)
         plane1 = img_cyto_reader.getIndex(0,0, k - 1) + 1;
         nuc_cyto = bfGetPlane(img_cyto_reader,plane1);
         
-        [outdat, Lnuc] = nucCytoIlastik2peaks(nuc_mask_all(:,:,k),cyto_mask_all(:,:,k),nuc_img,nuc_cyto,paramfile);
+%  nuc_mask_all = nuc_mask_all(1,:,:,k); % 
+%  nuc_mask_all = squeeze(nuc_mask_all);
+% the following two lines are done within the nucCytoIlastik2peaks, but
+% need to adjust to the appropriate h5 structure (different in ilastik is
+% ran from feadless
+
+%  nuc_mask_all = nuc_mask_all<1;
+%  Lnuc =  bwareafilt(nuc_mask_all',[areanuclow areanuchi]);
+   % same processing for the cyto channel     
+        [outdat, Lnuc] = nucCytoIlastik2peaks(nuc_mask_all(:,:,k),cyto_mask_all(:,:,k),nuc_img,nuc_cyto,paramfile);%
         
         peaks{nTprev+k} = outdat;
         

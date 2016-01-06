@@ -1,7 +1,7 @@
 % add the loop over positions
 fr_stim = 38;
 zplane = [];
-pos = 12;
+pos = 4;
 chan = [0 1];
 fldat = [2 3];
 delta_t = 5;
@@ -23,20 +23,24 @@ cellsToDynColonies(outfile);
 %plot(colonies(1).cells(2).fluorData(:,2)./colonies(1).cells(2).fluorData(:,3),'r*--');
 %vect{j} = 1:length(peaks);
 %vect{j} = (vect{j}.*delta_t)./60;
-%p = fr_stim*delta_t/60;
-colors = jet(30);
+p = fr_stim*delta_t/60;
+colors = colorcube(30);
+for i = 1:size(colonies,2);
 ratio = cell(size(colonies(i).cells,2),1);
 tpt = cell(size(colonies(i).cells,2),1);
-for i = 1:size(colonies,2);
-for k=1:size(colonies(i).cells,2)
-    ratio{k} = colonies(i).cells(k).fluorData(:,fldat(1))./colonies(i).cells(k).fluorData(:,fldat(2));
-    tpt{k} =  (colonies(i).cells(k).onframes');
-    tpt{k} =  (tpt{k}.*delta_t)./60;
-end
+
+    for k=1:size(colonies(i).cells,2)
+        ratio{k} = colonies(i).cells(k).fluorData(:,fldat(1))./colonies(i).cells(k).fluorData(:,fldat(2));
+        tpt{k} =  (colonies(i).cells(k).onframes');
+        tpt{k} =  (tpt{k}.*delta_t)./60;
+    end
+    for k=1:size(ratio,1)
+       figure(i), plot(tpt{k},ratio{k},'-*','color',colors(i,:));hold on
+        legend(['bmp4 added at ' num2str(p) 'hours']);
+    end
+    ylabel('nuc/cyto raio');
+    xlabel('Time, hours');
 end
 
-for k=1:size(ratio,1)
-plot(tpt{k},ratio{k},'-*','color',colors(k,:));hold on
-end
 
 
