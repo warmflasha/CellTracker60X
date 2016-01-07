@@ -78,8 +78,11 @@ for j = 1:length(ilastikCytoAll)
         
         [outdat, Lnuc] = nucCytoIlastik2peaks(nuc_mask_all(:,:,k),cyto_mask_all(:,:,k),nuc_img,nuc_cyto,paramfile);%
         peaks{nTprev+k} = outdat;
-        
-        imgfiles(nTprev+k).compressNucMask = compressBinaryImg(Lnuc);
+        if sum(sum(Lnuc)) == 0
+         imgfiles(nTprev+k).compressNucMask = [];
+        else
+          imgfiles(nTprev+k).compressNucMask = compressBinaryImg(Lnuc);
+        end
     end
     nTprev = nTprev + nT;
     
