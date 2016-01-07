@@ -1,4 +1,4 @@
-function peaks = nucCytoIlastik2peaksLoop(ilastikDirec,imageDirec1,imageDirec2,zplane,pos,chan,paramfile,outfile)
+function peaks = nucCytoIlastik2peaksLoop(ilastikDirec,imageDirec,zplane,pos,chan,paramfile,outfile)
 % peaks = nucCytoIlastik2peaksLoop(ilastikDirec,imageDirec,zplane,pos,chan,paramfile,outfile)
 % ----------------------------------------------------------------------------
 % runs nucCytoIlastik2peaks in a loop on all images at a particular
@@ -24,8 +24,8 @@ if pos <10
 [~, ilastikNucAll]=folderFilesFromKeyword(ilastikDirec,'Nuc',['Mask' num2str(pos)]);% all nuc masks for the frame 0 ( four time groups)
 end
 if pos >=10
-[~, ilastikCytoAll]=folderFilesFromKeyword(ilastikDirec,'Cyto',['Mask' num2str(pos)]);% all cyto masks for the frame 0 ( four time groups)'Cyto','{0002}'['Outfile_000' num2str(pos) '_t']
-[~, ilastikNucAll]=folderFilesFromKeyword(ilastikDirec,'Nuc',['Mask' num2str(pos)]);% all nuc masks for the frame 0 ( four time groups)
+[~, ilastikCytoAll]=folderFilesFromKeyword(ilastikDirec,'Cyto',['Mask' num2str(pos) '}']);% all cyto masks for the frame 0 ( four time groups)'Cyto','{0002}'['Outfile_000' num2str(pos) '_t']
+[~, ilastikNucAll]=folderFilesFromKeyword(ilastikDirec,'Nuc',['Mask' num2str(pos) '}']);% all nuc masks for the frame 0 ( four time groups)
 end    
 nTprev = 0;
 for j = 1:length(ilastikCytoAll)
@@ -49,10 +49,9 @@ for j = 1:length(ilastikCytoAll)
     
     
     %get the image readers
-    ff1 = readAndorDirectory(imageDirec1);
-    ff2 = readAndorDirectory(imageDirec2);% AN
-    filename1 = getAndorFileName(ff1,pos,ff1.t(j),zplane,chan(1));
-    filename2 = getAndorFileName(ff2,pos,ff2.t(j),zplane,chan(2));
+    ff = readAndorDirectory(imageDirec);
+    filename1 = getAndorFileName(ff,pos,ff.t(j),zplane,chan(1));
+    filename2 = getAndorFileName(ff,pos,ff.t(j),zplane,chan(2));
     img_nuc_reader = bfGetReader(filename1);
     img_cyto_reader = bfGetReader(filename2);
     

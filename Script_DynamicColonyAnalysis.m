@@ -1,15 +1,17 @@
 % add the loop over positions
 fr_stim = 38;
 zplane = [];
-pos = 12;
+pos = 1;
 chan = [0 1];
 fldat = [2 3];
 delta_t = 5;
 paramfile = 'setUserParamLiveImagingAN';
-outfile = '10ngml22hr_microCol.mat';% basic name for all positions
-ilastikDirec = ('/Users/warmflashlab/Desktop/IlastikMasksFromProjections_Nov12dataset(diff)');
-imgDirec = ('/Users/warmflashlab/Desktop/MaxProjectionsLiveImg_DiffCondition(nov12data)');% already max projections
-peaks = nucCytoIlastik2peaksLoop(ilastikDirec,imgDirec,zplane,pos,chan,paramfile,outfile);% tsted
+outfile = 'testheadless.mat';% basic name for all positions
+ilastikDirec = ('/Users/warmflashlab/Desktop/TestTraces');
+imgDirec1 = ('/Users/warmflashlab/Desktop/MaxProjectionsLiveImg_DiffCondition(nov12data)/Nov12ImagingMaxProj_W0');% already max projections
+imgDirec2 = ('/Users/warmflashlab/Desktop/MaxProjectionsLiveImg_DiffCondition(nov12data)/Nov12ImagingMaxProj_W1');% already max projections
+
+peaks = nucCytoIlastik2peaksLoop(ilastikDirec,imgDirec1,imgDirec2,zplane,pos,chan,paramfile,outfile);% tsted
 outfile = ([ num2str(pos) '_' num2str(outfile)]);
 addShiftToPeaks(outfile,fr_stim);
 runTracker(outfile,'newTrackParam');
