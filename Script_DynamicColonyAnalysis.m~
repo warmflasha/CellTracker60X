@@ -28,7 +28,6 @@ fr_stim = 38;
 fldat = [2 3];
 delta_t = 5; 
 p = fr_stim*delta_t/60;
-colSZ = 1; 
- % add the loop oved positions here
-GetDynamicColonyTraces(matfile,fr_stim,fldat,delta_t,colSZ);
+ % add the loop oved position
+GetDynamicColonyTraces(colonies,fr_stim,fldat,delta_t)
 
