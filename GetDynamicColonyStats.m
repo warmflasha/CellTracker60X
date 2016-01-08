@@ -1,12 +1,13 @@
-function [data_perframe] = GetDynamicColonyStats(matfile,fr_stim,delta_t)
+function [datafin] = GetDynamicColonyStats(matfile,fr_stim,delta_t,flag,colSZ)
 
 load(matfile,'colonies','ncells','peaks');
 
 p = fr_stim*delta_t/60;
 colors = colorcube(50);
+ntimes = length(peaks);
 
-colgr = size(colonies,2);% how many colonies were found 
-ntimes = length(peaks); 
+colgr = size(colonies,2);% how many colonies were found
+datafin = cell(colgr,1); % preallocate , more than necessary col 1 - means before, col2  mean after
 
 for ii = 1:colgr;
     %if colSZ == ncells{ii}(1); % how many cells were there in the first frame of the i-th colony
@@ -24,14 +25,36 @@ for ii = 1:colgr;
         for k = 1:ntimes
             data_perframe(k,j) = data_perframe(k,j);
             
-            
         end
-        
-        
     end
     
-    data_perframe{ii} = data_perframe;
+    datafin{ii}(j,1) = mean(nonzeros(data_perframe(1:fr_stim,j)));
+    datafin{ii}(j,2) = mean(nonzeros(data_perframe(fr_stim:end,j)));
     %end
+    
+    if flag == 1
+        figure(10),subplot(1,3,1),plot(nonzeros(datafin{ii}(:,1)),'*','color',colors(ii,:),'markersize',15);
+        hold on
+        ylim([0 2.5]);
+        %xlim([0 lenth(datcell)]);% number traces
+        legend('before');
+        ylabel('nuc/cyto ratio, mean over time');
+        xlabel('Positions');
+        title(['microCol of size ' num2str(colSZ) ],'fontsize',15);
+        figure(10),subplot(1,3,2),plot(nonzeros(datafin{ii}(:,2)),'*','color',colors(ii,:),'markersize',15);
+        hold on
+        legend('after');
+        ylim([0 2.5])
+        % xlim([0 length(datcell)]);
+        ylabel('nuc/cyto ratio, mean over time');
+        xlabel('Positions');
+        title(['microCol of size ' num2str(colSZ) ],'fontsize',15);
+        % ncells for each colony , per frame
+            figure(10),subplot(1,3,3),plot(ncells{ii},'*','color',colors(ii,:),'markersize',5);
+            hold on
+            ylim([0 5])
+            ylabel('Number of cells in the colony','fontsize',9);
+        
+    end
 end
-
 end
