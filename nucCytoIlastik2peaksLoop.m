@@ -19,14 +19,14 @@ function peaks = nucCytoIlastik2peaksLoop(ilastikDirec,imageDirec1,imageDirec2,z
 
 % {CytoMaskt2}_{0000}.h5
 % need to change the find string in the name 
-if pos <10
+%if pos <10
 [~, ilastikCytoAll]=folderFilesFromKeyword(ilastikDirec,'Cyto',['Mask' num2str(pos)]);% all cyto masks for the frame 0 ( four time groups)'Cyto','{0002}'['Outfile_000' num2str(pos) '_t']
 [~, ilastikNucAll]=folderFilesFromKeyword(ilastikDirec,'Nuc',['Mask' num2str(pos)]);% all nuc masks for the frame 0 ( four time groups)
-end
-if pos >=10
-[~, ilastikCytoAll]=folderFilesFromKeyword(ilastikDirec,'Cyto',['Mask' num2str(pos)]);% all cyto masks for the frame 0 ( four time groups)'Cyto','{0002}'['Outfile_000' num2str(pos) '_t']
-[~, ilastikNucAll]=folderFilesFromKeyword(ilastikDirec,'Nuc',['Mask' num2str(pos)]);% all nuc masks for the frame 0 ( four time groups)
-end    
+%end
+% if pos >=10
+% [~, ilastikCytoAll]=folderFilesFromKeyword(ilastikDirec,'Cyto',['Mask' num2str(pos)]);% all cyto masks for the frame 0 ( four time groups)'Cyto','{0002}'['Outfile_000' num2str(pos) '_t']
+% [~, ilastikNucAll]=folderFilesFromKeyword(ilastikDirec,'Nuc',['Mask' num2str(pos)]);% all nuc masks for the frame 0 ( four time groups)
+% end    
 nTprev = 0;
 for j = 1:length(ilastikCytoAll)
     
@@ -38,13 +38,13 @@ for j = 1:length(ilastikCytoAll)
     %nuc_mask_all = squeeze(nuc_mask_all);% this line is for the data that
     %was exported from the non headles mode run
     
-    nuc_mask_all = nuc_mask_all(2,:,:,:);
+    nuc_mask_all = nuc_mask_all(1,:,:,:);
     nuc_mask_all = squeeze(nuc_mask_all);
     
     
     cyto_mask_all = h5read(ilastikCyto,'/exported_data');
     %cyto_mask_all = squeeze(cyto_mask_all);% same comment
-    cyto_mask_all = cyto_mask_all(2,:,:,:);
+    cyto_mask_all = cyto_mask_all(1,:,:,:);
     cyto_mask_all = squeeze(cyto_mask_all);
     
     

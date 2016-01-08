@@ -1,12 +1,17 @@
 % add the loop over positions
+% save every 4th file as a separate position
 
 zplane = [];
-pos = 7;
-chan = [0 1];
 
+chan = [0 1];
+[nums, ilastikCytoAll]=folderFilesFromKeyword(ilastikDirec,'CytoMask');%num2str(pos)]
+length(nums) % number of Cyto masks ( need to run all of them bus save the outfiles suzh that only every 4th mask gets a different positoin number 
+for jj = 1:length(nums)
+
+pos = jj;
 paramfile = 'setUserParamLiveImagingAN';
 outfile = 'testheadless.mat';% basic name for all positions
-ilastikDirec = ('/Users/warmflashlab/Desktop/TestTraces');
+ilastikDirec = ('/Users/warmflashlab/Desktop/IlastikMasks_headlessW1');
 imgDirec1 = ('/Users/warmflashlab/Desktop/MaxProjectionsLiveImg_DiffCondition(nov12data)/Nov12ImagingMaxProj_W0');% already max projections
 imgDirec2 = ('/Users/warmflashlab/Desktop/MaxProjectionsLiveImg_DiffCondition(nov12data)/Nov12ImagingMaxProj_W1');% already max projections
 
@@ -28,6 +33,8 @@ fr_stim = 38;
 fldat = [2 3];
 delta_t = 5; 
 p = fr_stim*delta_t/60;
- % add the loop oved position
-GetDynamicColonyTraces(colonies,fr_stim,fldat,delta_t)
-
+colSZ = 1;
+flag = 1;
+ % add the loop oved positions here
+GetDynamicColonyTraces(matfile,fr_stim,fldat,delta_t,colSZ);
+datafin = GetDynamicColonyStats(matfile,fr_stim,delta_t,flag,colSZ);

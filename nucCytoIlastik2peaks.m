@@ -27,13 +27,13 @@ catch
 end
 
 %process nuclear mask
-%Lnuc = mask1 >1;     %if h5 files are generated not in the headless mode
-Lnuc = im2bw(mask1,graythresh(mask1));
+Lnuc = mask1 <1;     
+%Lnuc = im2bw(mask1,graythresh(mask1));
 Lnuc =  bwareafilt(Lnuc',[userParam.areanuclow userParam.areanuchi]);
 
 %cytoplasmic mask
-%LcytoIl = mask2 > 1;   %if h5 files are generated not in the headless mode
-LcytoIl = im2bw(mask2,graythresh(mask2));
+LcytoIl = mask2 < 1;  
+%LcytoIl = im2bw(mask2,graythresh(mask2));
 LcytoIl = (LcytoIl');
 Lcytonondil = LcytoIl;
 LcytoIl = imdilate(LcytoIl,strel('disk',5)); %this should be made into a parameter

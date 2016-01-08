@@ -1,12 +1,19 @@
 % add the loop over positions
+% save every 4th file as a separate position
 
 zplane = [];
-pos = 7;
-chan = [0 1];
 
+chan = [0 1];
+[nums, ilastikCytoAll]=folderFilesFromKeyword(ilastikDirec,'CytoMask');%num2str(pos)]
+timegroups = 4;
+positions = length(nums)/timegroups; % number of separate position numbers (start from 0)
+for jj = 1:positions
+pos = jj-1;
+outfile = ([ num2str(pos) '_' num2str(outfile)]);
+end
 paramfile = 'setUserParamLiveImagingAN';
 outfile = 'testheadless.mat';% basic name for all positions
-ilastikDirec = ('/Users/warmflashlab/Desktop/TestTraces');
+ilastikDirec = ('/Users/warmflashlab/Desktop/IlastikMasks_headlessW1');
 imgDirec1 = ('/Users/warmflashlab/Desktop/MaxProjectionsLiveImg_DiffCondition(nov12data)/Nov12ImagingMaxProj_W0');% already max projections
 imgDirec2 = ('/Users/warmflashlab/Desktop/MaxProjectionsLiveImg_DiffCondition(nov12data)/Nov12ImagingMaxProj_W1');% already max projections
 
@@ -19,11 +26,7 @@ userParam.colonygrouping = 120;
 cellsToDynColonies(outfile);
 
 
-%colonies(k).cells
-%colonies(k).cells(j).fluorData
-%plot(colonies(1).cells(2).fluorData(:,2)./colonies(1).cells(2).fluorData(:,3),'r*--');
-%vect{j} = 1:length(peaks);
-%vect{j} = (vect{j}.*delta_t)./60;
+
 fr_stim = 38;
 fldat = [2 3];
 delta_t = 5; 
