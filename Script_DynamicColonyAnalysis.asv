@@ -4,7 +4,7 @@
 zplane = [];
 
 chan = [0 1];
-[nums, ilastikCytoAll]=folderFilesFromKeyword(ilastikDirec1,'CytoMask');%make two ilastik directories
+[nums, ilastikCytoAll]=folderFilesFromKeyword(ilastikDirec,'CytoMask');%make two ilastik directories
 timegroups = 4;
 positions = length(nums)/timegroups; % number of separate position numbers (start from 0)
 positions = 0:positions;% vector with position numbers
@@ -14,9 +14,13 @@ ilastikDirec1 = ('/Users/warmflashlab/Desktop/IlastikMasks_headlessW0');
 ilastikDirec2 = ('/Users/warmflashlab/Desktop/IlastikMasks_headlessW1');
 imgDirec1 = ('/Users/warmflashlab/Desktop/MaxProjectionsLiveImg_DiffCondition(nov12data)/Nov12ImagingMaxProj_W0');% already max projections
 imgDirec2 = ('/Users/warmflashlab/Desktop/MaxProjectionsLiveImg_DiffCondition(nov12data)/Nov12ImagingMaxProj_W1');% already max projections
-for kk=1: length(positions)
-    pos = positions(kk);
- 
+
+for jj = 1:length(nums) % loop over all the ilastik masks
+ for kk=1:timegroups
+    pos = positions(1);
+% outfile = ([ num2str(pos) '_' num2str(outfile)]);
+% end
+
 peaks = nucCytoIlastik2peaksLoop(ilastikDirec1,ilastikDirec2,imgDirec1,imgDirec2,zplane,pos,chan,paramfile,outfile);% tsted
 outfile = ([ num2str(pos) '_' num2str(outfile)]);
 addShiftToPeaks(outfile,fr_stim);
@@ -24,7 +28,7 @@ runTracker(outfile,'newTrackParam');
 global userParam;
 userParam.colonygrouping = 120;
 cellsToDynColonies(outfile);
-end
+
 
 
 fr_stim = 38;
