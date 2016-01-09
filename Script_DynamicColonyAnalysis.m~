@@ -4,31 +4,34 @@
 zplane = [];
 
 chan = [0 1];
-[nums, ilastikCytoAll]=folderFilesFromKeyword(ilastikDirec,'CytoMask');%num2str(pos)]
-length(nums) % number of Cyto masks ( need to run all of them bus save the outfiles suzh that only every 4th mask gets a different positoin number 
-for jj = 1:length(nums)
 
-pos = jj;
+
 paramfile = 'setUserParamLiveImagingAN';
-outfile = 'testheadless.mat';% basic name for all positions
-ilastikDirec = ('/Users/warmflashlab/Desktop/IlastikMasks_headlessW1');
+outfile = '10ngml22hrs.mat';% basic name for all positions
+ilastikDirec1 = ('/Users/warmflashlab/Desktop/IlastikMasks_headlessW0');
+ilastikDirec2 = ('/Users/warmflashlab/Desktop/IlastikMasks_headlessW1');
 imgDirec1 = ('/Users/warmflashlab/Desktop/MaxProjectionsLiveImg_DiffCondition(nov12data)/Nov12ImagingMaxProj_W0');% already max projections
 imgDirec2 = ('/Users/warmflashlab/Desktop/MaxProjectionsLiveImg_DiffCondition(nov12data)/Nov12ImagingMaxProj_W1');% already max projections
 
-peaks = nucCytoIlastik2peaksLoop(ilastikDirec,imgDirec1,imgDirec2,zplane,pos,chan,paramfile,outfile);% tsted
+[nums, ilastikCytoAll]=folderFilesFromKeyword(ilastikDirec2,'CytoMask');%make two ilastik directories
+timegroups = 4;
+positions = length(nums)/timegroups; % number of separate position numbers (start from 0)
+positions = 0:(positions-1);% vector with position numbers
+for kk=1: length(positions)
+    pos = positions(kk);
+    
+peaks = nucCytoIlastik2peaksLoop(ilastikDirec1,ilastikDirec2,imgDirec1,imgDirec2,zplane,pos,chan,paramfile,outfile);% tsted
 outfile = ([ num2str(pos) '_' num2str(outfile)]);
+
 addShiftToPeaks(outfile,fr_stim);
+end
 runTracker(outfile,'newTrackParam');
 global userParam;
 userParam.colonygrouping = 120;
 cellsToDynColonies(outfile);
 
 
-%colonies(k).cells
-%colonies(k).cells(j).fluorData
-%plot(colonies(1).cells(2).fluorData(:,2)./colonies(1).cells(2).fluorData(:,3),'r*--');
-%vect{j} = 1:length(peaks);
-%vect{j} = (vect{j}.*delta_t)./60;
+
 fr_stim = 38;
 fldat = [2 3];
 delta_t = 5; 

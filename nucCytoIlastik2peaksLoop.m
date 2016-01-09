@@ -23,6 +23,8 @@ function peaks = nucCytoIlastik2peaksLoop(ilastikDirec1,ilastikDirec2,imageDirec
 [~, ilastikCytoAll]=folderFilesFromKeyword(ilastikDirec2,'CytoMask');% all cyto masks for the frame 0 ( four time groups)'Cyto','{0002}'['Outfile_000' num2str(pos) '_t']
 [~, ilastikNucAll]=folderFilesFromKeyword(ilastikDirec1,'NucMask');% all nuc masks for the frame 0 ( four time groups)
 %end
+timegroups = 4;
+
 ilastikCytoAll = ilastikCytoAll((pos*timegroups+1):(pos+1)*timegroups); % 1-4; 5-8;...
 ilastikNucAll = ilastikNucAll((pos*timegroups+1):(pos+1)*timegroups);
 nTprev = 0;
