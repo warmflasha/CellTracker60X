@@ -28,7 +28,7 @@ for ii = 1:colgr;
         end
     end
     
-    datafin{ii}(j,1) = mean(nonzeros(data_perframe(1:fr_stim,j)));
+    datafin{ii}(j,1) = mean(nonzeros(data_perframe(1:fr_stim,j)));% 
     datafin{ii}(j,2) = mean(nonzeros(data_perframe(fr_stim:end,j)));
     %end
     

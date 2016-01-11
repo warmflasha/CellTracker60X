@@ -24,21 +24,22 @@ for kk=1: length(positions)
 peaks = nucCytoIlastik2peaksLoop(ilastikDirec1,ilastikDirec2,imgDirec1,imgDirec2,zplane,pos,chan,paramfile,outfile);% tsted
 outfile = ([ num2str(pos) '_' num2str(outfile)]);
 end
-addShiftToPeaks(outfile,fr_stim);
 
+% run shift on all outfiles
+
+addShiftToPeaks(outfile,fr_stim);
 runTracker(outfile,'newTrackParam');
 global userParam;
 userParam.colonygrouping = 120;
+% look at colonies around the stimulation frame (window of couple hours)?
 cellsToDynColonies(outfile);
-
-
 
 
 fldat = [2 3];
 delta_t = 5; 
 p = fr_stim*delta_t/60;
-colSZ = 1;
+colSZ = 2;
 flag = 1;
  % add the loop oved positions here
-GetDynamicColonyTraces(matfile,fr_stim,fldat,delta_t,colSZ);
-datafin = GetDynamicColonyStats(matfile,fr_stim,delta_t,flag,colSZ);
+GetDynamicColonyTraces(outfile,fr_stim,fldat,delta_t,colSZ);
+datafin = GetDynamicColonyStats(outfile,fr_stim,delta_t,flag,colSZ);
