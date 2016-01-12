@@ -13,9 +13,9 @@ num=1
 
 ndir=/Users/warmflashlab/Desktop/IlastikMasks_headless_pluriW0/
 
-projectpath=/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/TrainingSetNuc60XPluriImaging.ilp
+projectpath=/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/test_Pluri_nuc.ilp
 
-savepath=/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/PluriIlasikMasks_projections/\{NucMaskt1\}_\{0003\}.h5
+savepath=/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/PluriIlasikMasks_projections/\{newtraining\}_\{P\}.h5
 
 #segchannel=1
 

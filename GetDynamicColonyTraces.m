@@ -8,7 +8,7 @@ ntimes = length(ncells{1});
 colgr = size(colonies,2);% how many colonies were found 
 
 for i = 1:colgr;
-    if colSZ == ncells{i}(1); % how many cells were there in the first frame of the i-th colony
+    if colSZ == ncells{i}(fr_stim-6); % how many cells were there in the frame before stimulation of the i-th colony,
         
 ratio = cell(size(colonies(i).cells,2),1);
 tpt = cell(size(colonies(i).cells,2),1);
@@ -25,6 +25,7 @@ tpt = cell(size(colonies(i).cells,2),1);
     ylabel('nuc/cyto raio');
     xlabel('Time, hours');
     ylim([0 2.5])
+   % xlim([0 (fr_stim+resptime)])
     end
 end
 

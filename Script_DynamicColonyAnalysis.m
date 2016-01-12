@@ -36,10 +36,11 @@ cellsToDynColonies(outfile);
 
 
 fldat = [2 3];
-delta_t = 5; 
+delta_t = 5; % in minutes
 p = fr_stim*delta_t/60;
 colSZ = 2;
 flag = 1;
- % add the loop oved positions here
+resptime = 12;% in frames ( converted to hours later)
+ % add the loop oved positions and colony sizes here
 GetDynamicColonyTraces(outfile,fr_stim,fldat,delta_t,colSZ);
-datafin = GetDynamicColonyStats(outfile,fr_stim,delta_t,flag,colSZ);
+datafin = GetDynamicColonyStats(outfile,fr_stim,delta_t,flag,colSZ,resptime);

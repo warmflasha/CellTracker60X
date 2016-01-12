@@ -1,5 +1,5 @@
-function [datafin] = GetDynamicColonyStats(matfile,fr_stim,delta_t,flag,colSZ)
-
+function [datafin] = GetDynamicColonyStats(matfile,fr_stim,delta_t,flag,colSZ,resptime)
+% resptime = how many frames after stimulation want to look at the response
 load(matfile,'colonies','ncells','peaks');
 
 p = fr_stim*delta_t/60;
@@ -28,11 +28,12 @@ for ii = 1:colgr;
         end
     end
     
-    datafin{ii}(j,1) = mean(nonzeros(data_perframe(1:fr_stim,j)));% 
-    datafin{ii}(j,2) = mean(nonzeros(data_perframe(fr_stim:end,j)));
+    datafin{ii}(j,1) = mean(nonzeros(data_perframe(1:fr_stim,j)));% mean before stimulation
+    datafin{ii}(j,2) = mean(nonzeros(data_perframe(fr_stim:fr_stim+resptime,j)));% mean after stimulation, 20 frames past stimulation only
     %end
     
     if flag == 1
+        p2 = ((resptime)*delta_t)/60;
         figure(10),subplot(1,3,1),plot(nonzeros(datafin{ii}(:,1)),'*','color',colors(ii,:),'markersize',15);
         hold on
         ylim([0 2.5]);
@@ -43,7 +44,7 @@ for ii = 1:colgr;
         title(['microCol of size ' num2str(colSZ) ],'fontsize',15);
         figure(10),subplot(1,3,2),plot(nonzeros(datafin{ii}(:,2)),'*','color',colors(ii,:),'markersize',15);
         hold on
-        legend('after');
+        legend([num2str(p2) 'hours after stimulation']);
         ylim([0 2.5])
         % xlim([0 length(datcell)]);
         ylabel('nuc/cyto ratio, mean over time');

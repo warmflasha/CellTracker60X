@@ -35,16 +35,15 @@ for j = 1:length(ilastikCytoAll)
     ilastikCyto= fullfile(ilastikDirec2,ilastikCytoAll(j).name);
     
     nuc_mask_all = h5read(ilastikNuc,'/exported_data');
-    %nuc_mask_all = squeeze(nuc_mask_all);% this line is for the data that
-    %was exported from the non headles mode run
+    %nuc_mask_all = squeeze(nuc_mask_all);
     
-    nuc_mask_all = nuc_mask_all(1,:,:,:);
+    nuc_mask_all = nuc_mask_all(2,:,:,:);% for probabilities exported
     nuc_mask_all = squeeze(nuc_mask_all);
     
     
     cyto_mask_all = h5read(ilastikCyto,'/exported_data');
     %cyto_mask_all = squeeze(cyto_mask_all);% same comment
-    cyto_mask_all = cyto_mask_all(1,:,:,:);
+    cyto_mask_all = cyto_mask_all(2,:,:,:);% for probabilities exported
     cyto_mask_all = squeeze(cyto_mask_all);
     
     
