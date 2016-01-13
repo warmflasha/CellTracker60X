@@ -1,4 +1,4 @@
-function [ncells, nucleinmod, masterCCnmod]  =  overlapfilter(PILsn, PILsSourcen, masterCCn, nuclein1, Inuc, zrange, overlapthresh)
+function [nucleinmod, masterCCnmod]  =  overlapfilter(PILsn, PILsSourcen, masterCCn, nuclein1, Inuc, zrange, overlapthresh)
 % pixel intersection matrix
 
 %zlim = zstart:zend;

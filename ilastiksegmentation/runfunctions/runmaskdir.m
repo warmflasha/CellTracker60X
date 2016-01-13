@@ -1,4 +1,4 @@
-function runfile(segfiledir, rawfiledir, nzslices, outfile)
+function runmaskdir(segfiledir, rawfiledir, nzslices, outfile)
 %%
 % segfiledir: directory path of ilastik 2d segmentation probability density maps
 % rawfiledir: directory path of the nuclear channel raw images (the same
@@ -31,17 +31,14 @@ for maskno = start:nzslices:size(dirinfo,1)
     %%
     overlapthresh = 80;
     colonyno = (maskno - start)/nzslices + 1;
-    [ncells(colonyno), nucleilist, masterCC] =  overlapfilter(PILsn, PILsSourcen, masterCCn, nucleilist, inuc, zrange, overlapthresh);
-    
-    
-    %%
-    mrnamatfile = [{'/Volumes/data/Sapna/150813FISH_MP/200um/ch1allspots.mat'}, {'/Volumes/data/Sapna/150813FISH_MP/200um/ch2allspots.mat'}];
-    for ch = 1:2
+    [nucleilist, masterCC] =  overlapfilter(PILsn, PILsSourcen, masterCCn, nucleilist, inuc, zrange, overlapthresh);
         
-      [cellmrna{colonyno}(ch), mrnapercell{colonyno}(ch)] = mrnapercells(nucleilist, stats, mrnamatfile{ch}, colonyno, zrange);
-
-    end
+    %%
+    channels = [1 2 3];
+    mrnafilepath = sprintf('/Volumes/data/Sapna/150813FISH_MP/200um/spotresults');
+    peaks{colonyno} = mrnapercells(nucleilist, stats, mrnafilepath, colonyno, zrange, channels);
+    
+    
 end
-
-save(outfile, 'cellmrna', 'mrnapercell', 'ncells');
+save(outfile, 'peaks');
 end

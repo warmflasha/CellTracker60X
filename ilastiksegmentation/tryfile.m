@@ -5,15 +5,15 @@
 
 segfiledir = '/Volumes/data/Sapna/150813FISH_MP/200um/im1seg'; % ilastik probability maps
 rawfiledir = '/Volumes/data/Sapna/150813FISH_MP/200um/images00'; % raw data
-outfile = '/Users/sapnac18/Desktop/Experiments/1508FISHMP200um/output12.mat';
+outfile = '/Users/sapnachhabra/Desktop/CellTrackercd/Experiments/150813FISHMP/200um/output.mat';
 
 nzslices = 16;
 colonyno = 1;
 objno = [13 19 71 115 130];
-[ncells, cellmrna, mrnapercell] = runmaskone(segfiledir, rawfiledir, nzslices, colonyno, objno);
+peaks = runmaskone(segfiledir, rawfiledir, nzslices, colonyno, objno);
 %%
 tic;
-runfile(segfiledir, rawfiledir, nzslices, outfile);
+runmaskdir(segfiledir, rawfiledir, nzslices, outfile);
 toc;
 
 %%
