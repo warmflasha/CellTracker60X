@@ -1,4 +1,6 @@
-function [ fileinfo, start] = readdirectory(dir1)
+
+
+function [fileinfo, start] = postart(dir1)
 fileinfo = dir(dir1);
 nelem = size(fileinfo, 1);
 
