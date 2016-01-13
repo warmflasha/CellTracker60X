@@ -9,7 +9,7 @@ samplepos = postart(samplepath);
 
 sampleno = 1;
 
-%% deciphering file details(no. of channels, no. of time points etc. fro metadata)
+%% deciphering file details(no. of channels, no. of time points etc. from metadata)
 samplefl = strcat(samplepath, '/', sampledir(samplepos).name);
 reader = bfGetReader(samplefl);
 nch = getSizeC(reader);
