@@ -11,13 +11,13 @@
 i=0
 num=1
 
-ndir=/Users/warmflashlab/Desktop/IlastikMasks_headlessW1/
+ndir=/Users/warmflashlab/Desktop/IlastikMasks_headless_DiffW1/
 
 projectpath=/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/TrainingTimeSeriesCyto60Xnewilastikversion.ilp
 
-savepath=/Users/warmflashlab/Desktop/IlastikMasksFromProjections_Nov12dataset\(diff\)/{CytoMasktest}_{0007}.h5
+savepath=/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/NucDifftraining/cytoMask_P.h5
 
-segchannel=1
+#segchannel=1
 
 mkdir $ndir
 
@@ -31,7 +31,7 @@ do
 
 i=$((i+num))
 
-scp $savepath ${ndir}CytoMask_tg${i}.h5
+scp $savepath ${ndir}CytoMaskDiff_tg${i}.h5
 
 echo $f $i
 done

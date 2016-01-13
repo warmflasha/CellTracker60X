@@ -28,8 +28,9 @@ end
 
 %process nuclear mask
 %Lnuc = mask1 <1;     
-Lnuc = im2bw(mask1,0.9);% for probabilities exported
+Lnuc = im2bw(mask1,0.75);% for probabilities exported
 Lnuc =  bwareafilt(Lnuc',[userParam.areanuclow userParam.areanuchi]);
+%Lnuc = imerode(Lnuc,strel('disk',1));% erode by 1 pixel if some masks had touching cells still
 
 %cytoplasmic mask
 %LcytoIl = mask2 < 1;  

@@ -23,7 +23,7 @@ function peaks = nucCytoIlastik2peaksLoop(ilastikDirec1,ilastikDirec2,imageDirec
 [~, ilastikCytoAll]=folderFilesFromKeyword(ilastikDirec2,'CytoMask');% all cyto masks for the frame 0 ( four time groups)'Cyto','{0002}'['Outfile_000' num2str(pos) '_t']
 [~, ilastikNucAll]=folderFilesFromKeyword(ilastikDirec1,'NucMask');% all nuc masks for the frame 0 ( four time groups)
 %end
-timegroups = 4;
+timegroups = 1;
 
 ilastikCytoAll = ilastikCytoAll((pos*timegroups+1):(pos+1)*timegroups); % 1-4; 5-8;...
 ilastikNucAll = ilastikNucAll((pos*timegroups+1):(pos+1)*timegroups);
@@ -75,17 +75,19 @@ for j = 1:length(ilastikCytoAll)
 %  Lnuc =  bwareafilt(nuc_mask_all',[userParam.areanuclow userParam.areanuchi]);
    % same processing for the cyto channel     
         
-        [outdat, Lnuc] = nucCytoIlastik2peaks(nuc_mask_all(:,:,k),cyto_mask_all(:,:,k),nuc_img,nuc_cyto,paramfile);%
+        [outdat, Lnuc,Lcytofin] = nucCytoIlastik2peaks(nuc_mask_all(:,:,k),cyto_mask_all(:,:,k),nuc_img,nuc_cyto,paramfile);%
         peaks{nTprev+k} = outdat;
         if sum(sum(Lnuc)) == 0
          imgfiles(nTprev+k).compressNucMask = [];
+         imgfilescyto(nTprev+k).compressNucMask = [];
         else
           imgfiles(nTprev+k).compressNucMask = compressBinaryImg(Lnuc);
+          imgfilescyto(nTprev+k).compressNucMask = compressBinaryImg(Lcytofin);
         end
     end
     nTprev = nTprev + nT;
     
    % save(outfile,'peaks','imgfiles');
-    save([ num2str(pos) '_' num2str(outfile)],'peaks','imgfiles');
+    save([ num2str(pos) '_' num2str(outfile)],'peaks','imgfiles','imgfilescyto');
         
 end

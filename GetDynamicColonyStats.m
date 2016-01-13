@@ -10,7 +10,7 @@ colgr = size(colonies,2);% how many colonies were found
 datafin = cell(colgr,1); % preallocate , more than necessary col 1 - means before, col2  mean after
 
 for ii = 1:colgr;
-    %if colSZ == ncells{ii}(1); % how many cells were there in the first frame of the i-th colony
+    if colSZ == ncells{i}(1); % how many cells were there in the frame before stimulation of the i-th colony,
     
     Ntr = size(colonies(ii).cells,2); % number of trajectories
     %onframesall = zeros(length(peaks),size(colonies(ii).cells,2));
@@ -56,6 +56,7 @@ for ii = 1:colgr;
             ylim([0 5])
             ylabel('Number of cells in the colony','fontsize',9);
         
+    end
     end
 end
 end

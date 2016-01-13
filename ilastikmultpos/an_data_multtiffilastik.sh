@@ -11,19 +11,19 @@
 i=0
 num=1
 
-ndir=/Users/warmflashlab/Desktop/IlastikMasks_headless_pluriW0/
+ndir=/Users/warmflashlab/Desktop/IlastikMasks_headless_DiffW0/
 
-projectpath=/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/TrainingSetNuc60XPluriImaging.ilp
+projectpath=/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/TrainingTimeSeriesNuc60Xnewilastikversion.ilp
 
-savepath=/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/PluriIlasikMasks_projections/\{NucMaskt1\}_\{0003\}.h5
+savepath=/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/NucDifftraining/nucMask_P.h5
 
 #segchannel=1
 
 mkdir $ndir
 
-samplepath=/Users/warmflashlab/Desktop/MaxProjectionsPluri_42hrNov29/Projections_NuclearChannel/;
+samplepath=/Users/warmflashlab/Desktop/MaxProjectionsLiveImg_DiffCondition\(nov12data\)/Nov12ImagingMaxProj_W0/;
 
-files=/Users/warmflashlab/Desktop/MaxProjectionsPluri_42hrNov29/Projections_NuclearChannel/*;
+files=/Users/warmflashlab/Desktop/MaxProjectionsLiveImg_DiffCondition\(nov12data\)/Nov12ImagingMaxProj_W0/*;
 
 for f in $files
 do
@@ -31,7 +31,7 @@ do
 
 i=$((i+num))
 
-scp $savepath ${ndir}NucMaskPluri_tg${i}.h5
+scp $savepath ${ndir}NucMaskDiff_tg${i}.h5
 
 echo $f $i
 done
