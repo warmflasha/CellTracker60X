@@ -38,7 +38,7 @@ for maskno = start:nzslices:size(dirinfo,1)
     mrnafilepath = sprintf('/Volumes/data/Sapna/150813FISH_MP/200um/spotresults');
     peaks1{colonyno} = mrnapercells(nucleilist, stats, mrnafilepath, colonyno, zrange, channels);
     %%
-    peaks{colonyno} = peakscelltrackerformat(peaks{colonyno});
+    peaks{colonyno} = peakscelltrackerformat(peaks1{colonyno});
     
     
 end
