@@ -40,7 +40,7 @@ end
 
 %%
 ff = dir('*10ngmlDifferentiated_22hrs*.mat');%jan8set % Pluri_42hrs % 22hr set: k = 3,4,6,16,22 traces k = 10 bad
-k =22;
+k =4;
 outfile = ff(k).name;
 load(outfile);
 
@@ -60,20 +60,20 @@ end
 
 %%
 % plot the stats (before, after, amplitude...)
-fr_stim = 22;%22 %38
+fr_stim = 38;%22 %38
 fldat = [2 3];
-delta_t = 12; % 12% in minutes
+delta_t = 5; % 12% in minutes
 p = fr_stim*delta_t/60;
 flag = 1;
-resptime =150;% 15 50 36 in frames ( converted to hours later)
-coloniestoanalyze = 3; % max size of the colonies that want to look at
+resptime =50;% 15 50 36 in frames ( converted to hours later)
+coloniestoanalyze = 2; % max size of the colonies that want to look at
 for jj = 1:coloniestoanalyze
     
     colSZ = jj;
     
     %GetDynamicColonyTraces(outfile,fr_stim,fldat,delta_t);
     %ff = dir('*10ngmlDifferentiated*.mat');
-    ff = dir('*jan8set*.mat');%jan8set 10ngmlDifferentiated_22hrs % Pluri_42hrs
+    ff = dir('*jan8set10ngmlDifferentiated_22hrs*.mat');%jan8set % Pluri_42hrs
     for k=1:size(ff,1)
         outfile = ff(k).name; %nms{k};
         load(ff(k).name);

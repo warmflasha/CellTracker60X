@@ -28,7 +28,7 @@ for i = 1:colgr;
     ylim([0 2.5])
     hold on
     
-    x = (210*delta_t/60);
+    x = (fr_stim*delta_t/60);
     x = ones(1,4).*x;
     y = 0:1:3;
     plot(x,y,'-*r','linewidth',3);

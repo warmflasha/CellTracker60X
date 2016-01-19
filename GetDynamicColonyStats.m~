@@ -27,8 +27,8 @@ for ii = 1:colgr;
             end
             if ~isempty(fr_stim)
                 datafin{ii}(j,1) = mean(nonzeros(data_perframe(1:fr_stim,j)));% mean before stimulation
-                datafin{ii}(j,2) = mean(nonzeros(data_perframe(fr_stim+4:fr_stim+resptime,j)));% mean after stimulation
-                datafin{ii}(j,3) = abs(mean(nonzeros(data_perframe(1:fr_stim,j))) - mean(nonzeros(data_perframe((fr_stim+4):(fr_stim+25),j))));
+                datafin{ii}(j,2) = mean(nonzeros(data_perframe(fr_stim:fr_stim+resptime,j)));% mean after stimulation
+                datafin{ii}(j,3) = abs(mean(nonzeros(data_perframe(1:fr_stim,j))) - mean(nonzeros(data_perframe((fr_stim):(fr_stim+12),j))));
             end
             if isempty(fr_stim)
                 datafin{ii}(j,1) = mean(nonzeros(data_perframe(:,j)));% mean over all time points
