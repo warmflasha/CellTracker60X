@@ -4,7 +4,8 @@ function  GetZProjections_allPositionsAN(direc,direc2,Npos,tg,chan)
 % Npos = number of positions, need to know from experiment (or get from the
 % directory , line 15, need to debug
 % tg = time group, vector
-% chan = corresponds to ff.w(chan), e.g. ff.w(1) = nuclear channel
+% chan = corresponds to ff.w(chan), e.g. ff.w(1) = nuclear channel here
+% chan = [1 2]
 % direc2 = where to save the output projections
 % tg = a vector with the number of separate time groups, need to know it
 % from experiment

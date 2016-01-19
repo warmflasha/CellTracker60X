@@ -17,13 +17,10 @@ function peaks = nucCytoIlastik2peaksLoop(ilastikDirec1,ilastikDirec2,imageDirec
 %   -peaks - output segmentation in the usual format. also saved in outfile
 
 
-% {CytoMaskt2}_{0000}.h5
-% need to change the find string in the name 
-%if pos <10
-[~, ilastikCytoAll]=folderFilesFromKeyword(ilastikDirec2,'CytoMask');% all cyto masks for the frame 0 ( four time groups)'Cyto','{0002}'['Outfile_000' num2str(pos) '_t']
-[~, ilastikNucAll]=folderFilesFromKeyword(ilastikDirec1,'NucMask');% all nuc masks for the frame 0 ( four time groups)
-%end
-timegroups = 1;
+[~, ilastikCytoAll]=folderFilesFromKeyword(ilastikDirec2,'CytoMask');
+[~, ilastikNucAll]=folderFilesFromKeyword(ilastikDirec1,'NucMask');% 
+
+timegroups = 3;
 
 ilastikCytoAll = ilastikCytoAll((pos*timegroups+1):(pos+1)*timegroups); % 1-4; 5-8;...
 ilastikNucAll = ilastikNucAll((pos*timegroups+1):(pos+1)*timegroups);
