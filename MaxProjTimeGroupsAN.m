@@ -23,6 +23,7 @@ end
 
 for x = 1:nz
     imgs{x} = bfopen(filename{x});% open each timegroup and each z slice
+    
 end
 % then find the max image within those and save
 % code below will do this

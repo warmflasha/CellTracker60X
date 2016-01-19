@@ -9,5 +9,5 @@ userParam.presubNucBackground = 1;
 userParam.backdiskrad = 300;
 userParam.colonygrouping = 120;
 
-userParam.areanuclow = 1200;
+userParam.areanuclow = 1250;
 userParam.areanuchi = 15000;
