@@ -9,11 +9,13 @@ chan = [0 1];
 
 paramfile = 'setUserParamLiveImagingAN';
 
+
 ilastikDirec1 = ('/Users/warmflashlab/Desktop/Jan8setIlastikMasks_headless_DiffW0');
 ilastikDirec2 = ('/Users/warmflashlab/Desktop/Jan8setIlastikMasks_headless_DiffW1');
 imgDirec1 =('/Users/warmflashlab/Desktop/MaxProjections_Dif_Jan8run/W0') ;% already max projections
 imgDirec2 =('/Users/warmflashlab/Desktop/MaxProjections_Dif_Jan8run/W1') ;% already max projections
 fr_stim = [];% for the pluri dataset is empty
+
 [nums, ilastikCytoAll]=folderFilesFromKeyword(ilastikDirec2,'CytoMask');%make two ilastik directories
 timegroups = 3;% 4 for the diff dataset(nov12) and three for the pluri dataset
 
@@ -36,14 +38,19 @@ end
 % save(outfile,'peaks','imgfiles','imgfilescyto','-append');
 
 
+addShiftToPeaks(outfile,fr_stim); %don't need to run the shift for the
+peaks{fr_stim} = peaks{fr_stim-1};
+save(outfile,'peaks','imgfiles','imgfilescyto');
+
+
 runTracker(outfile,'newTrackParam');
 global userParam;
 userParam.colonygrouping = 120;
 % look at colonies around the stimulation frame (window of couple hours)?
 cellsToDynColonies(outfile);
 
-
 fldat = [2 3];
+
 delta_t = 5; % 5 in minutes (for the differentiated dataset), 11 mins for the pluripotent condition)
 p = fr_stim*delta_t/60;
 colSZ = 1;
