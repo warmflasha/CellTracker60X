@@ -3,11 +3,11 @@ function newTrackParamAN
 global userParam;
 
 
-userParam.L = 24;
+userParam.L = 25;
 userParam.sizeImg = [1024, 1024];
 
 userParam.verboseCellTrackerEDS = 0;
-userParam.minTrajLen = 9;%4
+userParam.minTrajLen = 5;%4
 userParam.mergeGap = 10;%2 6
 userParam.sclDstCost = [1 2];
 userParam.minlength = 20;

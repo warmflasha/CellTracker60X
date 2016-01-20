@@ -13,7 +13,7 @@ datafin = cell(colgr,1); % preallocate , more than necessary col 1 - means befor
 for ii = 1:colgr;
 
     data_perframe = zeros(length(peaks),size(colonies(ii).cells,2));
-    if ncells{ii}(10) == colSZ; % how many cells were there in the frame before stimulation of the i-th colony,
+    if ncells{ii}(fr_stim) == colSZ; % how many cells were there in the frame before stimulation of the i-th colony,
         
         Ntr = size(colonies(ii).cells,2); % number of trajectories
                
@@ -27,7 +27,7 @@ for ii = 1:colgr;
             end
             if ~isempty(fr_stim)
                 datafin{ii}(j,1) = mean(nonzeros(data_perframe(1:fr_stim,j)));% mean before stimulation
-                datafin{ii}(j,2) = mean(nonzeros(data_perframe(fr_stim+4:fr_stim+resptime,j)));% mean after stimulation
+                datafin{ii}(j,2) = mean(nonzeros(data_perframe((fr_stim+4):(fr_stim+resptime),j)));% mean after stimulation
                 datafin{ii}(j,3) = abs(mean(nonzeros(data_perframe(1:fr_stim,j))) - mean(nonzeros(data_perframe((fr_stim+4):(fr_stim+25),j))));
             end
             if isempty(fr_stim)

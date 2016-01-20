@@ -112,24 +112,23 @@ p2 = resptime*delta_t/60;
 coloniestoanalyze = 2;
 cmap = parula;
 C = {'b','g','r','m'};
-    ff = dir('*jan8set*.mat');%jan8set 10ngmlDifferentiated_22hrs % Pluri_42hrs
-    %for %k=1:size(ff,1);
-    k=5;
 
+    ff = dir('*jan8set*.mat');%jan8set 10ngmlDifferentiated_22hrs % Pluri_42hrs
+    for k=1:size(ff,1);
         outfile = ff(k).name; %nms{k};
         cellsToDynColonies(outfile);
         load(outfile,'colonies');
         
         numcol = size(colonies,2); % how many colonies were grouped within the frame
         for j = 1:numcol
-           % if colSZ == colonies(j).numOfCells(fr_stim); 
+            if colSZ == colonies(j).numOfCells(fr_stim); 
             figure(j+10), plot(colonies(j).NucSmadRatio(:),'-*','color',C{j});% cmap(j,:) 'r'traces
             ylim([0 2]);
             ylabel('mean Nuc/Cyto smad4  ');
             xlabel('frames');
-        %end
         end
-   % end 
+        end
+    end 
 %%
 % NEW: get the before and after  plots
 
