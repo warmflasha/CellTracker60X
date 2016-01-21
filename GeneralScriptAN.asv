@@ -61,13 +61,13 @@ ncells{j}(10)
 end
 
 %%
-% plot the stats (before, after, amplitude...)
+%OLD:  plot the stats (before, after, amplitude...)
 fr_stim = 22;%22 %38
 fldat = [2 3];
 delta_t = 12; % 12% in minutes
 p = fr_stim*delta_t/60;
 flag = 1;
-resptime =60;% 15 50 36 in frames ( converted to hours later)
+resptime =50;% 15 50 36 in frames ( converted to hours later)
 coloniestoanalyze = 3; % max size of the colonies that want to look at
 for jj = 1:coloniestoanalyze
     
@@ -99,7 +99,7 @@ if isempty(fr_stim)
 end
 %%
 % get new traces
-fr_stim = 22;%22 %38
+fr_stim = [];%22 %38
 fldat = [2 3];
 delta_t = 12; % 12% in minutes
 p = fr_stim*delta_t/60;
@@ -108,27 +108,28 @@ userParam.colonygrouping = 120;
 flag = 1;
 colSZ = 3;
 resptime =50;% 15 50 36 in frames ( converted to hours later)
-p2 = resptime*delta_t/60;
-coloniestoanalyze = 2;
-cmap = parula;
+p2 = (resptime+4)*delta_t/60;
+coloniestoanalyze = 3;
+cmap = colorcube;
 C = {'b','g','r','m'};
+    ff = dir('*Pluri_42hrs*.mat');%jan8set 10ngmlDifferentiated_22hrs % Pluri_42hrs
+    %for %k=1:size(ff,1);
+    k=10;
 
-    ff = dir('*jan8set*.mat');%jan8set 10ngmlDifferentiated_22hrs % Pluri_42hrs
-    for k=1:size(ff,1);
         outfile = ff(k).name; %nms{k};
         cellsToDynColonies(outfile);
         load(outfile,'colonies');
         
         numcol = size(colonies,2); % how many colonies were grouped within the frame
         for j = 1:numcol
-            if colSZ == colonies(j).numOfCells(fr_stim); 
-            figure(j+10), plot(colonies(j).NucSmadRatio(:),'-*','color',C{j});% cmap(j,:) 'r'traces
+           % if colSZ == colonies(j).numOfCells(fr_stim); 
+            figure(j), plot(colonies(j).NucSmadRatio(:),'-*','color',cmap(j,:));% cmap(j,:) 'r'traces
             ylim([0 2]);
             ylabel('mean Nuc/Cyto smad4  ');
             xlabel('frames');
+        %end
         end
-        end
-    end 
+   % end 
 %%
 % NEW: get the before and after  plots
 
@@ -139,12 +140,14 @@ p = fr_stim*delta_t/60;
 global userParam;
 userParam.colonygrouping = 120;
 flag = 1;
-
-resptime =60;% 15 50 36 in frames ( converted to hours later)
-p2 = resptime*delta_t/60;
+bf_fin = [];
+aft_fin = [];
+resptime =50;% 15 50 36 in frames ( converted to hours later)
+p2 = (resptime+4)*delta_t/60;
 coloniestoanalyze = 3;
 cmap = parula;
 C = {'b','g','r','m'};
+q = 1;
 
 for jj = 1:coloniestoanalyze
     
@@ -158,41 +161,139 @@ for jj = 1:coloniestoanalyze
         t = length(peaks);
         numcol = size(colonies,2); % how many colonies were grouped within the frame
         for j = 1:numcol
-            if colSZ == colonies(j).numOfCells(fr_stim); % how many cells within colony at time fr_stim
+            if ~isempty(fr_stim)
                 
-                stats =  colonies(j).DynNucSmadRatio(t,fr_stim,resptime);%,resptime
-                bf = (stats(:,1));
-                aft =(stats(:,2));
-                
-                b = find(isnan(bf));
-                bf(b)=0;
-                a = find(isnan(aft));
-                aft(a)=0;
-                hold on,figure(4), plot(bf,aft,'*','color',C{colSZ},'markersize',15);
-                hold on,figure(5),subplot(1,2,1), plot(bf,'*','color',C{colSZ},'markersize',15);
-                ylim([0 2]);
-                hold on,figure(5),subplot(1,2,2), plot(aft,'*','color',C{colSZ},'markersize',15);
-                               
-                
+                if colSZ == colonies(j).numOfCells(fr_stim); % how many cells within colony at time fr_stim
+                    
+                    stats =  colonies(j).DynNucSmadRatio(t,fr_stim,resptime);%,resptime
+                    bf = (stats(:,1));
+                    aft =(stats(:,2));
+                    
+                    b = find(isnan(bf));
+                    bf(b)=0;
+                    a = find(isnan(aft));
+                    aft(a)=0;
+                    
+                    bf_fin{jj}(q,1) = sum(bf);
+                    aft_fin{jj}(q,1) = sum(aft);
+                    bf_fin{jj}(q,2) = size(nonzeros(bf),1);
+                    aft_fin{jj}(q,2) = size(nonzeros(aft),1);
+                    q = q+1;
+                                      
+                    hold on,figure(4), plot(bf,aft,'*','color',C{colSZ},'markersize',15);
+                    hold on,figure(5),subplot(1,2,1), plot(colSZ,bf,'*','color',C{colSZ},'markersize',15);
+                    ylim([0 2]);
+                    hold on,figure(5),subplot(1,2,2), plot(colSZ,aft,'*','color',C{colSZ},'markersize',15);
+                end
+                save('meansdiff.mat','bf_fin','aft_fin');
+            end
+            
+            if isempty(fr_stim)
+                if colSZ == colonies(j).numOfCells(10);%
+                    stats =  colonies(j).DynNucSmadRatio(t,fr_stim,resptime);%,resptime
+                    bf = (stats(:,1));
+                    bf_fin{jj}(q,1) = sum(bf);
+                    bf_fin{jj}(q,2) = size(nonzeros(bf),1);
+                    q = q+1;
+                    hold on,figure(4), plot(colSZ,bf,'*','color',C{colSZ},'markersize',15);
+                    ylim([0 2]);
+                    xx = 0:1:4;
+                    yy = ones(1,5);
+                    figure(4),plot(xx,yy,'-k','linewidth',2);
+                end
+                save('meanspluri.mat','bf_fin');
             end
             
         end
         
-        
     end
+    
+    
 end
-                xx = 0:1:14;
-                yy = ones(1,15);
+
+                xx = 0:1:4;
+                yy = ones(1,5);
                 hold on,figure(4),plot(xx,xx,'-k','linewidth',2);
                 ylim([0 2]);
                 xlim([0 2]);
                 ylabel(['mean Nuc/Cyto smad4  ' num2str(p2) ' hours after stimulation']);
                 xlabel('mean Nuc/Cyto smad4 Before stimulation');
                 hold on,figure(5),subplot(1,2,2),plot(xx,yy,'-k','linewidth',2);
+                ylabel(['mean Nuc/Cyto smad4  ' num2str(p2) ' hours after stimulation']);
                 ylim([0 2]);
-                hold on,figure(5),subplot(1,2,1),plot(xx,yy,'-k','linewidth',2);
-                 ylim([0 2]);
+%                 hold on,figure(5),subplot(1,2,1),plot(xx,yy,'-k','linewidth',2);
+%                  ylim([0 2]);
 %                 xlim([0 2]);
+%%
+% plot the mean values
+fr_stim = [];%22 %38
+fldat = [2 3];
+delta_t = 12; % 12% in minutes
+p = fr_stim*delta_t/60;
+global userParam;
+userParam.colonygrouping = 120;
+flag = 1;
+test = cell(1,20);
+resptime =50;% 15 50 36 in frames ( converted to hours later)
+p2 = (resptime+4)*delta_t/60;
+coloniestoanalyze = 3;
+cmap = parula;
+C = {'b','g','r','m'};
+%test = cell(1,coloniestoanalyze);
+for jj = 1:coloniestoanalyze
+    colSZ = jj;
+    if isempty(fr_stim)
+        load('meanspluri.mat');
+        before(jj) = sum(bf_fin{jj}(:,1))/sum(bf_fin{jj}(:,2));
+        
+        t1= nonzeros(bf_fin{jj}(:,1));
+        t2= nonzeros(bf_fin{jj}(:,2));
+        for k=1:size(t1,1)
+        t3 = t1(k)/t2(k);
+        test{k}(1:t2(k),1) = t3;
+        end
+        test4 = cellfun(@isempty,test);
+        testnew = cat(1,test{test4 ==0});
+        
+        errbf(jj) = std(testnew);
+        
+        figure(6), errorbar(jj,before(jj),errbf(jj),'*','markersize',15,'color',C{jj});hold on
+        ylabel('Mean Nuc/Cyto smad4');
+        ylim([0.5 1.7]);
+        xlim([0 (coloniestoanalyze+1)]);
+    end
+    if ~isempty(fr_stim)
+        load('meansdiff.mat');
+        before(jj) = sum(bf_fin{jj}(:,1))/sum(bf_fin{jj}(:,2));
+        after(jj) = sum(aft_fin{jj}(:,1))/sum(aft_fin{jj}(:,2));
+       
+        t1= nonzeros(bf_fin{jj}(:,1));
+        a1 = nonzeros(aft_fin{jj}(:,1));
+        t2= nonzeros(bf_fin{jj}(:,2));
+        a2= nonzeros(aft_fin{jj}(:,2));
+        for k=1:size(t1,1)
+        t3 = t1(k)/t2(k);
+        test{k}(1:t2(k),1) = t3;
+        end
+        for k=1:size(a1,1)
+        t3 = t1(k)/t2(k);
+        test{k}(1:t2(k),1) = t3;
+        end
+        test4 = cellfun(@isempty,test);
+        testnew = cat(1,test{test4 ==0});
+        
+        errbf(jj) = std(testnew);
+        
+        
+        figure(7), errorbar(jj,before(jj),errbf(jj),'*','markersize',15,'color',C{jj});hold on;
+         figure(7), errorbar(jj,after(jj),erraft(jj),'.','markersize',25,'color',C{jj});
+        legend('before','after');
+        ylabel('Mean Nuc/Cyto smad4');
+        ylim([0.5 1.7]);
+        xlim([0 (coloniestoanalyze+1)]);
+    end
+end
+
       
       
       
