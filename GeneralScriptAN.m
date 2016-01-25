@@ -1,14 +1,23 @@
 %%
-ilastikfile = ('/Users/warmflashlab/Desktop/IlastikMasks_headless_PluriW0/NucMaskPluri_tg56.h5');
+%ilastikfile = ('/Users/warmflashlab/Desktop/IlastikMasks_headless_PluriW0/NucMaskPluri_tg56.h5');
+ilastikfile = ('{NucMasks}_{P}.h5');
+ilastikfile2 = ('{CytoMasks}_{P}.h5');
 nuc = h5read(ilastikfile,'/exported_data');
-  k = 12;
+cyto = h5read(ilastikfile2,'/exported_data');
+  k = 85;
     nuc = nuc(2,:,:,k);% for probabilities exported
     nuc = squeeze(nuc);
     mask1 = nuc;
     
-    imshow(mask1);
-    Lnuc = im2bw(mask1,0.5);
-    figure, imshow(Lnuc);
+    cyto = cyto(2,:,:,k);% for probabilities exported
+    cyto = squeeze(cyto);
+    mask2 = cyto;
+    
+    figure(2), subplot(1,2,1),imshow(mask1);
+    figure(2), subplot(1,2,2),imshow(mask2);
+    Lnuc = im2bw(mask1,0.6);
+    Lcyto = im2bw(mask2,0.75);
+    figure, imshow(Lcyto&~Lnuc);
 
 
 %%
