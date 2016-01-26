@@ -10,23 +10,23 @@ chan = [0 1];
 paramfile = 'setUserParamLiveImagingAN';
 
 
-ilastikDirec1 = ('/Users/warmflashlab/Desktop/Jan8setIlastikMasks_headless_DiffW0');
-ilastikDirec2 = ('/Users/warmflashlab/Desktop/Jan8setIlastikMasks_headless_DiffW1');
-imgDirec1 =('/Users/warmflashlab/Desktop/MaxProjections_Dif_Jan8run/W0') ;% already max projections
-imgDirec2 =('/Users/warmflashlab/Desktop/MaxProjections_Dif_Jan8run/W1') ;% already max projections
-fr_stim = [];% for the pluri dataset is empty
+ilastikDirec1 = ('/Users/warmflashlab/Desktop/Dec31setIlastikMasks_headless_DiffW0');
+ilastikDirec2 = ('/Users/warmflashlab/Desktop/Dec31setIlastikMasks_headless_DiffW1');
+imgDirec1 =('/Users/warmflashlab/Desktop/MaxProjections_december31Diff/W0') ;% already max projections
+imgDirec2 =('/Users/warmflashlab/Desktop/MaxProjections_december31Diff/W1') ;% already max projections
+fr_stim = 1;% for the pluri dataset is empty
 
 [nums, ilastikCytoAll]=folderFilesFromKeyword(ilastikDirec2,'CytoMask');%make two ilastik directories
 timegroups = 3;% 4 for the diff dataset(nov12) and three for the pluri dataset
 
 positions = length(nums)/timegroups; % number of separate position numbers (start from 0)
 
-positions = 15:(positions-1);% vector with position numbers
+positions = 0:(positions-1);% vector with position numbers
 
-for kk=1: length(positions)
+for kk=2: length(positions)
     
     pos = positions(kk);
-    outfile = 'jan8setDiff_42hrs.mat';% basic name for all positions
+    outfile = 'dec31_set_Diff.mat';% basic name for all positions
 peaks = nucCytoIlastik2peaksLoop(ilastikDirec1,ilastikDirec2,imgDirec1,imgDirec2,zplane,pos,chan,paramfile,outfile);% tsted
 outfile = ([ num2str(pos) '_' num2str(outfile)]);
 end

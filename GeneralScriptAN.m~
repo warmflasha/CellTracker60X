@@ -1,10 +1,10 @@
 %%
 %ilastikfile = ('/Users/warmflashlab/Desktop/IlastikMasks_headless_PluriW0/NucMaskPluri_tg56.h5');
-ilastikfile = ('/Users/warmflashlab/Desktop/Dec31setIlastikMasks_headless_DiffW0/NucMaskDiffDec31set_tg3.h5');
-ilastikfile2 = ('/Users/warmflashlab/Desktop/Dec31setIlastikMasks_headless_DiffW1/CytoMaskDiffDec31set_tg3.h5');
+ilastikfile = ('/Users/warmflashlab/Desktop/Dec31setIlastikMasks_headless_DiffW0/NucMaskDiffDec31set_tg40.h5');
+ilastikfile2 = ('/Users/warmflashlab/Desktop/Dec31setIlastikMasks_headless_DiffW1/CytoMaskDiffDec31set_tg40.h5');
 nuc = h5read(ilastikfile,'/exported_data');
 cyto = h5read(ilastikfile2,'/exported_data');
-  k =1;
+  k =50;
     nuc = nuc(2,:,:,k);% for probabilities exported
     nuc = squeeze(nuc);
     mask1 = nuc;
@@ -17,7 +17,7 @@ cyto = h5read(ilastikfile2,'/exported_data');
    figure(2), subplot(1,2,2),imshow(mask2);
     Lnuc = im2bw(mask1,0.7);
    Lcyto = im2bw(mask2,0.7);
-   figure, imshow(Lcyto'&~Lnuc');
+   figure, imshow(Lcyto&~Lnuc);
 %
 
 %%
@@ -27,7 +27,7 @@ outfile = ff(k).name;
 load(outfile);
 
 %%
-N =  1;
+N =  120;
 n = uncompressBinaryImg(imgfiles(N).compressNucMask);
 nc = uncompressBinaryImg(imgfilescyto(N).compressNucMask);
 %close all

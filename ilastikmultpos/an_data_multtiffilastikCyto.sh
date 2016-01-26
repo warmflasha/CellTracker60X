@@ -11,19 +11,19 @@
 i=0
 num=1
 
-ndir=/Users/warmflashlab/Desktop/Jan8setIlastikMasks_headless_DiffW1/
+ndir=/Users/warmflashlab/Desktop/Dec31setIlastikMasks_headless_DiffW1/
 
-projectpath=/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/TrainingCyto60XJan8set.ilp
+projectpath=/Users/warmflashlab/Desktop/Dec31imging_TrainingSet/Cyto_Training.ilp
 
-savepath=/Users/warmflashlab/Desktop/Jan8livecell_TrainingSetData/\{CytoMasks\}_\{P\}.h5
+savepath=/Users/warmflashlab/Desktop/Dec31imging_TrainingSet/\{CytoMasks\}_\{P\}.h5
 
 #segchannel=1
 
 mkdir $ndir
 
-samplepath=/Users/warmflashlab/Desktop/MaxProjections_Dif_Jan8run/W1/;
+samplepath=/Users/warmflashlab/Desktop/MaxProjections_december31Diff/W1/;
 
-files=/Users/warmflashlab/Desktop/MaxProjections_Dif_Jan8run/W1/*;
+files=/Users/warmflashlab/Desktop/MaxProjections_december31Diff/W1/*;
 
 for f in $files
 do
@@ -31,7 +31,7 @@ do
 
 i=$((i+num))
 
-scp $savepath ${ndir}CytoMaskDiffjan8set_tg${i}.h5
+scp $savepath ${ndir}CytoMaskDiffDec31set_tg${i}.h5
 
 echo $f $i
 done

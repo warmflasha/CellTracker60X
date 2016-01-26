@@ -3,7 +3,7 @@ function peaks = nucCytoIlastik2peaksLoop(ilastikDirec1,ilastikDirec2,imageDirec
 % ----------------------------------------------------------------------------
 % runs nucCytoIlastik2peaks in a loop on all images at a particular
 % position in a directory. Each image can have multiple time points but
-% must be z slices and channels must be saved in separate images.
+% must be z slices and channels must be saved in separate images. 
 % Inputs:
 %   -ilastikDirec - ilastik directory with masks, one mask file per image
 %   file
@@ -87,9 +87,8 @@ for j = 1:length(ilastikCytoAll)
         end
         
     end
-    nTprev = nTprev + nT;
 end
-
+nTprev = nTprev + nT;
 
 % save(outfile,'peaks','imgfiles');
 save([ num2str(pos) '_' num2str(outfile)],'peaks','imgfiles','imgfilescyto');
