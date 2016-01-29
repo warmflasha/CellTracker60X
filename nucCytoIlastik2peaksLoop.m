@@ -83,13 +83,13 @@ for j = 1:length(ilastikCytoAll)
         if sum(sum(Lcytofin)) == 0
             imgfilescyto(nTprev+k).compressNucMask = [];
             
-        else imgfilescyto(nTprev+k).compressNucMask = compressBinaryImg(Lcytofin);
+        else
+            imgfilescyto(nTprev+k).compressNucMask = compressBinaryImg(Lcytofin);
         end
         
     end
     nTprev = nTprev + nT;
 end
-
 
 % save(outfile,'peaks','imgfiles');
 save([ num2str(pos) '_' num2str(outfile)],'peaks','imgfiles','imgfilescyto');

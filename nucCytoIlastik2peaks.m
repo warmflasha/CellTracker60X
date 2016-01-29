@@ -27,14 +27,15 @@ catch
 end
 
 %process nuclear mask
-%Lnuc = mask1 <1;     
-Lnuc = im2bw(mask1,0.7);% for probabilities exported
+%Lnuc = mask1 <1;
+Lnuc = imfill(mask1 > userParam.probthresh_nuc,'holes');% for probabilities exported
+
 Lnuc =  bwareafilt(Lnuc',[userParam.areanuclow userParam.areanuchi]);
 %Lnuc = imerode(Lnuc,strel('disk',1));% erode by 1 pixel if some masks had touching cells still
 
 %cytoplasmic mask
 %LcytoIl = mask2 < 1;  
-LcytoIl = im2bw(mask2,0.7);% for probabilities exported
+LcytoIl = im2bw(mask2,userParam.probthresh_cyto);% for probabilities exported
 LcytoIl = (LcytoIl');
 Lcytonondil = LcytoIl;
 LcytoIl = imdilate(LcytoIl,strel('disk',5)); %this should be made into a parameter
