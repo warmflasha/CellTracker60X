@@ -38,7 +38,7 @@ Lnuc =  bwareafilt(Lnuc',[userParam.areanuclow userParam.areanuchi]);
 LcytoIl = im2bw(mask2,userParam.probthresh_cyto);% for probabilities exported
 LcytoIl = (LcytoIl');
 Lcytonondil = LcytoIl;
-LcytoIl = imdilate(LcytoIl,strel('disk',5)); %this should be made into a parameter
+LcytoIl = imdilate(LcytoIl,strel('disk',userParam.dilate_cyto)); %this should be made into a parameter
 
 %if no nuclei, exit
 if sum(sum(Lnuc)) == 0
@@ -86,7 +86,7 @@ Inew = zeros(1024,1024);
 Inew(onebiglist) = true;
 
 % erode nuclei a little since sometimes causes problems
-t = imerode(Lnuc,strel('disk',10)); %this should also be a parameter
+t = imerode(Lnuc,strel('disk',userParam.erode_nuc)); %this should also be a parameter
 
 LcytoIl = (Inew & ~ t & ~vImg);    % cyto masks initially include both nuclei+cyto, so need to eliminate nuc, use voronoi to divide;
 % return back to the non-dilated cyto masks
@@ -110,8 +110,8 @@ cc_nuc = bwconncomp(Lnuc,8);
 statsnuc = regionprops(cc_nuc,I2proc,'Area','Centroid','PixelIdxList','MeanIntensity');
 statsnucw0 = regionprops(cc_nuc,Inuc,'Area','Centroid','PixelIdxList','MeanIntensity');% these are the stats for the actual nuclear image(rfp)
 
-badinds = [statsnuc.Area] < 1000; %this area should also be a parameter
-badinds2 = [statsnucw0.Area] < 1000;
+badinds = [statsnuc.Area] < userParam.areanuclow; %this area should also be a parameter
+badinds2 = [statsnucw0.Area] < userParam.areanuclow;
 statsnuc(badinds) = [];
 statsnucw0(badinds2) = [];
 
@@ -119,7 +119,7 @@ statsnucw0(badinds2) = [];
 %get the cytoplasmic mean intensity for each labeled object
 %cc_cyto = bwconncomp(Lcytofin);
 statscyto = regionprops(Lcytofin,I2proc,'Area','Centroid','PixelIdxList','MeanIntensity');
-badinds = [statscyto.Area] < 1000;
+badinds = [statscyto.Area] < userParam.areacytolow; 
 statscyto(badinds) = [];
 
 

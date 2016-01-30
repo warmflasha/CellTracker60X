@@ -14,3 +14,8 @@ userParam.areanuchi = 15000;
 
 userParam.probthresh_nuc = 0.86;
 userParam.probthresh_cyto = 0.86;
+
+userParam.dilate_cyto = 5;
+userParam.erode_nuc = 10;
+
+userParam.areacytolow = 100;

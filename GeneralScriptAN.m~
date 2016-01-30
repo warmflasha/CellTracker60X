@@ -1,12 +1,12 @@
 %%
 %ilastikfile = ('/Users/warmflashlab/Desktop/IlastikMasks_headless_PluriW0/NucMaskPluri_tg56.h5');
-ilastikfile = ('/Users/warmflashlab/Desktop/Jan8setIlastikMasks_headless_DiffW0/NucMaskDiffjan8set_tg79.h5'); % 79=81 for position 26
-ilastikfile2 = ('/Users/warmflashlab/Desktop/Jan8setIlastikMasks_headless_DiffW1/CytoMaskDiffjan8set_tg79.h5');
+ilastikfile = ('/Users/warmflashlab/Desktop/Jan8setIlastikMasks_headless_DiffW0/NucMaskDiffjan8set_tg94.h5');
+ilastikfile2 = ('/Users/warmflashlab/Desktop/Jan8setIlastikMasks_headless_DiffW1/CytoMaskDiffjan8set_tg94.h5');
 %ilstikfile3 = ('/Users/warmflashlab/Desktop/{test}_{track}.h5');
 
 nuc = h5read(ilastikfile,'/exported_data');
 cyto = h5read(ilastikfile2,'/exported_data');
-  k =83;
+  k =40;
     nuc = nuc(2,:,:,k);% for probabilities exported
     nuc = squeeze(nuc);
     mask1 = nuc;
@@ -31,28 +31,31 @@ cyto = h5read(ilastikfile2,'/exported_data');
 % h5 track
 ilstikfile3 = ('/Users/warmflashlab/Desktop/{test}_{track}.h5');
 ilstikfile4 = ('/Users/warmflashlab/Desktop/{test}_{trackCyto}.h5');
-k = 90;
+k = 20;
 
 trac_nuc = h5read(ilstikfile3,'/exported_data');
 trac_nuc = squeeze(trac_nuc);
+
 trac1 = trac_nuc(:,:,k);
 bw2 = bwlabel(trac1);
-figure,imshow(bw2,[]);
 
-% trac_cyto = h5read(ilstikfile4,'/exported_data');
-% trac_cyto = squeeze(trac_cyto);
-% trac2 = trac_cyto(:,:,k);
-% bw3 = bwlabel(trac2);
-% figure,imshow(bw3,[]);
+trac_cyto = h5read(ilstikfile4,'/exported_data');
+trac_cyto = squeeze(trac_cyto);
+
+trac2 = trac_cyto(:,:,k);
+bw3 = bwlabel(trac2);
+
+figure,imshow(bw3,[]);
+figure,imshow(bw2,[]);
 
 %%
 clear all
 ff = dir('*jan8corr*.mat');
-k = 19;
+k = 10;
 outfile = ff(k).name;
 load(outfile);
 %%
-N =70;
+N =40;
 n = uncompressBinaryImg(imgfiles(N).compressNucMask);
 nc = uncompressBinaryImg(imgfilescyto(N).compressNucMask);
 %close all
@@ -68,7 +71,7 @@ subplot(1,2,2),imshow(a);
 ff = dir('*jan8corr*.mat');
 for k=1:size(ff,1)
     outfile = ff(k).name;
-    outfile = '15_jan8set_optimization.mat';
+    
 runTracker(outfile,'newTrackParamAN');
 global userParam;
 userParam.colonygrouping = 120;
@@ -94,11 +97,10 @@ flag = 1;
 C = {'b','g','r','m'};
     ff = dir('*jan8corr*.mat');%jan8set 10ngmlDifferentiated_22hrs % Pluri_42hrs %Outfile
    % for k=1:size(ff,1);
-      k=7;
+      k=32;
         
         outfile = ff(k).name; %nms{k};
         %cellsToDynColonies(outfile);
-                                            % outfile = '26_jan8set_optimization.mat';
         load(outfile,'colonies','peaks');
         tps = length(peaks);
         numcol = size(colonies,2); % how many colonies were grouped within the frame
@@ -130,9 +132,9 @@ p = fr_stim*delta_t/60;
 global userParam;
 userParam.colonygrouping = 120;
 flag = 1;
-resptime =150;% 15 50 36 in frames ( converted to hours later)
+resptime =130;% 15 50 36 in frames ( converted to hours later)
 range = [26 20];
-jumptime = 20;% in frames 5
+jumptime = 5;% in frames
 p2 = (resptime+jumptime)*delta_t/60;
 coloniestoanalyze = 5;
 cmap = parula;
@@ -154,7 +156,7 @@ end
         
         numcol = size(colonies,2); % how many colonies were grouped within the frame
         for j = 1:numcol
-            if ~isempty(fr_stim) % && k~=22;
+            if ~isempty(fr_stim) && k~=22;
                 
                 %   if colSZ == colonies(j).numOfCells(fr_stim); % how many cells within colony at time fr_stim
                 colSZ = colonies(j).numOfCells(fr_stim-1); % how many cells within colony at time fr_stim
@@ -283,7 +285,7 @@ global userParam;
 userParam.colonygrouping = 120;
 flag = 1;
 test = cell(1,20);
-resptime =150;% 15 50 36 in frames ( converted to hours later)
+resptime =130;% 15 50 36 in frames ( converted to hours later)
 p2 = (resptime+jumptime)*delta_t/60;
 coloniestoanalyze = 3;
 cmap = parula;

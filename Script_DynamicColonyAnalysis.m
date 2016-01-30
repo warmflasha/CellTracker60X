@@ -23,7 +23,7 @@ positions = 0:(positions-1);% vector with position numbers
 for kk=1: length(positions)
     
     pos = positions(kk);
-    outfile = 'jan8corr_set_Diff.mat';% basic name for all positions
+    outfile = 'jan8set_newparams.mat';% basic name for all positions
 peaks = nucCytoIlastik2peaksLoop(ilastikDirec1,ilastikDirec2,imgDirec1,imgDirec2,zplane,pos,chan,paramfile,outfile);% tsted
 outfile = ([ num2str(pos) '_' num2str(outfile)]);
 end
