@@ -1,12 +1,12 @@
 %%
 %ilastikfile = ('/Users/warmflashlab/Desktop/IlastikMasks_headless_PluriW0/NucMaskPluri_tg56.h5');
-ilastikfile = ('/Users/warmflashlab/Desktop/Jan8setIlastikMasks_headless_DiffW0/NucMaskDiffjan8set_tg79.h5'); % 79=81 for position 26
-ilastikfile2 = ('/Users/warmflashlab/Desktop/Jan8setIlastikMasks_headless_DiffW1/CytoMaskDiffjan8set_tg79.h5');
+ilastikfile = ('/Users/warmflashlab/Desktop/Jan8setIlastikMasks_headless_DiffW0/NucMaskDiffjan8set_tg37.h5'); % 79=81 for position 26; 37-39 , pos 12
+ilastikfile2 = ('/Users/warmflashlab/Desktop/Jan8setIlastikMasks_headless_DiffW1/CytoMaskDiffjan8set_tg37.h5');
 %ilstikfile3 = ('/Users/warmflashlab/Desktop/{test}_{track}.h5');
 
 nuc = h5read(ilastikfile,'/exported_data');
 cyto = h5read(ilastikfile2,'/exported_data');
-  k =83;
+  k =51;
     nuc = nuc(2,:,:,k);% for probabilities exported
     nuc = squeeze(nuc);
     mask1 = nuc;
@@ -21,11 +21,56 @@ cyto = h5read(ilastikfile2,'/exported_data');
    figure(1), subplot(1,3,2),imshow(mask2);
    figure(1), subplot(1,3,3),imshow(mask3);
    
-%     Lnuc = mask3;%im2bw(mask1,0.5);
-%     Lcyto = im2bw(mask2,0.86);
-%    figure(2),subplot(1,2,1), imshow(Lnuc);
-%    figure(2),subplot(1,2,2), imshow(Lcyto&~Lnuc);
-% %
+    Lnuc = mask3;%im2bw(mask1,0.5);
+    Lcyto = im2bw(mask2,0.86);
+   figure(2),subplot(1,2,1), imshow(Lnuc);
+   figure(2),subplot(1,2,2), imshow(Lcyto&~Lnuc);
+%%
+imshow(mask3);
+mask3new = bwareafilt(mask3,[4800 20000]);
+mask3old = bwareafilt(mask3,[1000 5000]);
+
+figure(1), imshow(mask3new);
+bw = bwlabel(mask3new);
+bw2 = bwconncomp(mask3new);
+stats3 = regionprops(bw2,'Extrema','Centroid','PixelList');
+
+figure(1), hold on
+%plot(stats3.Extrema(:,1),stats3.Extrema(:,2),'y*','markersize',25);
+%hold on
+plot(stats3.Centroid(:,1),stats3.Centroid(:,2),'b*','markersize',15)
+mask4 = imdilate(mask3new,strel('disk',1));
+boundary = mask4&~mask3;
+statsboundary = regionprops(boundary,'PixelList');
+hold on
+plot(statsboundary.PixelList(:,1),statsboundary.PixelList(:,2),'m*','markersize',15);
+data1 = stats3.Centroid;
+data2 = statsboundary.PixelList;
+%d = ipdm(data2,'Result','array','Subset','NearestNeighbor');
+d = ipdm(data1,data2,'Result','structure','Subset','SmallestFew','Limit',15); % return 10 out of all the min distances
+d.columnindex; %the pixellist ids of the boundary datapoints that are at min distance from the centroid (only the row number is returned
+to_elim = statsboundary.PixelList(d.columnindex,:); % pixel coordinates that lie closest to the centroid and need to be zero to separate the merged cells
+plot(to_elim(:,1),to_elim(:,2),'r*','Markersize',30);hold on
+l = to_elim;
+
+%l = cat(1,round(data1),to_elim);
+l2 = sort(l,2);
+
+xx = (linspace(min(l2(:,1)),max(l2(:,1))));
+yy = (linspace(min(l2(:,2)),max(l2(:,2))));
+plot(xx,yy,'r*');
+
+
+Img = zeros(1024, 1024);
+Img(round(xx),round(yy)) = 1;
+Img = im2bw(Img');
+%Img = imerode(Img,strel('disk',5));
+figure, imshow(Img,[]);
+
+
+MaskFin = mask3new&~Img;
+MaskFin2 = MaskFin + mask3old;
+figure, imshow(MaskFin2);
 
 %%
 % h5 track
@@ -47,28 +92,38 @@ figure,imshow(bw2,[]);
 
 %%
 clear all
-ff = dir('*jan8corr*.mat');
-k = 19;
+ff = dir('*dec31_set_Diff*.mat');%jan8set_newparams
+k = 1;
 outfile = ff(k).name;
 load(outfile);
 %%
-N =70;
+N =100;
 n = uncompressBinaryImg(imgfiles(N).compressNucMask);
 nc = uncompressBinaryImg(imgfilescyto(N).compressNucMask);
 %close all
+bwn = bwlabel(n);
+bwn2 = bwconncomp(bwn);
+a2 = label2rgb(bwn);
+
 bw2 = bwlabel(nc);
 bw3 = bwconncomp(bw2);
 a = label2rgb(bw2);
 
-figure,subplot(1,2,1),imshow(n);
+figure,subplot(1,2,1),imshow(a2);
 hold on
 subplot(1,2,2),imshow(a);
+
+
+% badinds = [bwn2.PixelIdxList] < userParam.areanuclow; %this area should also be a parameter
+% badinds2 = [statsnucw0.Area] < userParam.areanuclow;
+% statsnuc(badinds) = [];
+% statsnucw0(badinds2) = [];
 %%
 %fr_stim = 16;
-ff = dir('*jan8corr*.mat');
+ff = dir('*jan8set_newparams*.mat');
 for k=1:size(ff,1)
     outfile = ff(k).name;
-    outfile = '15_jan8set_optimization.mat';
+%     outfile = '15_jan8set_optimization.mat';
 runTracker(outfile,'newTrackParamAN');
 global userParam;
 userParam.colonygrouping = 120;
@@ -92,9 +147,9 @@ cmap = summer;
 flag = 1;
 
 C = {'b','g','r','m'};
-    ff = dir('*jan8corr*.mat');%jan8set 10ngmlDifferentiated_22hrs % Pluri_42hrs %Outfile
+    ff = dir('*jan8set_newparams*.mat');%jan8set 10ngmlDifferentiated_22hrs % Pluri_42hrs %Outfile
    % for k=1:size(ff,1);
-      k=7;
+      k=16;
         
         outfile = ff(k).name; %nms{k};
         %cellsToDynColonies(outfile);
@@ -130,9 +185,9 @@ p = fr_stim*delta_t/60;
 global userParam;
 userParam.colonygrouping = 120;
 flag = 1;
-resptime =150;% 15 50 36 in frames ( converted to hours later)
+resptime =180;% 15 50 36 in frames ( converted to hours later)
 range = [26 20];
-jumptime = 20;% in frames 5
+jumptime = 10;% in frames 5
 p2 = (resptime+jumptime)*delta_t/60;
 coloniestoanalyze = 5;
 cmap = parula;
@@ -145,7 +200,7 @@ end
 %for jj = 1:coloniestoanalyze
     
     %colSZ = jj;
-    ff = dir('*jan8corr*.mat');%jan8set 10ngmlDifferentiated_22hrs % Pluri_42hrs %Outfile  %dec31_set_Diff
+    ff = dir('*jan8set_newparams*.mat');%jan8set 10ngmlDifferentiated_22hrs % Pluri_42hrs %Outfile  %dec31_set_Diff
     for k=1:size(ff,1)
         outfile = ff(k).name ;
         %cellsToDynColonies(outfile);
@@ -157,8 +212,9 @@ end
             if ~isempty(fr_stim) % && k~=22;
                 
                 %   if colSZ == colonies(j).numOfCells(fr_stim); % how many cells within colony at time fr_stim
-                colSZ = colonies(j).numOfCells(fr_stim-1); % how many cells within colony at time fr_stim
-                colSZaft = colonies(j).numOfCells(fr_stim+jumptime);
+                
+                colSZ = colonies(j).numOfCells(fr_stim-2); % how many cells within colony at time fr_stim
+                %colSZaft = colonies(j).numOfCells(fr_stim+jumptime);
                 
                 if colSZ >0 %&& (colSZ==colSZaft)
                    
@@ -274,7 +330,7 @@ end
 
 %%
 % plot the mean values
-jumptime = [];% in frames
+jumptime = 6;% in frames
 fr_stim = 22;%22 %38 %16
 fldat = [2 3];
 delta_t = 12; % 12% in minutes
@@ -285,7 +341,7 @@ flag = 1;
 test = cell(1,20);
 resptime =150;% 15 50 36 in frames ( converted to hours later)
 p2 = (resptime+jumptime)*delta_t/60;
-coloniestoanalyze = 3;
+coloniestoanalyze = 5;
 cmap = parula;
 C = {'b','g','r','m','m'};
 %test = cell(1,coloniestoanalyze);
