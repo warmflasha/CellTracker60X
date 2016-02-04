@@ -6,7 +6,7 @@ ilastikfile2 = ('/Users/warmflashlab/Desktop/Jan8setIlastikMasks_headless_DiffW1
 
 nuc = h5read(ilastikfile,'/exported_data');
 cyto = h5read(ilastikfile2,'/exported_data');
-  k =51;
+  k =41;% 88,41
     nuc = nuc(2,:,:,k);% for probabilities exported
     nuc = squeeze(nuc);
     mask1 = nuc;
@@ -26,51 +26,74 @@ cyto = h5read(ilastikfile2,'/exported_data');
    figure(2),subplot(1,2,1), imshow(Lnuc);
    figure(2),subplot(1,2,2), imshow(Lcyto&~Lnuc);
 %%
+% function [newmask] = unmergetwonuclei()
 imshow(mask3);
 mask3new = bwareafilt(mask3,[4800 20000]);
 mask3old = bwareafilt(mask3,[1000 5000]);
 
-figure(1), imshow(mask3new);
+figure(1), imshow(mask3new);hold on
 bw = bwlabel(mask3new);
 bw2 = bwconncomp(mask3new);
-stats3 = regionprops(bw2,'Extrema','Centroid','PixelList');
+stats3 = regionprops(bw2,'Extrema','Centroid','PixelList','ConvexHull','Area','ConvexArea','ConvexImage');
+ch = stats3.ConvexHull;
+chi = bwconvhull(mask3new);% image that has the convex hull object filled
+% get the boundary of ch object
+mask_ch = imerode(chi,strel('disk',1));
+boundary_ch = chi&~mask_ch;
+stboundary_ch = regionprops(boundary_ch,'PixelList');
+hold on
+plot(stboundary_ch.PixelList(:,1),stboundary_ch.PixelList(:,2),'c*','markersize',15);
+data_ch = stboundary_ch.PixelList;       % pixel coordinates of the convex hull boundary
 
-figure(1), hold on
-%plot(stats3.Extrema(:,1),stats3.Extrema(:,2),'y*','markersize',25);
-%hold on
+hold on
 plot(stats3.Centroid(:,1),stats3.Centroid(:,2),'b*','markersize',15)
-mask4 = imdilate(mask3new,strel('disk',1));
-boundary = mask4&~mask3;
+mask4 = imerode(mask3new,strel('disk',1));
+boundary = mask3new&~mask4;                              
 statsboundary = regionprops(boundary,'PixelList');
 hold on
 plot(statsboundary.PixelList(:,1),statsboundary.PixelList(:,2),'m*','markersize',15);
-data1 = stats3.Centroid;
-data2 = statsboundary.PixelList;
-%d = ipdm(data2,'Result','array','Subset','NearestNeighbor');
-d = ipdm(data1,data2,'Result','structure','Subset','SmallestFew','Limit',15); % return 10 out of all the min distances
-d.columnindex; %the pixellist ids of the boundary datapoints that are at min distance from the centroid (only the row number is returned
-to_elim = statsboundary.PixelList(d.columnindex,:); % pixel coordinates that lie closest to the centroid and need to be zero to separate the merged cells
-plot(to_elim(:,1),to_elim(:,2),'r*','Markersize',30);hold on
-l = to_elim;
 
-%l = cat(1,round(data1),to_elim);
-l2 = sort(l,2);
-
-xx = (linspace(min(l2(:,1)),max(l2(:,1))));
-yy = (linspace(min(l2(:,2)),max(l2(:,2))));
-plot(xx,yy,'r*');
+data_c = statsboundary.PixelList;        % boundary of the cell merged object
+extra = chi&~mask3new;                   % extra stuff in the convex hull area
+stextra = bwconncomp(extra);
+extrafilt = bwareafilt(extra,[150 2000]);
 
 
-Img = zeros(1024, 1024);
-Img(round(xx),round(yy)) = 1;
-Img = im2bw(Img');
-%Img = imerode(Img,strel('disk',5));
-figure, imshow(Img,[]);
+
+figure, imshow(extrafilt);hold on
+plot(statsboundary.PixelList(:,1),statsboundary.PixelList(:,2),'m*','markersize',15);
+plot(stboundary_ch.PixelList(:,1),stboundary_ch.PixelList(:,2),'c*','markersize',15);
+d2 = ipdm(data_c,data_ch,'result','structure','Subset','Maximum','Limit',2);
+%if size(data_ch,1)>size(data_c,1)
+%for k=1:size(data_ch,1)
+x1 = data_c(100,1);
+y1 = data_c(k,2);
+x2 = data_ch(k,1);
+y2 = data_ch(k,2);
+dpts = sqrt(power((x1-x2),2)+power((y1-y2),2));
+hold on
+plot(x1,y1,'r*','markersize',30);
+plot(x2,y2,'y*','markersize',30);
 
 
-MaskFin = mask3new&~Img;
-MaskFin2 = MaskFin + mask3old;
-figure, imshow(MaskFin2);
+%d3 = [d2.rowindex d2.columnindex d2.distance];
+% pts = max(d3,[],1);
+%  m = max(d3(:,3));
+%  [r,~] = (find(d3(:,3)==m)) ;
+% r(1); %  connect the furthest points in the convex hull
+% r(2);
+% pt11 = ch(r(1),:);%actual pixel coordinates of these points on the hull
+% pt22 = ch(r(2),:);
+% xy = [pt11 pt22]; % assuming only two nuclei are merged
+% x = xy(1:2:end);
+% y = xy(2:2:end);
+
+
+
+
+% MaskFin = mask3new&~Img;
+% MaskFin2 = MaskFin + mask3old;
+% figure, imshow(MaskFin2);
 
 %%
 % h5 track
