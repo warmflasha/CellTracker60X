@@ -6,7 +6,7 @@ ilastikfile2 = ('/Users/warmflashlab/Desktop/Jan8setIlastikMasks_headless_DiffW1
 
 nuc = h5read(ilastikfile,'/exported_data');
 cyto = h5read(ilastikfile2,'/exported_data');
-  k =41;% 88,41
+  k =15;% 41 15
     nuc = nuc(2,:,:,k);% for probabilities exported
     nuc = squeeze(nuc);
     mask1 = nuc;
@@ -37,6 +37,8 @@ bw2 = bwconncomp(mask3new);
 stats3 = regionprops(bw2,'Extrema','Centroid','PixelList','ConvexHull','Area','ConvexArea','ConvexImage');
 ch = stats3.ConvexHull;
 chi = bwconvhull(mask3new);% image that has the convex hull object filled
+data_mc = stats3.PixelList; % dpixels of the merged cell
+
 % get the boundary of ch object
 mask_ch = imerode(chi,strel('disk',1));
 boundary_ch = chi&~mask_ch;
@@ -48,11 +50,15 @@ data_ch = stboundary_ch.PixelList;       % pixel coordinates of the convex hull 
 hold on
 plot(stats3.Centroid(:,1),stats3.Centroid(:,2),'b*','markersize',15)
 mask4 = imerode(mask3new,strel('disk',1));
-boundary = mask3new&~mask4;                              
+mask4_2 = imdilate(mask3new,strel('disk',1));
+boundary = mask3new&~mask4;
+boundary2 = mask4_2&~mask3new;
 statsboundary = regionprops(boundary,'PixelList');
+statsboundary2 = regionprops(boundary2,'PixelList');
 hold on
-plot(statsboundary.PixelList(:,1),statsboundary.PixelList(:,2),'m*','markersize',15);
+plot(statsboundary2.PixelList(:,1),statsboundary2.PixelList(:,2),'m*','markersize',15);
 
+data_c2 = statsboundary2.PixelList;
 data_c = statsboundary.PixelList;        % boundary of the cell merged object
 extra = chi&~mask3new;                   % extra stuff in the convex hull area
 stextra = bwconncomp(extra);
@@ -60,35 +66,145 @@ extrafilt = bwareafilt(extra,[150 2000]);
 
 
 
-figure, imshow(extrafilt);hold on
-plot(statsboundary.PixelList(:,1),statsboundary.PixelList(:,2),'m*','markersize',15);
-plot(stboundary_ch.PixelList(:,1),stboundary_ch.PixelList(:,2),'c*','markersize',15);
-d2 = ipdm(data_c,data_ch,'result','structure','Subset','Maximum','Limit',2);
-%if size(data_ch,1)>size(data_c,1)
-%for k=1:size(data_ch,1)
-x1 = data_c(100,1);
-y1 = data_c(k,2);
-x2 = data_ch(k,1);
-y2 = data_ch(k,2);
-dpts = sqrt(power((x1-x2),2)+power((y1-y2),2));
+figure(3), imshow(extrafilt);hold on
+plot(statsboundary2.PixelList(:,1),statsboundary2.PixelList(:,2),'w*','markersize',15);
+plot(stboundary_ch.PixelList(:,1),stboundary_ch.PixelList(:,2),'w*','markersize',15);
+
+%figure, imshow(extrafilt);hold on
+extra2= imerode(extrafilt,strel('disk',1));
+extra2bndr = extrafilt&~extra2;
+stats_extra = regionprops(extra2bndr,'PixelList','PixelIdxList');% get the boundaries of the two objects
+% add the loop here over the found objects
+data_extra1 = stats_extra(1).PixelList;% each object here will have its own hull boundary and cell boundary
+data_extra2 = stats_extra(2).PixelList;
+
 hold on
-plot(x1,y1,'r*','markersize',30);
-plot(x2,y2,'y*','markersize',30);
+plot(stats_extra(1).PixelList(:,1),stats_extra(1).PixelList(:,2),'r*','markersize',15);
+plot(stats_extra(2).PixelList(:,1),stats_extra(2).PixelList(:,2),'r*','markersize',15);
+
+hull_bnd_only1 = intersect(data_ch,data_extra1,'rows');
+hull_bnd_only2 = intersect(data_ch,data_extra2,'rows');
+
+obj_bnd_only1 = intersect(data_c2,data_extra1,'rows');
+obj_bnd_only2 = intersect(data_c2,data_extra2,'rows');
+
+[badinds1,r1,c1] = intersect(hull_bnd_only1,obj_bnd_only1,'rows');
+[badinds2,r2,c2] = intersect(hull_bnd_only2,obj_bnd_only2,'rows');
+hull_bnd_only1(r1,:)=[];
+obj_bnd_only1(c1,:)=[];
+hull_bnd_only2(r2,:)=[];
+obj_bnd_only2(c2,:)=[];
+
+hold on; plot(obj_bnd_only1(:,1),obj_bnd_only1(:,2),'b*','markersize',15);
+plot(hull_bnd_only1(:,1),hull_bnd_only1(:,2),'y*','markersize',15);
+plot(hull_bnd_only2(:,1),hull_bnd_only2(:,2),'m*','markersize',15);
+plot(hull_bnd_only2(:,1),hull_bnd_only2(:,2),'g*','markersize',15);
 
 
-%d3 = [d2.rowindex d2.columnindex d2.distance];
-% pts = max(d3,[],1);
-%  m = max(d3(:,3));
-%  [r,~] = (find(d3(:,3)==m)) ;
-% r(1); %  connect the furthest points in the convex hull
-% r(2);
-% pt11 = ch(r(1),:);%actual pixel coordinates of these points on the hull
-% pt22 = ch(r(2),:);
-% xy = [pt11 pt22]; % assuming only two nuclei are merged
-% x = xy(1:2:end);
-% y = xy(2:2:end);
+o = size(obj_bnd_only1,1);
+h = size(hull_bnd_only1,1);
+h1 = zeros(o,2);
+o1 = zeros(h,2);
+if o > h
+N = h;
+end
+
+if o < h
+N = o;
+end
+
+maxdist1 = zeros(N,1);
+objrow = zeros(N,1);
+for k=1:h;
+
+x1 = hull_bnd_only1(k,1);
+y1 = hull_bnd_only1(k,2);
+%disp([num2str(y1) ]);
+curr = find(obj_bnd_only1(:,2)== y1);%%%%%%%%%%%%%%%%%%%%%%%%%%
+if ~isempty(curr)
+x2 = obj_bnd_only1(curr(end),1);
+y2 = obj_bnd_only1(curr(end),2);
+%disp([num2str(y2)]);
+maxdist1(k,1) = sqrt(power((x1-x2),2)+power((y1-y2),2));
+objrow(k,1) = curr(end);
+%curr = [];
+end
 
 
+end
+ maxdist1(maxdist1>100) =0;
+ m = max(maxdist1);
+ [r,~] = find(maxdist1 == m);
+
+o2 = size(obj_bnd_only2,1);
+h2 = size(hull_bnd_only2,1);
+o2 = zeros(h,2);
+if o > h
+N2 = h;
+end
+
+if o < h
+N2 = o;
+end
+
+maxdist2 = zeros(N2,1);
+objrow2 = zeros(N2,1);
+for k=1:h2
+  
+x1 = hull_bnd_only2(k,1);%kround(size(hull_bnd_only2,1)/2)
+y1 = hull_bnd_only2(k,2);
+
+curr2 = find(obj_bnd_only2(:,2)== y1);%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if ~isempty(curr2)
+x2 = obj_bnd_only2(curr2(end),1);
+y2 = obj_bnd_only2(curr2(end),2);
+%disp([num2str(y2) ]);
+maxdist2(k) = sqrt(power((x1-x2),2)+power((y1-y2),2));
+objrow2(k,1) = curr2(end);
+end
+end
+ maxdist2(maxdist2>100) =0;
+ m2 = max(maxdist2);
+ [rr,~] = find(maxdist2 == m2);
+
+pt1 = hull_bnd_only1(r(1),:);
+pt2 = obj_bnd_only1(objrow(r(1)),:); 
+pt12 = hull_bnd_only2(rr(1),:);
+pt22 = obj_bnd_only2(objrow2(rr(1)),:);
+
+ hold on
+plot(pt1(:,1),pt1(:,2),'m*','markersize',30);
+plot(pt2(:,1),pt2(:,2),'m*','markersize',30);
+plot(pt12(:,1),pt12(:,2),'m*','markersize',30);
+plot(pt22(:,1),pt22(:,2),'m*','markersize',30);
+
+% pt2, pt22 represent the two pints to be connected and where the cut
+% should be made
+x1 = pt2(1);   
+y1 = pt2(2);   
+x2 = pt22(1);
+y2 = pt22(2);
+a = (y1-y2)/(x1-x2);
+b = 0.5*((y1+y2) -a*(x1+x2));
+
+for i=1:1024
+y(i)=a*i+b;
+end
+
+vect1 = x2:x1;
+ynew=round(a*vect1+b);
+toelim = cat(2,vect1',ynew');
+
+
+figure(1),hold on
+plot(y,'y*');
+plot(toelim(:,1),toelim(:,2),'c*');
+
+toelim2 = intersect(data_mc,toelim,'rows');
+plot(toelim2(:,1),toelim2(:,2),'r*');
+
+
+mask3new(toelim2)=0;
 
 
 % MaskFin = mask3new&~Img;
