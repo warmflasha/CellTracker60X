@@ -9,9 +9,9 @@ userParam.presubNucBackground = 1;
 userParam.backdiskrad = 300;
 userParam.colonygrouping = 120;
 
-userParam.areanuclow = 1500;
+userParam.areanuclow = 1000;
 userParam.areanuchi = 15000;
-userParam.areanuclow2 = 1500;
+userParam.areanuclow2 = 1600;
 
 userParam.probthresh_nuc = 0.95;
 userParam.probthresh_cyto = 0.80;

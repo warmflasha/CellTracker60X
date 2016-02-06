@@ -7,8 +7,8 @@ userParam.L =100 ;% cell diameter is around 80 ,assume that cells move on averag
 userParam.sizeImg = [1024, 1024];
 
 userParam.verboseCellTrackerEDS = 0;
-userParam.minTrajLen = 2;%4
-userParam.mergeGap = 8;%2  4
+userParam.minTrajLen = 4;%4
+userParam.mergeGap = 2;%2  4
 userParam.sclDstCost = [1 2];
 userParam.minlength = 20;
 userParam.mincyto = 0;
