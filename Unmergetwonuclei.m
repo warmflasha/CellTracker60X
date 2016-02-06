@@ -9,6 +9,7 @@ function [MaskFin2] = Unmergetwonuclei(mask3)% input the nuclear mask
 
 % right after ilasic probability thresholding
 %imshow(mask3);
+global userParam;
 mask3new = bwareafilt(mask3,[4820 20000]);% see if there are any merged nuclei
 mask3old = bwareafilt(mask3,[1000 4820 ]);% create the mask without the merged object
 stats = bwconncomp(mask3new);
@@ -17,7 +18,14 @@ if (sum(sum(mask3new)) == 0) || (stats.NumObjects >1); % if there are no merged 
 MaskFin2 = mask3;
 return
 end
-    
+
+mask3test = bwareafilt(mask3,[userParam.areanuclow userParam.areanuchi]); % if there is only one cell in the image, don't split it
+stats2 = bwconncomp(mask3test);
+if (stats2.NumObjects == 1)
+    MaskFin2 = mask3;
+return
+end
+
 %figure(1), imshow(mask3new);hold on
 bw = bwlabel(mask3new);
 bw2 = bwconncomp(mask3new);

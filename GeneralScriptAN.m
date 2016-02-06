@@ -1,12 +1,12 @@
 %%
 %ilastikfile = ('/Users/warmflashlab/Desktop/IlastikMasks_headless_PluriW0/NucMaskPluri_tg56.h5');
-ilastikfile = ('/Users/warmflashlab/Desktop/Jan8livecell_TrainingSetData/{NucMasks2}_{P}.h5'); % 79=81 for position 26; 37-39 , pos 12
-ilastikfile2 = ('/Users/warmflashlab/Desktop/Jan8livecell_TrainingSetData/{CytoMasks2}_{P}.h5');
+ilastikfile = ('/Users/warmflashlab/Desktop/Jan8livecell_TrainingSetData/{NucMasks9}_{P}.h5'); % 79=81 for position 26; 37-39 , pos 12
+ilastikfile2 = ('/Users/warmflashlab/Desktop/Jan8livecell_TrainingSetData/{CytoMasks9}_{P}.h5');
 %ilstikfile3 = ('/Users/warmflashlab/Desktop/Jan8livecell_TrainingSetData/{NucMasks2}_{P}.h5');
 
 nuc = h5read(ilastikfile,'/exported_data');
 cyto = h5read(ilastikfile2,'/exported_data');
-  k =17;% 41 15,14,16; ,42 % 43,44 , 52,53,54- no
+  k =20;% 41 15,14,16; ,42 % 43,44 , 52,53,54- no
     nuc = nuc(2,:,:,k);% for probabilities exported
     nuc = squeeze(nuc);
     mask1 = nuc;
@@ -58,7 +58,7 @@ outfile = ([ num2str(pos) '_' num2str(outfile)]);
 
 %%
  
-outfile = '12_test.mat';
+outfile = '9_jan8set_test.mat';
 runTracker(outfile,'newTrackParamAN');
 global userParam;
 userParam.colonygrouping = 120;
@@ -87,7 +87,7 @@ figure,imshow(bw2,[]);
 
 %%
 % plot nuc and cyto masks, colorcoded for label matrix elements
-N =9;
+N =11;
 n =uncompressBinaryImg(imgfiles(N).compressNucMask);
 nc = uncompressBinaryImg(imgfilescyto(N).compressNucMask);
 %close all
@@ -144,7 +144,7 @@ C = {'r','b','g','m'};
         
         %outfile = ff(k).name; %nms{k};
         %cellsToDynColonies(outfile);
-        outfile = ('12_test.mat');
+        outfile = ('12_jan8set_test.mat');
         load(outfile,'colonies','peaks');
         tps = length(peaks);
         numcol = size(colonies,2); % how many colonies were grouped within the frame
@@ -159,7 +159,7 @@ C = {'r','b','g','m'};
             if flag ==1
                 traces{j} = colonies(j).NucSmadRatio(:);
                 traces{j}((traces{j} == 0)) = nan;
-                figure(j), plot(traces{j},'-*','color',C{j});% cmap(j,:) 'r' traces
+                figure(j+1), plot(traces{j},'-*','color',C{j});% cmap(j,:) 'r' traces
                 ylim([0 2.5]);
                 ylabel('mean Nuc/Cyto smad4  ');
                 xlabel('frames');
