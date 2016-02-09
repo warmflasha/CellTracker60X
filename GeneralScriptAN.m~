@@ -6,7 +6,7 @@ ilastikfile2 = ( '/Users/warmflashlab/Desktop/JANYARY_8_DATA_ilasik/Jan8IlastikM
 
 nuc = h5read(ilastikfile,'/exported_data');
 cyto = h5read(ilastikfile2,'/exported_data');
-  k =66;% 41 15,14,16; ,42 % 43,44 , 52,53,54- no
+  k =1;% 41 15,14,16; ,42 % 43,44 , 52,53,54- no
     nuc = nuc(2,:,:,k);% for probabilities exported
     nuc = squeeze(nuc);
     mask1 = nuc;
@@ -51,7 +51,7 @@ positions = length(nums)/timegroups;
  
 positions = 0:(positions-1);% vector with position numbers
    
-    pos = 12;
+    pos = 17;
     outfile = 'jan8set_test.mat';% basic name for all positions
 peaks = nucCytoIlastik2peaksLoop(ilastikDirec1,ilastikDirec2,imgDirec1,imgDirec2,zplane,pos,chan,paramfile,outfile);% tsted
 outfile = ([ num2str(pos) '_' num2str(outfile)]);
@@ -87,7 +87,7 @@ figure,imshow(bw2,[]);
 
 %%
 % plot nuc and cyto masks, colorcoded for label matrix elements
-N =66;
+N =90;
 n =uncompressBinaryImg(imgfiles(N).compressNucMask);
 nc = uncompressBinaryImg(imgfilescyto(N).compressNucMask);
 %close all
@@ -144,7 +144,7 @@ C = {'r','b','g','m'};
         
         %outfile = ff(k).name; %nms{k};
         %cellsToDynColonies(outfile);
-        outfile = ('3_jan8set_test.mat');
+        outfile = ('17_jan8set_test.mat');
         load(outfile,'colonies','peaks');
         tps = length(peaks);
         numcol = size(colonies,2); % how many colonies were grouped within the frame

@@ -31,10 +31,12 @@ end
 Lnuc = imfill(mask1 > userParam.probthresh_nuc,'holes');% for probabilities exported
 
 Lnuc =  bwareafilt(Lnuc',[userParam.areanuclow userParam.areanuchi]);
+if userParam.flag == 1
 MaskFin2 = Unmergetwonuclei(Lnuc);  % see if there are merged nuclei ans if so, split them 
 Lnuc = im2bw(MaskFin2);                    % reassign the corrected (unmerged cells) mask to the Lnuc
-
 Lnuc =  bwareafilt(Lnuc,[userParam.areanuclow userParam.areanuchi]); % filter again, in case tiny portions of the nucleus were cutt off ( need to fix this possibility)
+end
+
 %cytoplasmic mask
 %LcytoIl = mask2 < 1;  
 LcytoIl = im2bw(mask2,userParam.probthresh_cyto);% for probabilities exported

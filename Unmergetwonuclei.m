@@ -10,8 +10,8 @@ function [MaskFin2] = Unmergetwonuclei(mask3)% input the nuclear mask
 % right after ilasic probability thresholding
 %imshow(mask3);
 global userParam;
-mask3new = bwareafilt(mask3,[4820 20000]);% see if there are any merged nuclei
-mask3old = bwareafilt(mask3,[1000 4820 ]);% create the mask without the merged object
+mask3new = bwareafilt(mask3,[userParam.areanuclow_unmerge 20000]);% see if there are any merged nuclei
+mask3old = bwareafilt(mask3,[1000 userParam.areanuclow_unmerge]);% create the mask without the merged object
 stats = bwconncomp(mask3new);
 
 if (sum(sum(mask3new)) == 0) || (stats.NumObjects >1); % if there are no merged objects, return the same nuc mask as was input
@@ -61,7 +61,7 @@ extra = chi&~mask3new;                      % extra stuff = difference between t
 extrafilt = bwareafilt(extra,[20 2000]);   % 150 filter out small intersections
 stextra = bwconncomp(extrafilt);
 if stextra.NumObjects > 2
-    extrafilt = bwareafilt(extra,[120 2000]);
+    extrafilt = bwareafilt(extra,[80 2000]);
 end
 if stextra.NumObjects == 1
     extrafilt = bwareafilt(extra,[30 2000]); 
