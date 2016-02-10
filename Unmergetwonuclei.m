@@ -61,7 +61,7 @@ extra = chi&~mask3new;                      % extra stuff = difference between t
 extrafilt = bwareafilt(extra,[20 2000]);   % 150 filter out small intersections
 stextra = bwconncomp(extrafilt);
 if stextra.NumObjects > 2
-    extrafilt = bwareafilt(extra,[80 2000]);
+    extrafilt = bwareafilt(extra,[105 2000]);
 end
 if stextra.NumObjects == 1
     extrafilt = bwareafilt(extra,[30 2000]); 
@@ -75,7 +75,7 @@ extra2= imerode(extrafilt,strel('disk',1));                                   % 
 extra2bndr = extrafilt&~extra2;
 stats_extra = regionprops(extra2bndr,'PixelList','PixelIdxList');             % get the boundaries of the two objects
 % add the loop here over the found objects
-%assume that after filtering only two objects are left
+%assume that after filtering only two objects are left !! VERY %WRONG
  if size(stats_extra,1)>2 || size(stats_extra,1)< 2
      MaskFin2 = mask3;
 return
