@@ -61,7 +61,7 @@ extra = chi&~mask3new;                      % extra stuff = difference between t
 extrafilt = bwareafilt(extra,[20 2000]);   % 150 filter out small intersections
 stextra = bwconncomp(extrafilt);
 if stextra.NumObjects > 2
-    extrafilt = bwareafilt(extra,[105 2000]);
+    extrafilt = bwareafilt(extra,[120 2000]);
 end
 if stextra.NumObjects == 1
     extrafilt = bwareafilt(extra,[30 2000]); 

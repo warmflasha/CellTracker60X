@@ -8,6 +8,7 @@ function [pnuc, inuc] = readmaskfiles(maskno, segfile, rawfile, dirinfo, dirinfo
         pnuc(:,:,m) = squeeze(file(1,:,:));
         pnuc(:,:,m) = pnuc(:,:,m)';
         m = m+1;
+        
     end
     
     

@@ -1,4 +1,4 @@
-function peaks = runmaskone(segfiledir, rawfiledir, nzslices, colonyno, objno)
+function peaks = runmaskoneANdata(segfiledir, rawfiledir, nzslices, colonyno, objno)
 %%
 % segfiledir: directory path of ilastik 2d segmentation probability density maps
 % rawfiledir: directory path of the nuclear channel raw images (the same
@@ -13,7 +13,7 @@ function peaks = runmaskone(segfiledir, rawfiledir, nzslices, colonyno, objno)
 maskno = start + (colonyno-1)*nzslices; % ilastik mask
 imageno = start1 + (colonyno-1)*nzslices ; %nuclear channel raw image
 
-[pnuc, inuc] = readmaskfiles(maskno, segfiledir, rawfiledir, dirinfo, dirinfo1, nzslices, imageno);
+[pnuc, inuc] = readmaskfiles1(maskno, segfiledir, rawfiledir, dirinfo, dirinfo1, nzslices, imageno);
 %%
 logfilter = 10;
 bthreshfilter = 0.25;
