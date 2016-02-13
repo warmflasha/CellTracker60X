@@ -16,7 +16,7 @@
     
     % recalculating zstart
     
-    for z = zstart:zend
+    for z = zrange(1):zrange(end)
         objects = bwconncomp(smasks(:,:,z));
         if(objects.NumObjects > 3);
             zstart = z+1;
@@ -26,7 +26,7 @@
     
     
     
-    for z = zstart:zend
+    for z = zrange(1):zrange(end)
         
         CC{z} = bwconncomp(smasks(:,:,z));
         stats{z} = regionprops(CC{z}, 'Centroid', 'Area');
@@ -34,24 +34,24 @@
     
     
     
-    nSlices = zend-zstart+1;
-    nuclein1 = nan([CC{zstart}.NumObjects nSlices]);
+    nSlices = zrange(end)-zrange(1)+1;
+    nuclein1 = nan([CC{zrange(1)}.NumObjects nSlices]);
     dmax = matchdistance;
     
     % master PixelIdxList
-    PILsn = CC{zstart}.PixelIdxList;
+    PILsn = CC{zrange(1)}.PixelIdxList;
     
     % keep track of which slice added an object to the PILs
-    PILsSourcen = ones([numel(PILsn) 1])*zstart;
+    PILsSourcen = ones([numel(PILsn) 1])*zrange(1);
     
-    for i = 1:CC{zstart}.NumObjects
+    for i = 1:CC{zrange(1)}.NumObjects
         nuclein1(i,1) = i;
     end
   %%  
     % Irrespective of the interval check size,  the logic for matching cells of two frames
     % will be the same.
     
-    for z = zstart+1
+    for z = zrange(1)+1
         clear CM1 CM2 D
         
         CM1 = cat(1,stats{z-1}.Centroid);
@@ -66,16 +66,16 @@
         
         % if matched add to current track
         for j = 1:sum(matched)
-            trackIdx = find(nuclein1(:,z-zstart) == row(j));
-            nuclein1(trackIdx,z-zstart+1) = col(j);
+            trackIdx = find(nuclein1(:,z-zrange(1)) == row(j));
+            nuclein1(trackIdx,z-zrange(1)+1) = col(j);
             PILsn{trackIdx} = cat(1,PILsn{trackIdx}(:), CC{z}.PixelIdxList{col(j)}(:));
         end
         
         % if not matched make new track
         for j = 1:CC{z}.NumObjects
             if ~matched(j)
-                newtrack = nan([1 zend-zstart+1]);
-                newtrack(z-zstart+1) = j;
+                newtrack = nan([1 zrange(end)-zrange(1)+1]);
+                newtrack(z-zrange(1)+1) = j;
                 nuclein1 = cat(1,nuclein1, newtrack);
                 PILsn = [PILsn, CC{z}.PixelIdxList(j)];
                 PILsSourcen = cat(1, PILsSourcen, z);
@@ -83,15 +83,15 @@
         end
     end
    %%
-    for z = zstart+2:zend
+    for z = zrange(1)+2:zrange(end)
         
-        if(z< zstart+n)
-            frchksize = z-zstart;
+        if(z<zrange(1)+n)
+            frchksize = z-zrange(1);
             framestart = 1;
             
         else
             frchksize = n;
-            framestart = z-n-zstart+1;
+            framestart = z-n-zrange(1)+1;
         end
         
         
@@ -111,7 +111,7 @@
         end
         
         frn = framestart;
-        frnlim = z-zstart+1; 
+        frnlim = z-zrange(1)+1; 
         mfrn = 1;
         
 
@@ -131,7 +131,7 @@
                     zsearch = frn;
                     clear trackIdx
                     trackIdx = find(nuclein1(:,zsearch) == row{mfrn}(olabel,1));
-                    nuclein1(trackIdx, z-zstart+1) = i1;
+                    nuclein1(trackIdx, z-zrange(1)+1) = i1;
                     PILsn{trackIdx} = cat(1,PILsn{trackIdx}(:), CC{z}.PixelIdxList{i1}(:));
                 end
             end
@@ -163,7 +163,7 @@
                     clear trackIdx;
                     trackIdx = size(nuclein1, 1)+1;
                     nuclein1(trackIdx, 1:nSlices) = NaN;
-                    nuclein1(trackIdx, z-zstart+1) = i1;
+                    nuclein1(trackIdx, z-zrange(1)+1) = i1;
                     PILsn = [PILsn, CC{z}.PixelIdxList(i1)];
                     PILsSourcen = cat(1, PILsSourcen, z);
                 end
@@ -176,7 +176,7 @@
     end
     
    %% 
-    masterCCn = CC{zstart};
+    masterCCn = CC{zrange(1)};
     masterCCn.NumObjects = numel(PILsn);
     masterCCn.PixelIdxList = PILsn;
-    zrange = [zstart:zend];
+    zrange = [zrange(1):zrange(end)];

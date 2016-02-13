@@ -28,15 +28,10 @@ pmasks = primaryfilter(pnuc,userParam.logfilter, userParam.bthreshfilter, userPa
 
 % plot the distinct nuclei
 lb = labelmatrix(masterCCn);
+bw = regionprops(lb,'Centroid','PizelIdxList');
+
 a = label2rgb(lb);
 figure, imshow(a);hold on
-bw = regionprops(lb,'Centroid','PixelIdxList');
-
-Inew = zeros(1024,1024);
-Inew(bw(7).PixelIdxList) = 1;
-Inew(bw(8).PixelIdxList) = 1;
-
-figure, imshow(Inew);
 N = size(stats,2);
 color = colorcube;
 C = {'r','g','b','k','y'};

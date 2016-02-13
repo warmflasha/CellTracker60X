@@ -9,11 +9,11 @@ userParam.presubNucBackground = 1;
 userParam.backdiskrad = 300;
 userParam.colonygrouping = 130;
 
-userParam.areanuclow = 1200;
+userParam.areanuclow = 1000;
 userParam.areanuchi = 15000;
-userParam.areanuclow2 = 1200;
+userParam.areanuclow2 = 1000;
 
-userParam.flag = 1;
+userParam.flag = 0;
 userParam.areanuclow_unmerge = 6500;%4820;
 
 userParam.probthresh_nuc = 0.98;
