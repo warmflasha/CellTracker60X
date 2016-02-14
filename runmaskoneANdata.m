@@ -27,16 +27,23 @@ pmasks = primaryfilter(pnuc,userParam.logfilter, userParam.bthreshfilter, userPa
 
 
 % plot the distinct nuclei
+
 lb = labelmatrix(masterCCn);
 a = label2rgb(lb);
 figure, imshow(a);hold on
-bw = regionprops(lb,'Centroid','PixelIdxList');
+bw = regionprops(lb,'Centroid','PixelIdxList','Area');
+badinds = [bw.Area]< userParam.area2filter ;
+bw(badinds) = [];
+
 
 Inew = zeros(1024,1024);
-Inew(bw(7).PixelIdxList) = 1;
-Inew(bw(8).PixelIdxList) = 1;
-
+for j=1:size(bw,1)
+Inew(bw(j).PixelIdxList) = 1;
 figure, imshow(Inew);
+Inew = zeros(1024,1024);
+end
+%bw has correctly 7 cells, now need to put those objects into a labeled matrix again
+
 N = size(stats,2);
 color = colorcube;
 C = {'r','g','b','k','y'};

@@ -11,7 +11,7 @@ userParam.area1filter = 100;
 
 userParam.minstartobj = 1;
 userParam.minsolidity = [0.9, 0.8];
-userParam.area2filter = 700;
+userParam.area2filter = 1000;
 
 userParam.zmatch = 5;
 userParam.matchdistance = 25;
