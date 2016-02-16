@@ -5,6 +5,17 @@ function peaks = runmaskoneANdata(ilastikdir,ilastikdircyto, imagedir,pos,tpt, t
 
 
 [pnuc, inuc] = readmaskfiles1(ilastikdir,imagedir, pos,tpt, timegroup,chan(1));%
+
+for ii=1:size(inuc,3)
+    img_now = inuc(:,:,ii);
+    if ii==1
+        max_img=img_now;
+    else
+        max_img=max(img_now,max_img);
+    end
+end
+max_inuc = max_img;
+
 %%[pnuc, inuc] = readmaskfiles1(maskno, segfiledir, rawfiledir, dirinfo, dirinfo1, nzslices, imageno);
 %%
 % 
@@ -17,84 +28,77 @@ pmasks = primaryfilter(pnuc,userParam.logfilter, userParam.bthreshfilter, userPa
 [zrange, smasks] = secondaryfilter(pmasks, userParam.minstartobj, userParam.minsolidity, userParam.diskfilter, userParam.area2filter);
 %%
 
-[PILsn,PILsSourcen, masterCCn, stats, nucleilist, zrange] = traceobjectsz(smasks, userParam.matchdistance, zrange, userParam.zmatch);
+[PILsn,PILsSourcen, masterCCn, stats, nucleilist, zrange,CC] = traceobjectsz(smasks, userParam.matchdistance, zrange, userParam.zmatch);
+
+
 %%
 
 [nucleilist, masterCC] =  overlapfilter(PILsn, PILsSourcen, masterCCn, nucleilist, inuc, zrange, userParam.overlapthresh);
-%%
 
+
+%%
+[a,b]=3Dlblmask(CC,nucleilist);
+
+
+
+%%
 
 
 
 % plot the distinct nuclei
-
-lb = labelmatrix(masterCCn);
+lb = labelmatrix(masterCC);
 a = label2rgb(lb);
 figure, imshow(a);hold on
 bw = regionprops(lb,'Centroid','PixelIdxList','Area');
+bw1 = regionprops(masterCC,'Centroid','PixelIdxList','Area');
 badinds = [bw.Area]< userParam.area2filter ;
 bw(badinds) = [];
 
+PILsSourcen;   % final planes where all the nuclei are 
 
 Inew = zeros(1024,1024);
 for j=1:size(bw,1)
-Inew(bw(j).PixelIdxList) = 1;
-figure, imshow(Inew);
-Inew = zeros(1024,1024);
+Inew(bw(j).PixelIdxList) = j;  % make labeled objects from the final PixelIdxList
+smasknew(:,:,j) = Inew;
 end
-%bw has correctly 7 cells, now need to put those objects into a labeled matrix again
+figure, imshow(Inew,[]);
 
-N = size(stats,2);
-color = colorcube;
-C = {'r','g','b','k','y'};
-for j=1:N
-    if ~isempty(stats{j})
-    s = stats{j};    
-    xy = [s.Centroid];
-    x = xy(1:2:end);
-    y =  xy(2:2:end);
-    plot(x,y,'*','color',C{j});%color(j,:)
-    end
-end
+bw1 = regionprops(Inew,'Area','Centroid','PixelIdxList');
+xy = [bw1.Centroid];
+x = xy(1:2:end);
+y =  xy(2:2:end);
+hold on; plot(x,y,'*');%color(j,:)
+
 %%
-%get the zplane numbers and coordinates of the unique nuclei 
-figure(5), hold on
-for x = 1:size(zrange,2)
-    nucinzx = nucleicenter(round(nucleicenter(:,3))==zrange(x),1:3);
-    
-    if ~ isempty(nucinzx)
-        plot(nucinzx(:,1),nucinzx(:,2),'*','color',C{x},'markersize',20);hold on%color(j,:)
-    end
-    
-end
-tmp = round(nucleicenter(:,3));
-nucleicenter(:,3) = tmp;
-nucleicenter_fin =nucleicenter;
-
-goodslices =  unique(nucleicenter_fin(:,3));
-size(goodslices,1);
-% once the good planes are determined, can get the corresponding
-% cytoplasmic masks and raw images
-
 %ilastikdircyto = ('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/3Dsegmentation_tracking_TrainingSet/masks_zcyto');
 [pcyto, icyto] = readmaskfiles1(ilastikdircyto,imagedir, pos,tpt, timegroup,chan(2));%
+for ii=1:size(icyto,3)
+    img_now = icyto(:,:,ii);
+    if ii==1
+        max_img=img_now;
+    else
+        max_img=max(img_now,max_img);
+    end
+end
+max_icyto = max_img;
 
 %%
 % run the peaks separately on those slices (nuc and cyto) and combine into
 % one peaks
 paramfile = 'setUserParamLiveImagingAN';
-zdata = cell(1,size(goodslices,1));
-n = cell(1,size(goodslices,1));
-c = cell(1,size(goodslices,1));
-for s=1:size(goodslices,1);
-mask1 = pnuc(:,:,goodslices(s))';
-mask2 = pcyto(:,:,goodslices(s))';
-img_nuc = inuc(:,:,goodslices(s))';
-img_cyto = icyto(:,:,goodslices(s))';
+zdata = cell(1,size(zrange,1));
+n = cell(1,size(zrange,1));
+c = cell(1,size(zrange,1));
+for s=1:size(zrange,2);
+%mask1 = pnuc(:,:,goodslices(s))';
+mask1 = Inew'; % this is the labeled object already thresholded and processed
+mask2 = pcyto(:,:,zrange(s))';  %sum(pcyto,3)' these need to be processed as usual
+img_nuc = max_inuc;%inuc(:,:,goodslices(s));%;
+img_cyto = max_icyto;%icyto(:,:,goodslices(s));%
 
 
 
-[datacell,Lnuc,Lcytofin] = nucCytoIlastik2peaks(mask1,mask2,img_nuc,img_cyto,paramfile);
+[datacell,Lnuc,Lcytofin] = nucCytoIlastik2peaks_3Dsegm(mask1,mask2,img_nuc,img_cyto,paramfile);
 zdata{s} = datacell;
 n{s} = Lnuc;
 c{s} = Lcytofin;

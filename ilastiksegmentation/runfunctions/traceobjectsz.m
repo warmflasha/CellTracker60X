@@ -1,5 +1,5 @@
   %%
-  function [PILsn, PILsSourcen, masterCCn, stats, nuclein1, zrange] = traceobjectsz(smasks, matchdistance, zrange, zmatch)
+  function [PILsn, PILsSourcen, masterCCn, stats, nuclein1, zrange,CC] = traceobjectsz(smasks, matchdistance, zrange, zmatch)
     
     % tracking objects
     %very simple matching
@@ -26,7 +26,7 @@
     
     
     
-    for z = zrange(1):zrange(end)
+    for z = zrange(1):zrange(end)               %%%%%%%%%
         
         CC{z} = bwconncomp(smasks(:,:,z));
         stats{z} = regionprops(CC{z}, 'Centroid', 'Area');
