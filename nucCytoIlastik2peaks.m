@@ -50,7 +50,7 @@ if sum(sum(Lnuc)) == 0
     Lcytofin =zeros(size(Lnuc));
     return;
 end
-% feed here the coordinates of the nuclei found using 3D segmentation
+% 
 stats = regionprops(Lnuc,'Centroid','PixelIdxList');
 xy = [stats.Centroid];
 xx = xy(1:2:end);

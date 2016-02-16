@@ -55,7 +55,8 @@ xy = [stats.Centroid];
 xx = xy(1:2:end);
 yy=xy(2:2:end);
 
-vImg = mkVoronoiImageFromPts([xx' yy'],[1024 1024]);
+%vImg = mkVoronoiImageFromPts([xx' yy'],[1024 1024]);
+vImg = 
 
 %raw images
 I2 = img_cyto;

@@ -33,24 +33,6 @@ end
   
  %%
  % get the mean intensitied from regionprops
- % newmask = the 3dlabel mask
- stats3d = regionprops(newmask,inuc(:,:,1:4),'MeanIntensity','Centroid');
- xyz_fin = cat(1,stats3d.Centroid);
-% stats = regionprops(Lnuc,'Centroid','PixelIdxList');   % from 2D code
-% xy = [stats.Centroid];
-% xx = xy(1:2:end);
-% yy=xy(2:2:end);
-
-%vImg = mkVoronoiImageFromPts([xx' yy'],[1024 1024]);
-%[V,C] = voronoin(X)
-[V,C] = voronoin(xyz_fin);
-K = convhulln(V);
-trisurf(K,V(2:end,1),V(2:end,2),V(2:end,3));
-
-
-%cc = bwconncomp(LcytoIl+Lnuc & ~vImg);    % from 2D code
- 
- 
  
  
  
