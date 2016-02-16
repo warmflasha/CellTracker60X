@@ -90,8 +90,10 @@ end
    Inew(ref(i).PixelIdxList)=lbl(i);
    maskznew(:,:,maxobjN(1)) = Inew;
    lbl(i)
-   %Inew = zeros(1024,1024);
+   Inew = zeros(1024,1024);
+   end
    
+   for i = 1:size(match,1)
    inotherplane = nonzeros(match{i}(:,1));
    pxlinotherplane = nonzeros(match{i}(:,2));
    
