@@ -1,27 +1,33 @@
-function peaks = runmaskoneANdata(ilastikdir,ilastikdircyto, imagedir,pos,tpt, timegroup,chan,paramfile)
+function peaks = runmaskoneANcyto(ilastikdir,ilastikdircyto, imagedir,pos,tpt, timegroup,chan,paramfile)
 %%
 % ilastikdir: directory path of ilastik 2d segmentation probability density maps
 % imagedir: directory path of the nuclear channel raw images 
 
-[pnuc, inuc] = readmaskfiles1(ilastikdir,imagedir, pos,tpt, timegroup,chan(1));%
+[pcyto, icyto] = readmaskfiles1(ilastikdircyto,imagedir, pos,tpt, timegroup,chan(2));%
 
 %%[pnuc, inuc] = readmaskfiles1(maskno, segfiledir, rawfiledir, dirinfo, dirinfo1, nzslices, imageno);
 %%
 % 
 setUserParam3DsegmentationAN;
 global userParam;
+for k=1:5
+pmaskscyto(:,:,k) = im2bw(pcyto(:,:,k),userParam.probthresh_cyto);% for probabilities exported
+pmaskscyto(:,:,k) =  bwareafilt(pmaskscyto(:,:,k),[2000 20000]);
+end
 
-pmasks = primaryfilter(pnuc,userParam.logfilter, userParam.bthreshfilter, userParam.diskfilter, userParam.area1filter);
-
-%%
-[zrange, smasks] = secondaryfilter(pmasks, userParam.minstartobj, userParam.minsolidity, userParam.diskfilter, userParam.area2filter);
-%%
-
-[PILsn,PILsSourcen, masterCCn, stats, nucleilist, zrange,CC] = traceobjectsz(smasks, userParam.matchdistance, zrange, userParam.zmatch);
 
 %%
-% [maskz] = 3Dlblmask(CC,nucleilist);
+% use the masks from nuclei analysis (pnuc/pmasks) to get the 3D cyto mask
+% ( cut out the nuclei )
 
+%[zrange, smasks] = secondaryfilter(pmasks, userParam.minstartobj, userParam.minsolidity, userParam.diskfilter, userParam.area2filter);
+
+%%
+%for cyto
+[PILsn,PILsSourcen, masterCCn, stats, cytolist, zrange,CC] = traceobjectsz(pmaskscyto, userParam.matchdistance, zrange, userParam.zmatch);
+
+%%
+[maskz] = 3Dlblmask(CC,cytolist);
 %%
 
 [nucleilist, masterCC] =  overlapfilter(PILsn, PILsSourcen, masterCCn, nucleilist, inuc, zrange, userParam.overlapthresh);
@@ -52,6 +58,8 @@ x = xy(1:2:end);
 y =  xy(2:2:end);
 hold on; plot(x,y,'*');%color(j,:)
 
-
+%%
+%ilastikdircyto = ('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/3Dsegmentation_tracking_TrainingSet/masks_zcyto');
+[pcyto, icyto] = readmaskfiles1(ilastikdircyto,imagedir, pos,tpt, timegroup,chan(2));%
 
 

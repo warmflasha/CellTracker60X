@@ -73,23 +73,22 @@ if V(1,1) == Inf                                                                
 end
 vertcell = cell(1,size(xyz_fin,1));
 for k=1:size(xyz_fin,1)                                                           %step 2
-nuc1 = xyz_fin(k,1:2); 
+nuc1 = xyz_fin(k,:) 
 
-d = ipdm(nuc1,V(:,1:2),'result','structure','subset','SmallestFew','limit',8)  ;        %step 3,4
+d = ipdm(nuc1,V,'result','structure','subset','SmallestFew','limit',8);          %step 3,4
 % in = inhull(testpts,xyz,tess,tol)
-d.columnindex; %row index of the vertex coordinate
+%d.columnindex; %row index of the vertex coordinate
 d.distance;
-xyz = V(d.columnindex,1:2);   %actual vertex coordinates of the closest N points
-[K,Vol] = convhull(xyz);    % each row of K is a triangle defined in terms of the point indices.      % step 5,6
+xyz = V(d.columnindex,:);   %actual vertex coordinates of the closest N points
+[K,Vol] = convhulln(xyz);    % each row of K is a triangle defined in terms of the point indices.      % step 5,6
 % in(k) = inhull(nuc1,xyz);                                                                             % alternative step 5,6
 % if in(k) == 1                       % get the hull coordinates
 % vert{k} = xyz;
 % end
 end
-%figure,trisurf(K,xyz(:,1),xyz(:,2),xyz(:,3));
 
-figure,plot(xyz(K,1),xyz(K,2),'r*',xyz(:,1),xyz(:,2),'b-');
-hold on
-plot(nuc1(1),nuc1(2),'m*');
+figure,trisurf(K,xyz(:,1),xyz(:,2),xyz(:,3));
+
+
 
 
