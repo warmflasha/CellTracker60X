@@ -12,14 +12,17 @@ setUserParam3DsegmentationAN;
 global userParam;
 for k=1:5
 pmaskscyto(:,:,k) = im2bw(pcyto(:,:,k),userParam.probthresh_cyto);% for probabilities exported
-pmaskscyto(:,:,k) =  bwareafilt(pmaskscyto(:,:,k),[2000 20000]);
+%pmaskscyto(:,:,k) =  bwareafilt(pmaskscyto(:,:,k),[1000 50000]);
 end
 
 
 %%
 % use the masks from nuclei analysis (pnuc/pmasks) to get the 3D cyto mask
 % ( cut out the nuclei )
-
+for k=1:5
+pmasks(:,:,k) = bwareafilt(pmasks(:,:,k),[1000 20000]);
+cyto_fin(:,:,k) = pmaskscyto(:,:,k)&~pmasks(:,:,k);
+end
 %[zrange, smasks] = secondaryfilter(pmasks, userParam.minstartobj, userParam.minsolidity, userParam.diskfilter, userParam.area2filter);
 
 %%
