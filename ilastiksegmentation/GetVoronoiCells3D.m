@@ -4,45 +4,60 @@ function [maskzcyto] = GetVoronoiCells3D(maskz,inuc,icyto)
  stats3d = regionprops(newmask,inuc(:,:,1:4),'Centroid');
 % xyz_fin = cat(1,stats3d.Centroid);
 
-
+clear nucmaskall
+clear dist
+clear dist_all
 % mask1test = (newmask(:,:,1)==2);
 % dist = bwdist(mask1test);
 nelem = max(max(max(newmask))); %number of elements in all masks
 nelemvect = 1:nelem;
-j=5;
-%for j=1:nelem 
-for ii=1:size(newmask,3)
-    nucmaskall(:,:,ii) = newmask(:,:,ii) == nelemvect(j);
+min_ind = cell(1,size(newmask,3));
+Inew = zeros(1024,1024,size(newmask,3));
+%j=2;
+range =cell(1,nelem);
+ints =cell(1,nelem);
+
+% 
+for ii=1%:size(newmask,3)
+    nucmaskall = newmask(:,:,ii);
+    for j=1:nelem
+        nuc_submask(:,:,j) = nucmaskall==nelemvect(j);
+        if sum(sum(nuc_submask(:,:,j)))>0
+            nuc_submask1(:,:,j)=nuc_submask(:,:,j);
+        end                                             %at this point have the separate nuclei masks with neighboring cells, from which to take bwdist
+    end
 end
-  
-for ii=1:size(newmask,3)
-    %if sum(sum(sum(nucmaskall(:,:,ii))))>0
-  %  dist(:,:,ii) = nucmaskall;
-    dist(:,:,:,ii) = bwdist(nucmaskall);
-    %end
+ 
+for k=1:size(nuc_submask1,3)
+    dist(:,:,:,k) = bwdist(nuc_submask1(:,:,k));%
 end
 
-[~,min_ind] = min(dist,[],3); % min_ind should become the label for the area for element with j = 3;
-%end
-
-
+ dist_all = cat(3,dist);
+ 
+ [~,min_ind] = min(dist_all,[],3);% dist transform number (~ row ) with the pixels having min distance to the nonzero object
+ 
+ 
+ 
 
 %%
+for k=1:size(nuc_submask1,3)
+    figure, imshow(nuc_submask1(:,:,k),[]);
+end
+%%
 
+for k=1:size(nuc_submask1,3)
+    figure, imshow(dist_all(:,:,k),[]);
+end
+
+%%
 for k=1:4
     figure, imshow(nucmaskall(:,:,k),[]);
 end
-%%
-for k=1:4
-    figure, imshow(dist(:,:,k),[]);
-end
-
 
 %%
 for k=1:4
-    figure, imshow(min_ind(:,:,k),[]);
+    figure, imshow(Inew(:,:,k),[]);
 end
-
 
 %%
 

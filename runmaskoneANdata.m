@@ -3,6 +3,15 @@ function peaks = runmaskoneANdata(ilastikdir,ilastikdircyto, imagedir,pos,tpt, t
 % ilastikdir: directory path of ilastik 2d segmentation probability density maps
 % imagedir: directory path of the nuclear channel raw images 
 
+ilastikdircyto = ('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/3Dsegmentation_tracking_TrainingSet/masks_zcyto');
+ilastikdir = ('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/3Dsegmentation_tracking_TrainingSet/Masks_z2');
+imagedir = ('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/3Dsegmentation_tracking_TrainingSet/rawimages_');
+pos = 23;
+tpt =40;
+timegroup = 1;
+chan = [1 2];
+%%
+
 [pnuc, inuc] = readmaskfiles1(ilastikdir,imagedir, pos,tpt, timegroup,chan(1));%
 
 %%[pnuc, inuc] = readmaskfiles1(maskno, segfiledir, rawfiledir, dirinfo, dirinfo1, nzslices, imageno);
