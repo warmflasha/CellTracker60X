@@ -11,7 +11,7 @@ io = h5read(ilastikfile,'/exported_data');
 io = io(2,:,:,:);
 io1 = squeeze(io);
 io1_t = io1(:,:,tpt);
-pnuc(:,:,m) = io1_t';
+pnuc(:,:,m) = io1_t'; % flipped here
 end
 
 % reading raw data
@@ -22,8 +22,8 @@ filename = cell(1,nz);
 imgs = cell(1,nz);
 %dirinfo1(start1).name
 for j=1:nz
-    filename{j} = getAndorFileName(ff,pos,ff.t(timegroup),ff.z(j),ff.w(chan))
-   
+    filename{j} = getAndorFileName(ff,pos,ff.t(timegroup),ff.z(j),ff.w(chan));
+    
 end
 
 

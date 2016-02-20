@@ -13,7 +13,7 @@ userParam.areanuclow = 1000;
 userParam.areanuchi = 15000;
 userParam.areanuclow2 = 1000;
 
-userParam.flag = 0;
+userParam.flag = 0;% only if not 3d analysis is done
 userParam.areanuclow_unmerge = 6500;%4820;
 
 userParam.probthresh_nuc = 0.98;
