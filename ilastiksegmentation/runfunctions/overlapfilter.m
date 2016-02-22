@@ -1,4 +1,4 @@
-function [nucleinmod, masterCCnmod]  =  overlapfilter(PILsn, PILsSourcen, masterCCn, nuclein1, Inuc, zrange, overlapthresh)
+function [nucleinmod, masterCCnmod]  =  overlapfilter(PILsn, PILsSourcen, masterCCn, nuclein1, Inuc, zrange, overlapthresh, imview)
 % pixel intersection matrix
 
 %zlim = zstart:zend;
@@ -14,7 +14,7 @@ PILsSourcenmod = PILsSourcen;
 
 for i = 1:nobj
     for j = 1:nobj
-        p_intmat(i,j) = nnz(ismember(PILsnmod{i}, PILsnmod{j}))/numel(PILsnmod{i});  
+        p_intmat(i,j) = nnz(ismember(PILsnmod{i}, PILsnmod{j}))/numel(PILsnmod{i});
     end
 end
 
@@ -27,7 +27,7 @@ rwcl = [r c];
 m = 1;
 
 
-% remove the diagonals. 
+% remove the diagonals.
 rwcl = rwcl(rwcl(:,1) ~= rwcl(:,2),:);
 
 %%
@@ -79,22 +79,25 @@ if(exist('rcnew', 'var'))
         nuclein1(rcnew(i,1),:) = [];
     end
 end
-  masterCCnmod.PixelIdxList = masterCCnmod.PixelIdxList(~cellfun('isempty',masterCCnmod.PixelIdxList));
-  masterCCnmod.NumObjects = size(masterCCnmod.PixelIdxList,2);
-  PILsnmod = PILsnmod(~cellfun('isempty', PILsnmod));
- %% 
-  masterLntr = labelmatrix(masterCCnmod);
-  
-  rgbLntr = label2rgb(masterLntr, 'jet', 'k', 'shuffle');
+masterCCnmod.PixelIdxList = masterCCnmod.PixelIdxList(~cellfun('isempty',masterCCnmod.PixelIdxList));
+masterCCnmod.NumObjects = size(masterCCnmod.PixelIdxList,2);
+PILsnmod = PILsnmod(~cellfun('isempty', PILsnmod));
+%%
+masterLntr = labelmatrix(masterCCnmod);
+
+rgbLntr = label2rgb(masterLntr, 'jet', 'k', 'shuffle');
 overlayntr = zeros(size(rgbLntr));
 for c1 = 1:3
     overlayntr(:,:,c1) = 0.5*mat2gray(rgbLntr(:,:,c1)) +...
-                            mat2gray(sum(Inuc(:,:,zstart:zend),3));
+        mat2gray(sum(Inuc(:,:,zstart:zend),3));
 end
 
 %%
 nucleinmod = nuclein1;
 ncells = masterCCnmod.NumObjects;
-%figure; imshow(overlayntr)
-%figure; imshow(masterLntr, []);
-        
+
+if(imview)
+    figure; imshow(overlayntr)
+    figure; imshow(masterLntr, []);
+end
+

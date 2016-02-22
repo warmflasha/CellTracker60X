@@ -1,11 +1,11 @@
   %%
-  function [PILsn, PILsSourcen, masterCCn, stats, nuclein1, zrange] = traceobjectsz(smasks, matchdistance, zrange, zmatch)
+  function [PILsn, PILsSourcen, CC, masterCCn, stats, nuclein1, zrange] = traceobjectsz(smasks, matchdistance, zrange, zmatch)
     
     % tracking objects
     %very simple matching
     
     clear nuclein1 PILsn PILsSourceN overlayn
-    n = zmatch;
+     n = zmatch;
     
     CC = {};
     stats = {};

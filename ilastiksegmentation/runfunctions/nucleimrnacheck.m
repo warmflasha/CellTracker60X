@@ -1,31 +1,31 @@
-function nucleimrnacheck(masterCC, inuc, zrange, peaks, colonyno, objno, channels, mrnafilepath)
+function nucleimrnacheck(masterCC, inuc, zrange, peaks, colonyno, objno, channels, mrnafilepath, cmcenter)
 
 zstart = zrange(1);
 zend = zrange(end);
 
 %% centers of the objects
-nucleicenterlist = peaks{1}(:,1:3);
+nucleicenterlist = peaks{colonyno}(:,1:3);
 %%
 % Reference figure;
 
 masterLntr = labelmatrix(masterCC);
-    rgbLntr = label2rgb(masterLntr, 'jet', 'k', 'shuffle');
-    overlayntr = zeros(size(rgbLntr));
+rgbLntr = label2rgb(masterLntr, 'jet', 'k', 'shuffle');
+overlayntr = zeros(size(rgbLntr));
+
+zstart = zrange(1);
+zend = zrange(end);
+for c1 = 1:3
+    overlayntr(:,:,c1) = 0.5*mat2gray(rgbLntr(:,:,c1)) +...
+        mat2gray(sum(inuc(:,:,zstart:zend),3));
+end
+figure; imshow(overlayntr);
+
+hold on;
+
+for i = 1:size(nucleicenterlist,1)
+    text(nucleicenterlist(i,1), nucleicenterlist(i,2), int2str(i), 'Color', 'w', 'FontSize', 12);
     
-    zstart = zrange(1);
-    zend = zrange(end);
-    for c1 = 1:3
-        overlayntr(:,:,c1) = 0.5*mat2gray(rgbLntr(:,:,c1)) +...
-            mat2gray(sum(inuc(:,:,zstart:zend),3));
-    end
-    figure; imshow(overlayntr);
-    
-    hold on;
-    
-    for i = 1:size(nucleicenterlist,1)
-        text(nucleicenterlist(i,1), nucleicenterlist(i,2), int2str(i), 'Color', 'w', 'FontSize', 12);
-        
-    end
+end
 
 %%
 % assign mrna's to respective cells
@@ -51,14 +51,15 @@ for i = 1:numel(channels)
         mydist = sqrt((nucleicenterlist(:,1) - x0).^2 + (nucleicenterlist(:,2) - y0).^2 + (nucleicenterlist(:,3) - z0).^2);
         [dist, celln] = min(mydist);
         
-        if (~ isempty(cellmrna{celln}))
-            newrow = size(cellmrna{celln},1)+1;
-            cellmrna{celln}(newrow,:)= spotspos(i,:);
-        else
-            cellmrna{celln}(1,:) = spotspos(i,:);
+        if (dist < cmcenter)
+            if (~ isempty(cellmrna{celln}))
+                newrow = size(cellmrna{celln},1)+1;
+                cellmrna{celln}(newrow,:)= spotspos(i,:);
+            else
+                cellmrna{celln}(1,:) = spotspos(i,:);
+            end
+            
         end
-        
-        
     end
     
     

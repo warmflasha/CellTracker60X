@@ -1,4 +1,4 @@
-function peaks = mrnapercells(nucleilist, stats, mrnamatfile, colonyno, zrange, channels)
+function peaks = mrnapercells(nucleilist, stats, mrnamatfile, colonyno, zrange, channels, cmcenter)
 
 % getting the center of nuclei in 3D
 zstart = zrange(1);
@@ -56,9 +56,10 @@ for i = 1:numel(channels)
         
         [dist, celln] = min(mydist);
         
-       
-         mrnapercell(celln) = mrnapercell(celln)+floor(spots(i,5));
-       
+        if(dist<cmcenter)
+            mrnapercell(celln) = mrnapercell(celln)+floor(spots(i,5));
+        end
+        
         
     end
     
@@ -66,9 +67,9 @@ for i = 1:numel(channels)
     
     
     %%
-     ncolpeaks = size(peaks,2) + 1;
-     
-   for i = 1:size(nucleicenter,1)
+    ncolpeaks = size(peaks,2) + 1;
+    
+    for i = 1:size(nucleicenter,1)
         peaks(i,ncolpeaks) = mrnapercell(i);
     end
 end

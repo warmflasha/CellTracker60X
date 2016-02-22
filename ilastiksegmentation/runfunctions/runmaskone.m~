@@ -1,4 +1,4 @@
-function peaks = runmaskone(segfiledir, rawfiledir, mrnafilepath, paramfile, colonyno, objno)
+function peaks = runmaskone(segfiledir, rawfiledir, paramfile, colonyno, objno)
 %%
 % segfiledir: directory path of ilastik 2d segmentation probability density maps
 % rawfiledir: directory path of the nuclear channel raw images (the same
@@ -40,7 +40,10 @@ imviews = 0;
 
 %%
 clear peaks;
-peaks{colonyno} = mrnapercells(nucleilist, stats, mrnafilepath, colonyno, zrange, userparam.channels, userparam.cmcenter);
+channels = [0];
+mrnafilepath = sprintf('/Users/sapnachhabra/Desktop/CellTrackercd/Experiments/kinshuksdata/spotresults');
+cmcenter = 60;
+peaks{colonyno} = mrnapercells(nucleilist, stats, mrnafilepath, colonyno, zrange, channels, cmcenter);
 
 %%
 if (~exist('objno'))
