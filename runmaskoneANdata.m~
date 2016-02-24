@@ -1,8 +1,8 @@
-function [outdat,Lnuc,Lcytofin] = runmaskoneANdata(pnuc,pcyto, inuc,icyto,timegroup,paramfile,paramfile3D)
+function [outdat,Lnuc,Lcytofin] = runmaskoneANdata(pnuc,pcyto, inuc,icyto,timegroup,paramfile)
 
 
 eval(paramfile);
-eval(paramfile3D);
+eval(paramfile3D);%setUserParamLiveImagingAN
 global userParam;
 
 % sapna code tracking 

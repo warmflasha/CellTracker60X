@@ -2,107 +2,47 @@
 % info on where the images are and whidh position / timepoint to run
 
 ilastikdircyto = ('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/3Dsegmentation_tracking_TrainingSet/masks_zcyto');
-ilastikdir = ('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/3Dsegmentation_tracking_TrainingSet/Masks_z2');
-imagedir = ('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/3Dsegmentation_tracking_TrainingSet/');%rawimages_
+ilastikdirnuc = ('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/3Dsegmentation_tracking_TrainingSet/Masks_z2');
+imagedir = ('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/3Dsegmentation_tracking_TrainingSet/rawimages_');%rawimages_
 pos = 23;
-tpt =57;
+tpt =1;
 timegroup = 1;
 chan = [1 2];
 
 paramfile = 'setUserParamLiveImagingAN';
 paramfile2 = 'setUserParam3DsegmentationAN';
 %%
-function peaks = nucCytoIlastik2peaksLoop(ilastikDirec1,ilastikDirec2,imageDirec1,imageDirec2,zplane,pos,chan,paramfile,outfile)
-% peaks = nucCytoIlastik2peaksLoop(ilastikDirec,imageDirec,zplane,pos,chan,paramfile,outfile)
-% ----------------------------------------------------------------------------
-% runs nucCytoIlastik2peaks in a loop on all images at a particular
-% position in a directory. Each image can have multiple time points but
-% must be z slices and channels must be saved in separate images.
-% Inputs:
-%   -ilastikDirec - ilastik directory with masks, one mask file per image
-%   file
-%   -imageDirec - directory with images (assumes Andor format)
-%   -zplane - zplane to use (in Andor numbers, 0 possible)
-%   -pos - position to use (in Andor numbers, 0 possible)
-%   -chan - array of channels (1st is nuclear, 2nd to quantify, 0 possible)
-%   -paramfile - parameter file to use
-%   -outfile - output will be saved here
-% Outputs:
-%   -peaks - output segmentation in the usual format. also saved in outfile
+% run all timepoints and save into one peaks
+% main fnction:
 
+[~, ilastikCytoAll]=folderFilesFromKeyword(ilastikdircyto,['framecyto' num2str(pos) '_']);   % get the specific position ilastik masks (all z projections)
+[~, ilastikNucAll]=folderFilesFromKeyword(ilastikdirnuc,['frame' num2str(pos) '_']);%
 
-[~, ilastikCytoAll]=folderFilesFromKeyword(ilastikDirec2,['newCytoMasks' num2str(pos) '_']);
-[~, ilastikNucAll]=folderFilesFromKeyword(ilastikDirec1,['newNucMasks' num2str(pos) '_']);%
-
+imgfilescyto
+imgfilescyto
 timegroups = 1;
-
-ilastikCytoAll = ilastikCytoAll((pos*timegroups+1):(pos+1)*timegroups); % 1-4; 5-8;...
-ilastikNucAll = ilastikNucAll((pos*timegroups+1):(pos+1)*timegroups);
+% need this chunck if working with multiple positions and timegroups
+% ilastikCytoAll = ilastikCytoAll((pos*timegroups+1):(pos+1)*timegroups); % 1-4; 5-8;...
+% ilastikNucAll = ilastikNucAll((pos*timegroups+1):(pos+1)*timegroups);
 
 
 nTprev = 0;
-for j = 1:length(ilastikCytoAll)
-    
-    %get the ilastik masks
-    ilastikNuc = fullfile(ilastikDirec1,ilastikNucAll(j).name);
-    ilastikCyto= fullfile(ilastikDirec2,ilastikCytoAll(j).name);
-    
-    nuc_mask_all = h5read(ilastikNuc,'/exported_data');
-    %nuc_mask_all = squeeze(nuc_mask_all);
-    
-    nuc_mask_all = nuc_mask_all(2,:,:,:);% for probabilities exported
-    nuc_mask_all = squeeze(nuc_mask_all);
-    
-    
-    cyto_mask_all = h5read(ilastikCyto,'/exported_data');
-    %cyto_mask_all = squeeze(cyto_mask_all);% same comment
-    cyto_mask_all = cyto_mask_all(2,:,:,:);% for probabilities exported
-    cyto_mask_all = squeeze(cyto_mask_all);
-    
-    
-    %get the image readers
-    ff1 = readAndorDirectory(imageDirec1);
-    ff2 = readAndorDirectory(imageDirec2);% AN
-    filename1 = getAndorFileName(ff1,pos,ff1.t(j),zplane,chan(1));
-    filename2 = getAndorFileName(ff2,pos,ff2.t(j),zplane,chan(2));
-    img_nuc_reader = bfGetReader(filename1);
-    img_cyto_reader = bfGetReader(filename2);
-    
-    nT = img_nuc_reader.getSizeT;
-    
-    for k = 1:nT
+for j = 1:length(ilastikNucAll)      % loop over the same position time groups
         
-        plane1 = img_nuc_reader.getIndex(0,0, k - 1) + 1;
-        nuc_img = bfGetPlane(img_nuc_reader,plane1);
-        
-        plane1 = img_cyto_reader.getIndex(0,0, k - 1) + 1;
-        nuc_cyto = bfGetPlane(img_cyto_reader,plane1);
-        
-        %  nuc_mask_all = nuc_mask_all(1,:,:,k); %
-        %  nuc_mask_all = squeeze(nuc_mask_all);
-        % the following two lines are done within the nucCytoIlastik2peaks, but
-        % need to adjust to the appropriate h5 structure (different in ilastik is
-        % ran from feadless
-        
-        %  nuc_mask_all = nuc_mask_all<1;
-        %  Lnuc =  bwareafilt(nuc_mask_all',[userParam.areanuclow userParam.areanuchi]);
-        % same processing for the cyto channel
-        
-        [outdat, Lnuc,Lcytofin] = nucCytoIlastik2peaks(nuc_mask_all(:,:,k),cyto_mask_all(:,:,k),nuc_img,nuc_cyto,paramfile);%
+   nT = GetNumberTimePointsAN(imagedir,pos,timegroup);    % how many time point are within given time group
+    
+    for k = 1:nT                                                                       % loop over time points within a given time group
+    [pnuc, inuc]   =  readmaskfiles1(ilastikNucAll,imagedir, pos,k, j,chan(1));        % get the raw images for that position and merge them into a 3d format
+    [pcyto, icyto] =  readmaskfiles1(ilastikCytoAll,imagedir, pos,k, j,chan(2));     
+               
+    [outdat,Lnuc,Lcytofin] = runmaskoneANdata(pnuc,pcyto,inuc,icyto,pos,k,timegroup,paramfile);
+    
+       % [outdat, Lnuc,Lcytofin] = nucCytoIlastik2peaks(nuc_mask_all(:,:,k),cyto_mask_all(:,:,k),nuc_img,nuc_cyto,paramfile);%
         peaks{nTprev+k} = outdat;
         
-        if sum(sum(Lnuc)) == 0
-            imgfiles(nTprev+k).compressNucMask = [];
-        else
-            imgfiles(nTprev+k).compressNucMask = compressBinaryImg(Lnuc);
-        end
-        if sum(sum(Lcytofin)) == 0
-            imgfilescyto(nTprev+k).compressNucMask = [];
-            
-        else
-            imgfilescyto(nTprev+k).compressNucMask = compressBinaryImg(Lcytofin);
-        end
-        
+        imgfiles(nTprev+k).NucMask = Lnuc; %compressBinaryImg
+        imgfilescyto(nTprev+k).NucMask = Lcytofin;
+                
     end
     nTprev = nTprev + nT;
 end

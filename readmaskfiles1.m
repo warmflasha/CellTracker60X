@@ -1,9 +1,9 @@
-function [pnuc, inuc] = readmaskfilesAN(ilastikdir,imagedir,pos, tpt, timegroup,chan)%(maskno, segfile, rawfile, dirinfo, dirinfo1,  nzslices, pos)
+function [pnuc, inuc] = readmaskfilesAN(ilastikNucoAll,imagedir,pos, tpt, timegroup,chan)%(maskno, segfile, rawfile, dirinfo, dirinfo1,  nzslices, pos)
 %[pnuc, inuc] = readmaskfiles1(maskno, segfiledir, rawfiledir, dirinfo, dirinfo1, nzslices, imageno);
 % if all the z slices are separate files
 
 % reading masks
-[~, ilastikNucoAll]=folderFilesFromKeyword(ilastikdir,['frame' num2str(pos) '_']);
+
  nzslices = size(ilastikNucoAll,2);
 for m=1:nzslices
 ilastikfile=ilastikNucoAll(m).name;
@@ -28,8 +28,12 @@ end
 
 
 for m = 1:nz
-    imgs{m} = bfopen(filename{m}); %
-    img_now = imgs{m}{1}{tpt,1};   % open each timegroup and each z slice
+    imgs{m} = bfopen(filename{m});  %
+    img_now = imgs{m}{1}{tpt,1};    % open each timegroup and each z slice
     inuc(:,:,m) = img_now;
     
 end
+
+
+end
+
