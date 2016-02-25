@@ -28,12 +28,13 @@ m = 1;
 
 
 % remove the diagonals.
-rwcl = rwcl(rwcl(:,1) ~= rwcl(:,2),:);
+
 
 %%
 % find symmetrically overlapping objects
 % rcnew saves the rows that should be deleted
 if(~isempty(rwcl))
+    rwcl = rwcl(rwcl(:,1) ~= rwcl(:,2),:);
     m = 1;
     lim1 = size(rwcl);
     rowno = 1;

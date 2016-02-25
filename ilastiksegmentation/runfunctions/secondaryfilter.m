@@ -1,21 +1,29 @@
-  
+
 function [zrange,smasks] = secondaryfilter(pmasks, minobjzstart, minsolid, diskfilter, sizefilter)
-   
-   % zstart:first z slice with at least 4 objects; objects tracked from this slice.  
-   
-   for z = 1:size(pmasks,3)
-        objects = regionprops(pmasks(:,:,z),'Centroid');
-        if(size(objects,1)>minobjzstart)
-            zstart = z+1;
-            break;
-        end
+
+% zstart:first z slice with at least 4 objects; objects tracked from this slice.
+
+for z = 1:size(pmasks,3)
+    objects = regionprops(pmasks(:,:,z),'Centroid');
+    if(size(objects,1)>minobjzstart)
+        zstart = z;
+        break;
     end
+end
+
+zend = size(pmasks,3);
+
+if (~exist('zstart'))
+    smasks = [];
+    zrange =0;
     
-    zend = size(pmasks,3);
+else
+    cellsp = 1;
+    
     zrange = [zstart:zend];
     
     smasks = false(size(pmasks));
-   
+    
     for z= zstart:zend
         
         tmp = pmasks(:,:,z);
@@ -41,10 +49,10 @@ function [zrange,smasks] = secondaryfilter(pmasks, minobjzstart, minsolid, diskf
         
         
     end
-  
+    
     
     %%
-    % tmpn: modified clean masks 
+    % tmpn: modified clean masks
     % adding unique objects from low sol to high sol
     % consz = no. of consecutive z slices in which unique objects are checked
     % overlap: only if the new unique object does not overlap with any previous object, it is added to the corresponding z slice.
@@ -60,4 +68,4 @@ function [zrange,smasks] = secondaryfilter(pmasks, minobjzstart, minsolid, diskf
     end
     
 end
-    
+end

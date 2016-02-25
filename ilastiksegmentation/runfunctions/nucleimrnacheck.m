@@ -1,10 +1,10 @@
-function nucleimrnacheck(masterCC, inuc, zrange, peaks, colonyno, objno, channels, mrnafilepath, cmcenter)
+function nucleimrnacheck(masterCC, inuc, zrange, peaks, framenum, objno, channels, mrnafilepath, cmcenter)
 
 zstart = zrange(1);
 zend = zrange(end);
 
 %% centers of the objects
-nucleicenterlist = peaks{colonyno}(:,1:3);
+nucleicenterlist = peaks(:,1:3);
 %%
 % Reference figure;
 
@@ -29,12 +29,12 @@ end
 
 %%
 % assign mrna's to respective cells
-for i = 1:numel(channels)
+for ii = 1:numel(channels)
     
-    mrnafile = strcat(mrnafilepath, '/', sprintf('ch%dallspots.mat', channels(i)));
+    mrnafile = strcat(mrnafilepath, '/', sprintf('ch%dallspots.mat', channels(ii)));
     load(mrnafile);
     
-    spots = spotinfomat(spotinfomat(:,1) == colonyno,:);
+    spots = spotinfomat(spotinfomat(:,1) == framenum,:);
     
     spots(any(isnan(spots),2), :) = [];
     
@@ -68,17 +68,17 @@ for i = 1:numel(channels)
     figure; imshow(overlayntr);
     hold on;
     
-    for i = 1:size(nucleicenterlist,1)
-        text(nucleicenterlist(i,1), nucleicenterlist(i,2), int2str(i), 'Color', 'w', 'FontSize', 12);
+    for j = 1:size(nucleicenterlist,1)
+        text(nucleicenterlist(j,1), nucleicenterlist(j,2), int2str(j), 'Color', 'w', 'FontSize', 12);
         
     end
     
     
     
-    for i = 1:numel(objno)
+    for jj = 1:numel(objno)
         hold on;
-        if(~isempty(cellmrna{objno(i)}))
-            plot(cellmrna{objno(i)}(:,1), cellmrna{objno(i)}(:,2), 'g.');
+        if(~isempty(cellmrna{objno(jj)}))
+            plot(cellmrna{objno(jj)}(:,1), cellmrna{objno(jj)}(:,2), 'g.');
         end
     end
     

@@ -29,3 +29,6 @@ for j = imageno:imageno+nzslices-1
     m1 = m1+1;
 end
 end
+
+%%
+%

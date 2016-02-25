@@ -1,4 +1,4 @@
-function peaks = runmaskone(segfiledir, rawfiledir, mrnafilepath, paramfile, colonyno, objno)
+function peaks = runmaskone(segfiledir, rawfiledir, mrnafilepath, paramfile, samplenum,position_num, objnum)
 %%
 % segfiledir: directory path of ilastik 2d segmentation probability density maps
 % rawfiledir: directory path of the nuclear channel raw images (the same
@@ -10,40 +10,52 @@ function peaks = runmaskone(segfiledir, rawfiledir, mrnafilepath, paramfile, col
 % anywhere between 1 and 20.
 
 global userparam
-eval(paramfile)
+eval(paramfile);
 
-nzslices = userparam.nzslices;
-
-[dirinfo, start] = readdirectory(segfiledir);
-[dirinfo1, start1] = readdirectory(rawfiledir);
+ff = readFISHdir(rawfiledir, userparam.nsamples);
 
 
-maskno = start + (colonyno-1)*nzslices; % ilastik mask
-imageno = start1 + (colonyno-1)*nzslices ; %nuclear channel raw image
-[pnuc, inuc] = readmaskfiles(maskno, segfiledir, rawfiledir, dirinfo, dirinfo1, nzslices, imageno);
 
-%%
-
-pmasks = primaryfilter(pnuc,userparam.logfilter, userparam.bthreshfilter, userparam.diskfilter, userparam.area1filter);
-%%
-
-[zrange, smasks] = secondaryfilter(pmasks, userparam.minstartobj, userparam.minsolidity, userparam.diskfilter, userparam.area2filter);
-%%
-[PILsn,PILsSourcen, CC, masterCCn, stats, nucleilist, zrange] = traceobjectsz(smasks, userparam.matchdistance, zrange, userparam.zmatch);
-%%
-overlapthresh = 80;
-colonyno = (maskno - start)/nzslices + 1;
-imviews = 0;
-[nucleilist, masterCC] =  overlapfilter(PILsn, PILsSourcen, masterCCn, nucleilist, inuc, zrange, userparam.overlapthresh, userparam.imviews);
-%%
-% nuclei3dmasks = masksin3d(CC, nucleilist, nzslices);
-
-%%
-clear peaks;
-peaks{colonyno} = mrnapercells(nucleilist, stats, mrnafilepath, colonyno, zrange, userparam.channels, userparam.cmcenter);
-
-%%
-if (~exist('objno'))
-    objno = [5];
+if(ff.positions(samplenum)< position_num)
+    error('Error. Invalid position number. Try again!');
+else
+    nzslices = ff.zslices{samplenum}(position_num);
+    nuc_ch = userparam.nucchannel;
+    [pnuc, inuc] = readmaskfilesnew(segfiledir, rawfiledir, samplenum, position_num,  nzslices, nuc_ch);
+    
+    %%
+    
+    pmasks = primaryfilter(pnuc,userparam.logfilter, userparam.bthreshfilter, userparam.diskfilter, userparam.area1filter);
+    %%
+    
+    [zrange, smasks] = secondaryfilter(pmasks, userparam.minstartobj, userparam.minsolidity, userparam.diskfilter, userparam.area2filter);
+    %%
+    %%
+    if (zrange)
+        %%
+        zmatch = nzslices-1;
+        [PILsn,PILsSourcen, CC, masterCCn, stats, nucleilist, zrange] = traceobjectsz(smasks, userparam.matchdistance, zrange, zmatch);
+        %%
+        
+        
+        [nucleilist, masterCC] =  overlapfilter(PILsn, PILsSourcen, masterCCn, nucleilist, inuc, zrange, userparam.overlapthresh, userparam.imviews);
+        
+        %%
+        
+        framenum = sum(ff.positions(1:(samplenum-1))) + position_num;
+        peaks1{position_num} = mrnapercells(nucleilist, stats, mrnafilepath, framenum, zrange, userparam.channels, userparam.cmcenter);
+        %%
+        peaks{position_num} = peakscelltrackerformat(peaks1{position_num});
+        if (~exist('objno'))
+            objnum = [5];
+        end
+        nucleimrnacheck(masterCC, inuc, zrange, peaks{position_num}, framenum, objnum, userparam.channels, mrnafilepath, userparam.cmcenter);
+        
+    else
+        peaks{pos} = [];
+        error('Error. \No cells found! Try another sample.')
+    end
+    
 end
-nucleimrnacheck(masterCC, inuc, zrange, peaks, colonyno, objno, channels, mrnafilepath, cmcenter);
+%%
+

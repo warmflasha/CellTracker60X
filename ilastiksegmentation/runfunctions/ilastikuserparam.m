@@ -2,7 +2,8 @@ function ilastikuserparam
 
 global userparam
 %
-userparam.nzslices = 21;
+userparam.nsamples = 23;
+userparam.nucchannel = 0;
 %%
 % parameters for function primary filter
 %  % number of zslices in the image
@@ -24,17 +25,17 @@ userparam.area2filter = 300;
 % matchdistance: minimum distance in pixels between the centroid of two
 % objectsin two different zslices to be considered as the same object.
 
-userparam.zmatch = 21; 
+userparam.zmatch = 8; 
 userparam.matchdistance = 15;
 
 %%
 % overlap filter
-userparam.overlapthresh = 60; 
+userparam.overlapthresh = 70; 
 userparam.imviews = 0;
 %%
 %  
-userparam.channels = [0]; %fluorescent channel for which mRNA's are counted and need to be assigned
-userparam.cmcenter = 60;
+userparam.channels = [1 2 3]; %fluorescent channel for which mRNA's are counted and need to be assigned
+userparam.cmcenter = 70;
 userparam.negativecontrol = 1;
 
 end
