@@ -154,7 +154,6 @@ C = {'r','b','g','m'};
             
 %             if colSZ == colonies(j).numOfCells(fr_stim);
 %                 frames(k,1) =  k;% which outfile contains the traces for the colony size colSZ
-%                 
 %             end
             if flag ==1
                 traces{j} = colonies(j).NucSmadRatio(:);

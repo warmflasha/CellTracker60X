@@ -11,3 +11,5 @@ chan = [1 2];
 
 paramfile = 'setUserParamLiveImagingAN';
 paramfile3D = 'setUserParam3DsegmentationAN';
+
+outfile = '3D_45tpts.mat';

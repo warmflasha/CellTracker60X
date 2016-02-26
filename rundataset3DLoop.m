@@ -1,5 +1,5 @@
 
-function rundataset3DLoop(ilastikdirnuc,ilastikdircyto,imagedir,paramfile,timegroups,outfile,paramfile3D)
+function rundataset3DLoop(ilastikdirnuc,ilastikdircyto,imagedir,paramfile,timegroup,outfile,paramfile3D)
 
 % this is the loop over seprate positions 
 ff=readAndorDirectory(imagedir);
@@ -11,5 +11,5 @@ pos = position(jj);
 
 outfile = ([ num2str(pos) '_' num2str(outfile)]);
 
-rundataset3D(ilastikdirnuc,ilastikdircyto,imagedir,pos,paramfile,timegroups,outfile,paramfile3D)
+rundataset3D(ilastikdirnuc,ilastikdircyto,imagedir,pos,paramfile,timegroup,outfile,paramfile3D)
 end

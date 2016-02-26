@@ -1,18 +1,14 @@
 
-function rundataset3D(ilastikdirnuc,ilastikdircyto,imagedir,pos,paramfile,timegroups,outfile,paramfile3D)
+function rundataset3D(ilastikdirnuc,ilastikdircyto,imagedir,pos,paramfile,timegroup,outfile,paramfile3D)
 
 % run all timepoints and save into one peaks
 % main fnction
 
-[~, ilastikCytoAll]=folderFilesFromKeyword(ilastikdircyto,['framecyto' num2str(pos) '_']);   % get the specific position ilastik masks (all z projections)
+[~, ilastikCytoAll]=folderFilesFromKeyword(ilastikdircyto,['cytoframe' num2str(pos) '_']);   % get the specific position ilastik masks (all z projections)
 [~, ilastikNucAll]=folderFilesFromKeyword(ilastikdirnuc,['frame' num2str(pos) '_']);%
 
 imgfilescyto = struct;
 imgfiles = struct;
-
-% first 15 masks (from ilastik), if ran using the same .ssh script will
-% correspond to the three time groups of the given position (15 because
-% each timegroup has 5 z planes)
 
 % need this chunck if working with multiple positions and timegroups
 % ilastikCytoAll = ilastikCytoAll((pos*timegroups+1):(pos+1)*timegroups); % 1-4; 5-8;...
@@ -36,8 +32,9 @@ for j = 1:length(ilastikNucAll)      % loop over the same position's time groups
         
     end
     nTprev = nTprev + nT;
+    save([ num2str(pos) '_' num2str(outfile)],'peaks','imgfiles','imgfilescyto');
+
 end
 
-save([ num2str(pos) '_' num2str(outfile)],'peaks','imgfiles','imgfilescyto');
 
 

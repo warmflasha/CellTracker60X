@@ -19,12 +19,36 @@ for k=1:5
     figure(6), subplot(2,3,k),imshow(inuc(:,:,k),[]);
 end
 
-
+%%
+j = 5;
+Lnuc = imgfiles(j).NucMask;
 for k=1:size(Lnuc,3)
- figure(7),subplot(2,size(Lnuc,3),k),imshow(Lnuc(:,:,k),[]);
+ figure(7),subplot(1,size(Lnuc,3),k),imshow(Lnuc(:,:,k),[]);%(7),subplot(2,size(Lnuc,3),k),
+end
+figure(7), subplot(1,size(Lnuc,3),2), hold on
+plot(peaks{j}(:,1),peaks{j}(:,2),'*r','markersize',15);
+figure(7), subplot(1,size(Lnuc,3),2), hold on
+text(peaks{j}(:,1)+10,peaks{j}(:,2),num2str(peaks{j}(:,6)./peaks{j}(:,7)),'Color','m');
+
+%%
+
+Lcytofin = imgfilescyto(j).NucMask;
+
+for k=1:size(Lcytofin,3)
+ figure(8),subplot(2,size(Lcytofin,3),k),imshow(Lcytofin(:,:,k),[]);
+end
+%%
+
+for k=1:5
+ figure(9),subplot(1,5,k),imshow(inuc(:,:,k),[]);
 end
 
-for k=1:size(Lnuc,3)
- figure(8),subplot(2,size(Lnuc,3),k),imshow(Lcytofin(:,:,k),[]);
+for k=1:5
+ figure(11),subplot(1,5,k),imshow(pcyto(:,:,k),[]);
 end
-
+%%
+j = 22;
+Lnuc = imgfiles(j).NucMask;
+for k=1:size(Lnuc,3)
+figure(15),subplot(1,size(Lnuc,3),k),showMaskWithNumber(Lnuc(:,:,k))
+end

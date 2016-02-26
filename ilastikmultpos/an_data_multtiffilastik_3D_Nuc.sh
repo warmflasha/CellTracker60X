@@ -11,19 +11,19 @@
 i=0
 num=1
 
-ndir=/Users/warmflashlab/Desktop/Jan8IlastikMasks_newW0/
+ndir=/Users/warmflashlab/Desktop/JANYARY_8_DATA_ilasik/NucMsks3D/
 
-projectpath=/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/TrainingNuc60XJan8set_3lbl.ilp
+projectpath=/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/3Dsegmentation_tracking_TrainingSet/Z_segmentation.ilp
 
-savepath=/Users/warmflashlab/Desktop/Jan8livecell_TrainingSetData/\{NucMasks\}_\{P\}.h5
+savepath=/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/3Dsegmentation_tracking_TrainingSet/Masks_z2/frame_z.h5
 
 #segchannel=1
 
 mkdir $ndir
 
-samplepath=/Users/warmflashlab/Desktop/ToProcess_Jan8Data/W0/;
+samplepath=/Users/warmflashlab/Desktop/3DanalysisRAWimg_W0/;
 
-files=/Users/warmflashlab/Desktop/ToProcess_Jan8Data/W0/*;
+files=/Users/warmflashlab/Desktop/3DanalysisRAWimg_W0/*;
 
 for f in $files
 do
@@ -31,7 +31,7 @@ do
 
 i=$((i+num))
 
-scp $savepath ${ndir}newNucMasks_Jan8set_1tg${i}.h5
+scp $savepath ${ndir}NucMasks3Dtg${i}.h5
 
 echo $f $i
 done

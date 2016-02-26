@@ -18,22 +18,30 @@
     
     for z = zrange(1):zrange(end)
         objects = bwconncomp(smasks(:,:,z));
-        if(objects.NumObjects > 3);
+        if(objects.NumObjects > 1);%3
             zstart = z+1;
             break;
         end
     end
     
-    
-    
-    for z = zrange(1):zrange(end)               %%%%%%%%%
+    objects = cell(1,size(zrange,2));            % if some remaining planes are empty, reasses the zrange
+    for z = zrange(1):zrange(end)                 
+    objects{z}  = bwconncomp(smasks(:,:,z));
+    if objects{z}.NumObjects==0 
+    zrange(zrange == z) = [];
+    end
+    end
+
+    zstart = zrange(1);    
+    zend = zrange(end);
+    for z = zrange(1):zrange(end)             %%%%%%%%%1:size(zrange,2)    % Problems if the intermediate z-plane is empty,then does not work   
         
-        CC{z} = bwconncomp(smasks(:,:,z));
-        stats{z} = regionprops(CC{z}, 'Centroid', 'Area');
+        CC{z} = bwconncomp(smasks(:,:,z));%z
+        stats{z} = regionprops(CC{z}, 'Centroid', 'Area');%z
+
     end
     
-    
-    
+        
     nSlices = zrange(end)-zrange(1)+1;
     nuclein1 = nan([CC{zrange(1)}.NumObjects nSlices]);
     dmax = matchdistance;
@@ -99,6 +107,7 @@
         
         for i = 0:frchksize
             CM{i+1} = cat(1,stats{z-frchksize+i}.Centroid);
+             
         end
         
         for i = 1:frchksize
