@@ -20,7 +20,7 @@ for k=1:5
 end
 
 %%
-j = 5;
+j = 2;
 Lnuc = imgfiles(j).NucMask;
 for k=1:size(Lnuc,3)
  figure(7),subplot(1,size(Lnuc,3),k),imshow(Lnuc(:,:,k),[]);%(7),subplot(2,size(Lnuc,3),k),
@@ -47,7 +47,7 @@ for k=1:5
  figure(11),subplot(1,5,k),imshow(pcyto(:,:,k),[]);
 end
 %%
-j = 22;
+j = 10;
 Lnuc = imgfiles(j).NucMask;
 for k=1:size(Lnuc,3)
 figure(15),subplot(1,size(Lnuc,3),k),showMaskWithNumber(Lnuc(:,:,k))

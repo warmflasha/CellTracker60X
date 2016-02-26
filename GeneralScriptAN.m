@@ -1,30 +1,30 @@
 %%
 %ilastikfile = ('/Users/warmflashlab/Desktop/IlastikMasks_headless_PluriW0/NucMaskPluri_tg56.h5');
-ilastikfile = ( '/Users/warmflashlab/Desktop/JANYARY_8_DATA_ilasik/Jan8IlastikMasks_newW0/newNucMasks1_Jan8set.h5'); % 79=81 for position 26; 37-39 , pos 12
-%ilastikfile2 = ( '/Users/warmflashlab/Desktop/JANYARY_8_DATA_ilasik/Jan8IlastikMasks_newW1/newCytoMasks24_jan8set_1tg8.h5');
+ilastikfile = ('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/3Dsegmentation_tracking_TrainingSet/Masks_z2/frame23_z3.h5'); % 79=81 for position 26; 37-39 , pos 12
+ilastikfile2 = ('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/3Dsegmentation_tracking_TrainingSet/masks_zcyto/cytoframe_z.h5');
 
 
 nuc = h5read(ilastikfile,'/exported_data');
-%cyto = h5read(ilastikfile2,'/exported_data');
-  k =90;% 41 15,14,16; ,42 % 43,44 , 52,53,54- no
+cyto = h5read(ilastikfile2,'/exported_data');
+  k =30;% 41 15,14,16; ,42 % 43,44 , 52,53,54- no
     nuc = nuc(2,:,:,k);% for probabilities exported
     nuc = squeeze(nuc);
     mask1 = nuc;
     
-    mask3 = imfill(mask1 > 0.95,'holes');
-    mask3 = imerode(mask3,strel('disk',1));
-%      cyto = cyto(2,:,:,k);% for probabilities exported
-%      cyto = squeeze(cyto);
-%      mask2 = cyto;
+    mask3 = imfill(mask1 > 0.98,'holes');
+    
+     cyto = cyto(2,:,:,k);% for probabilities exported
+     cyto = squeeze(cyto);
+     mask2 = cyto;
    % 
     figure(1), subplot(1,3,1),imshow(mask1);
-   % figure(1), subplot(1,3,2),imshow(mask2);
+    figure(1), subplot(1,3,2),imshow(mask2);
     figure(1), subplot(1,3,3),imshow(mask3);
    
-%     Lnuc = mask3;%im2bw(mask1,0.5);
-%     Lcyto = im2bw(mask2,0.98);
-%     figure(2),subplot(1,2,1), imshow(Lnuc);
-%     figure(2),subplot(1,2,2), imshow(Lcyto&~Lnuc);
+    Lnuc = mask3;%im2bw(mask1,0.5);
+    Lcyto = im2bw(mask2,0.98);
+    figure(2),subplot(1,2,1), imshow(Lnuc);
+    figure(2),subplot(1,2,2), imshow(Lcyto&~Lnuc);
    %%
    [MaskFin2] = Unmergetwonuclei(mask3);
    %[MaskFin3] = Unmergetwonuclei(MaskFin2);
@@ -58,7 +58,7 @@ outfile = ([ num2str(pos) '_' num2str(outfile)]);
 
 %%
  
-outfile = '17_jan8set_test.mat';
+outfile = '23_3D_45tpts.mat';
 runTracker(outfile,'newTrackParamAN');
 global userParam;
 userParam.colonygrouping = 130;
@@ -136,7 +136,7 @@ coloniestoanalyze = 3;
 cmap = summer;
 flag = 1;
 
-C = {'r','b','g','m'};
+C = {'b','r','g','m'};
    % ff = dir('*12_jan8set_test*.mat');%jan8set 10ngmlDifferentiated_22hrs % Pluri_42hrs %Outfile
   
     % for k=1:size(ff,1);

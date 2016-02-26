@@ -1,12 +1,12 @@
-function [pnuc, inuc] = readmaskfilesAN(ilastikNucoAll,imagedir,pos, tpt, timegroup,chan)%(maskno, segfile, rawfile, dirinfo, dirinfo1,  nzslices, pos)
+function [pnuc, inuc] = readmaskfilesAN(ilastikNucAll,imagedir, pos,tpt, timegroup,chan)%(maskno, segfile, rawfile, dirinfo, dirinfo1,  nzslices, pos)
 %[pnuc, inuc] = readmaskfiles1(maskno, segfiledir, rawfiledir, dirinfo, dirinfo1, nzslices, imageno);
 % if all the z slices are separate files
 
 % reading masks
 
- nzslices = size(ilastikNucoAll,2);
+ nzslices = size(ilastikNucAll,2);
 for m=1:nzslices
-ilastikfile=ilastikNucoAll(m).name;
+ilastikfile=ilastikNucAll(m).name;
 io = h5read(ilastikfile,'/exported_data');
 io = io(2,:,:,:);
 io1 = squeeze(io);

@@ -143,7 +143,7 @@ if size(cyto_area,1) < size(nuc_areaw0,1) ||  size(cyto_area,1) > size(nuc_areaw
     return;
 end
 
-datacell=[xyzall(:,1) xyzall(:,2) nuc_areaw0 placeholder nuc_avrw0 nuc_avrw1 cyto_avrw1];%cyto_area
+datacell=[xyzall(:,1) xyzall(:,2) xyzall(:,3) placeholder nuc_avrw0 nuc_avrw1 cyto_avrw1];%cyto_area
 
 
 end

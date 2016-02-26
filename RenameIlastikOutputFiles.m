@@ -12,7 +12,6 @@ names = {ff(~[ff.isdir]).ff};% get the names of files within directory
 size(ff) % total number of masks in the dir
 
 pl = 5;% number of z planes
-%positions = [1 3 5 10]; %positions that were processed
 q = 1;
 
 for j=1:length(positions)  %loop over positions names 
