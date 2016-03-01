@@ -8,8 +8,11 @@ global userParam;
 % sapna code tracking 
 pmasks = primaryfilter(pnuc,userParam.logfilter, userParam.bthreshfilter, userParam.diskfilter, userParam.area1filter);
 
-% here can insert the UnmergeTwoNuclei function
-
+% here can insert the UnmergeTwoNuclei function ( after the masks are
+% already binary
+for k=1:size(pmasks,3)
+ pmasks(:,:,k) = Unmergetwonuclei(pmasks(:,:,k));
+end
 % zrange: where the nuclei are in z
 [zrange, smasks] = secondaryfilter(pmasks, userParam.minstartobj, userParam.minsolidity, userParam.diskfilter, userParam.area2filter);
 

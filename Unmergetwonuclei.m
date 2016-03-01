@@ -58,14 +58,25 @@ data_c2 = statsboundary2.PixelList;         % pixel coordinates of the boundary 
 %data_c = statsboundary.PixelList;        
 extra = chi&~mask3new;                      % extra stuff = difference between the filled convex hull area and the merged cell object
 
-extrafilt = bwareafilt(extra,[20 2000]);   % 150 filter out small intersections
+extrafilt = bwareafilt(extra,[20 1000]);    % filter out very small intersections
 stextra = bwconncomp(extrafilt);
+stextra2 = regionprops(extrafilt,'Area','PixelIdxList'); 
+
 if stextra.NumObjects > 2
-    extrafilt = bwareafilt(extra,[120 2000]);
+a = [stextra2.Area];
+a2 = sort(a,'descend');
+edg1 = find(a == a2(1));
+edg2 = find(a == a2(2));
+extrafilt = zeros(1024,1024);
+extrafilt(stextra2(edg1).PixelIdxList) = 1;
+extrafilt(stextra2(edg2).PixelIdxList) = 1;
+    
 end
 if stextra.NumObjects == 1
-    extrafilt = bwareafilt(extra,[30 2000]); 
+MaskFin2 = mask3;
+return
 end
+
 %figure(3), imshow(extrafilt);hold on
 %plot(statsboundary2.PixelList(:,1),statsboundary2.PixelList(:,2),'w*','markersize',15);
 %plot(stboundary_ch.PixelList(:,1),stboundary_ch.PixelList(:,2),'w*','markersize',15);
@@ -74,8 +85,8 @@ end
 extra2= imerode(extrafilt,strel('disk',1));                                   % get the boundary pixels of the extra objects
 extra2bndr = extrafilt&~extra2;
 stats_extra = regionprops(extra2bndr,'PixelList','PixelIdxList');             % get the boundaries of the two objects
-% add the loop here over the found objects
-%assume that after filtering only two objects are left !! VERY %WRONG
+%  add the loop here over the found objects
+%  assume that after filtering only two objects are left !! VERY %WRONG
  if size(stats_extra,1)>2 || size(stats_extra,1)< 2
      MaskFin2 = mask3;
 return
@@ -137,8 +148,8 @@ end
  [r,~] = find(maxdist1 == m); % r has the row numbers of the pixel coordinate (on the hull boundary ) of the point with max distance to the cell object
  % objrow  has the row numbers of the pixel coordinate (on the cell object
            % boundary ) of the point with max distance to the hull boundary
-           if m==0
-                 for k=1:h;               % calculate the distance from the hull boundary to the cell object boundary along the y direction (x works too)
+           %if m==0
+                 for k=1:h;               % calculate the distance from the hull boundary to the cell object boundary along the y direction 
                    x1 = hull_bnd_only1(k,1);
                    y1 = hull_bnd_only1(k,2);
                    %disp([num2str(y1) ]);
@@ -153,17 +164,17 @@ end
                    end
                    
                end
-               m = max(maxdist1);
-               [r,~] = find(maxdist1 == m);
+               m12 = max(maxdist1);
+               [r2,~] = find(maxdist1 == m12);
                
-           end
+          % end
  
 o2 = size(obj_bnd_only2,1);
 h2 = size(hull_bnd_only2,1);
 
 maxdist2 = zeros(h2,1);
 objrow2 = zeros(h2,1);
-for k=1:h2                    % calculate the distance from the hull boundary of the second object to the cell object boundary along the y direction (x works too)
+for k=1:h2                    % calculate the distance from the hull boundary of the second object to the cell object boundary along the y direction 
 x1 = hull_bnd_only2(k,1);
 y1 = hull_bnd_only2(k,2);
 curr2 = find(obj_bnd_only2(:,2)== y1);%%%%%%%%%%%%%%%%%%%
@@ -179,7 +190,7 @@ end
  m2 = max(maxdist2);             
  [rr,~] = find(maxdist2 == m2);           % same as for the first object
  
- if m2==0
+% if m2==0
      
      for k=1:h2                    % calculate the distance from the hull boundary of the second object to the cell object boundary along the y direction (x works too)
          x1 = hull_bnd_only2(k,1);
@@ -194,10 +205,10 @@ end
          end
      end
      
- end
-  m2 = max(maxdist2);             
- [rr,~] = find(maxdist2 == m2); 
- 
+% end
+  m22 = max(maxdist2);             
+ [rr2,~] = find(maxdist2 == m22); 
+ % IF THE DISTANCES ARE CALCULATED ALONG THE X DIRECTION
 pt1 = hull_bnd_only1(r(1),:);             % since some max distances are repeated , will take the first one
 pt2 = obj_bnd_only1(objrow(r(1)),:); 
 pt12 = hull_bnd_only2(rr(1),:);           % since some max distances are repeated , will take the first one
@@ -220,9 +231,9 @@ a = (y1-y2)/(x1-x2);                  % draw a line through those points
 b = 0.5*((y1+y2) -a*(x1+x2));
 
 if x1<x2
-vect1 = x1:x2;
+vect1 = x1:0.001:x2;
 else
-    vect1 = x2:x1;
+    vect1 = x2:0.001:x1;
 end
     
 ynew=round(a*vect1+b);
@@ -232,13 +243,44 @@ toelim = cat(2,vect1',ynew');         % pixel coordinated of the line (line goes
 %plot(y,'y*');
 %plot(toelim(:,1),toelim(:,2),'c*');
 toelim2 = intersect(data_mc,toelim,'rows');         % find where the line intersects with the cello object
-%plot(toelim2(:,1),toelim2(:,2),'r*');
+%plot(toelim2(:,1),toelim2(:,2),'c*');
+% IF THE DISTANCES ARE CALCULATED ALONG THE Y DIRECTION
+pt1 = hull_bnd_only1(r2(1),:);             % since some max distances are repeated , will take the first one
+pt2 = obj_bnd_only1(objrow(r2(1)),:); 
+pt12 = hull_bnd_only2(rr2(1),:);           % since some max distances are repeated , will take the first one
+pt22 = obj_bnd_only2(objrow2(rr2(1)),:);
+% pt2, pt22 represent the pixel coordinates on the merged cell objects that need to be connected and where the cut
+% should be made, if the distances are calculated along the y direction
+x1 = pt2(1);   
+y1 = pt2(2);   
+x2 = pt22(1);
+y2 = pt22(2);
+a = (y1-y2)/(x1-x2);                  % draw a line through those points
+b = 0.5*((y1+y2) -a*(x1+x2));
+if x1<x2
+vect1 = x1:0.001:x2;
+else
+    vect1 = x2:0.001:x1;
+end
+ynew=round(a*vect1+b);
+toelim_y = cat(2,vect1',ynew');         % pixel coordinated of the line (line goes through the whole image)
+toelim2_y = intersect(data_mc,toelim_y,'rows');         % find where the line intersects with the cello object
+
+if size(toelim2_y,2)>size(toelim,2)
+toelimfin = toelim;
+else
+toelimfin = toelim2_y;
+end
 
 I = zeros(1024,1024);                                         % create an image with only that element                 
-linearInd = sub2ind(size(I), toelim2(:,2), toelim2(:,1));
+linearInd = sub2ind(size(I), toelimfin(:,2), toelimfin(:,1));
 I(linearInd)=1;
-II = imdilate(I,strel('disk',7)); % 'disk',4                           % dilate a little in order to create a merged line 
-%figure(4), imshow(II);
+II = imdilate(I,strel('disk',1)); % 'disk',4                           % dilate a little in order to create a merged line 
+%vect1 = toelimfin(1,1):0.1:toelimfin(end,1);
+%toelimfin2=a*vect1+b; 
+%toelimfin2 = cat(2,vect1',toelimfin2');
+%linearInd = sub2ind(size(I), toelimfin2(:,2), toelimfin2(:,1));
+%I(linearInd)=[];
 
 
 MaskFin = mask3new&~II;                                       % remove those pixels from the merged object

@@ -24,7 +24,7 @@ pos = positions(j);
 for i=q:(q+pl-1) 
 torename = oldnames{i}; % needs to be string
 newname = [str num2str(pos) '_z' num2str(i-q) '.h5'];
-%disp([torename '   ' newname]);
+disp([torename '   ' newname]);
 movefile(torename, newname)
 end
 q = q+pl;

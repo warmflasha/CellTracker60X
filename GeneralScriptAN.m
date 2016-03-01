@@ -1,17 +1,16 @@
 %%
 %ilastikfile = ('/Users/warmflashlab/Desktop/IlastikMasks_headless_PluriW0/NucMaskPluri_tg56.h5');
-ilastikfile = ('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/3Dsegmentation_tracking_TrainingSet/Masks_z2/frame23_z3.h5'); % 79=81 for position 26; 37-39 , pos 12
-ilastikfile2 = ('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/3Dsegmentation_tracking_TrainingSet/masks_zcyto/cytoframe_z.h5');
-
+ilastikfile = ('/Users/warmflashlab/Desktop/JANYARY_8_DATA_ilasik/NucMsks3D/NucMasks3Dtg3.h5');
+ilastikfile2 = ('/Users/warmflashlab/Desktop/JANYARY_8_DATA_ilasik/CytoMasks3D/CytoMasks3Dtg3.h5');
 
 nuc = h5read(ilastikfile,'/exported_data');
 cyto = h5read(ilastikfile2,'/exported_data');
-  k =30;% 41 15,14,16; ,42 % 43,44 , 52,53,54- no
+  k =29;% 41 15,14,16; ,42 % 43,44 , 52,53,54- no
     nuc = nuc(2,:,:,k);% for probabilities exported
     nuc = squeeze(nuc);
     mask1 = nuc;
     
-    mask3 = imfill(mask1 > 0.98,'holes');
+    mask3 = imfill(mask1 > 0.8,'holes');
     
      cyto = cyto(2,:,:,k);% for probabilities exported
      cyto = squeeze(cyto);
@@ -22,9 +21,10 @@ cyto = h5read(ilastikfile2,'/exported_data');
     figure(1), subplot(1,3,3),imshow(mask3);
    
     Lnuc = mask3;%im2bw(mask1,0.5);
-    Lcyto = im2bw(mask2,0.98);
+    Lcyto = im2bw(mask2,0.9);
     figure(2),subplot(1,2,1), imshow(Lnuc);
     figure(2),subplot(1,2,2), imshow(Lcyto&~Lnuc);
+    
    %%
    [MaskFin2] = Unmergetwonuclei(mask3);
    %[MaskFin3] = Unmergetwonuclei(MaskFin2);
