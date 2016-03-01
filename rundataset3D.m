@@ -4,11 +4,11 @@ function rundataset3D(ilastikdirnuc,ilastikdircyto,imagedir,pos,paramfile,timegr
 % run all timepoints and save into one peaks
 % main fnction
 % pl = number of different ilastik files corresponding to the same position
-% (either z planes ot time groups, etc.)
+% (either z planes or time groups, etc.)
 % strnuc = keyword within the folder of nuc masks to separate the masks
 % corresponding only to single position 'pos' ( e.g. give position may have masks
 % separately for each x z plane)
-% for now the str is the same for nuc and cyto masks
+% 
 
 [ilastikCytoAll] = FindPositionMasks(ilastikdircyto,pl,pos,strcyto);    % get the specific position ilastik masks (all z projections)
 [ilastikNucAll] = FindPositionMasks(ilastikdirnuc,pl,pos,strnuc);
