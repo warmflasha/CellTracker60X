@@ -31,6 +31,12 @@ figure(7), subplot(1,size(Lnuc,3),2), hold on
 text(peaks{j}(:,1)+10,peaks{j}(:,2),num2str(peaks{j}(:,6)./peaks{j}(:,7)),'Color','m');
 
 %%
+for k=1:5
+    figure(5), subplot(2,3,k),imshow(pmasks(:,:,k),[]);
+    
+end
+
+%%
 
 Lcytofin = imgfilescyto(j).NucMask;
 
@@ -40,11 +46,11 @@ end
 %%
 
 for k=1:5
- figure(9),subplot(1,5,k),imshow(inuc(:,:,k),[]);
+ figure(9),subplot(2,3,k),imshow(pnuc(:,:,k),[]);
 end
 
 for k=1:5
- figure(11),subplot(1,5,k),imshow(pcyto(:,:,k),[]);
+ figure(11),subplot(2,3,k),imshow(pcyto(:,:,k),[]);
 end
 %%
 j = 10;

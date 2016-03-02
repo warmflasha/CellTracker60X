@@ -52,7 +52,7 @@ statsboundary2 = regionprops(boundary2,'PixelList');
 data_c2 = statsboundary2.PixelList;         % pixel coordinates of the boundary of the cell merged object
 extra = chi&~mask3new;                      % extra stuff = difference between the filled convex hull area and the merged cell object
 
-extrafilt = bwareafilt(extra,[10 userParam.areanuclow]);    % filter out very small intersections
+extrafilt = bwareafilt(extra,[10 1000]);    % filter out very small intersections
 stextra = bwconncomp(extrafilt);
 stextra2 = regionprops(extrafilt,'Area','PixelIdxList'); 
 
@@ -139,21 +139,8 @@ end
  % r has the row numbers of the pixel coordinate (on the hull boundary ) of the point with max distance to the cell object
  % objrow  has the row numbers of the pixel coordinate (on the cell object boundary) of the point with max distance to the hull boundary
  [r,~] = find(maxdist1 == m); 
- % calculate the distance from the hull boundary to the cell object boundary along the y direction 
-                for k=1:h;               
-                   x1 = hull_bnd_only1(k,1);
-                   y1 = hull_bnd_only1(k,2);
-                   curr = find(obj_bnd_only1(:,1)== x1);%%%%%
-                   if ~isempty(curr)
-                       x2 = obj_bnd_only1(curr(end),1);
-                       y2 = obj_bnd_only1(curr(end),2);
-                       maxdist1(k,1) = sqrt(power((x1-x2),2)+power((y1-y2),2));
-                       objrow(k,1) = curr(end);   
-                    end
-                   
-               end
-               m12 = max(maxdist1);
-               [r2,~] = find(maxdist1 == m12);
+ 
+ 
                
 % calculate the distance from the hull boundary of the second object to the cell object boundary along the x direction        
 h2 = size(hull_bnd_only2,1);
@@ -174,34 +161,19 @@ end
 
  m2 = max(maxdist2);             
  [rr,~] = find(maxdist2 == m2);           % same as for the first object
- 
-% calculate the distance from the hull boundary of the second object to the cell object boundary along the y direction (y works too)
-     for k=1:h2                    
-         x1 = hull_bnd_only2(k,1);
-         y1 = hull_bnd_only2(k,2);
-         curr2 = find(obj_bnd_only2(:,1)== x1);%%%
-         if ~isempty(curr2)
-             x2 = obj_bnd_only2(curr2(end),1);
-             y2 = obj_bnd_only2(curr2(end),2);
-             %disp([num2str(y2) ]);
-             maxdist2(k) = sqrt(power((x1-x2),2)+power((y1-y2),2));
-             objrow2(k,1) = curr2(end);
-         end
-     end
-  m22 = max(maxdist2);             
- [rr2,~] = find(maxdist2 == m22); 
- % COORDINATES OF CLOSEST POINTS,IF THE DISTANCES ARE CALCULATED ALONG THE X DIRECTION
+  % COORDINATES OF CLOSEST POINTS,IF THE DISTANCES ARE CALCULATED ALONG THE X DIRECTION
 % pt2, pt22 represent the pixel coordinates on the merged cell objects that need to be connected and where the cut
 % should be made
 pt1 = hull_bnd_only1(r(1),:);             % since some max distances are repeated , will take the first one
 pt2 = obj_bnd_only1(objrow(r(1)),:); 
+
 pt12 = hull_bnd_only2(rr(1),:);           % since some max distances are repeated , will take the first one
 pt22 = obj_bnd_only2(objrow2(rr(1)),:);
 %  hold on                                         
 % plot(pt1(:,1),pt1(:,2),'m*','markersize',30);
-% plot(pt2(:,1),pt2(:,2),'m*','markersize',30);
-% plot(pt12(:,1),pt12(:,2),'m*','markersize',30);
-% plot(pt22(:,1),pt22(:,2),'m*','markersize',30);
+% plot(pt2(:,1),pt2(:,2),'b*','markersize',30);
+% plot(pt12(:,1),pt12(:,2),'g*','markersize',30);
+% plot(pt22(:,1),pt22(:,2),'c*','markersize',30);
 
 x1 = pt2(1);   
 y1 = pt2(2);   
@@ -217,27 +189,59 @@ else
 end
     
 ynew=round(a*vect1+b);
-toelim = cat(2,vect1',ynew');                       % pixel coordinated of the line (line goes through the whole image)
-
+toelim = cat(2,vect1',ynew');                
 %plot(toelim(:,1),toelim(:,2),'c*');
 toelim2 = intersect(data_mc,toelim,'rows');         % find where the line intersects with the cell object
+% calculate the distance from the hull boundary of the second object to the cell object boundary along the y direction 
+     for k=1:h2                    
+         x1 = hull_bnd_only2(k,1);
+         y1 = hull_bnd_only2(k,2);
+         curr2 = find(obj_bnd_only2(:,1)== x1);%%%
+         if ~isempty(curr2)
+             x2 = obj_bnd_only2(curr2(end),1);
+             y2 = obj_bnd_only2(curr2(end),2);
+             %disp([num2str(y2) ]);
+             max2(k) = sqrt(power((x1-x2),2)+power((y1-y2),2));
+             objrow2(k,1) = curr2(end);
+         end
+     end
+  m22 = max(max2);             
+ [rr2,~] = find(max2 == m22); 
+       % pixel coordinated of the line (line goes through the whole image)
+
+
 %plot(toelim2(:,1),toelim2(:,2),'c*');
 %  COORDINATES OF CLOSEST POINTS,IF THE DISTANCES ARE CALCULATED ALONG THE Y DIRECTION
-pt1 = hull_bnd_only1(r2(1),:);             
-pt2 = obj_bnd_only1(objrow(r2(1)),:); 
-pt12 = hull_bnd_only2(rr2(1),:);           
-pt22 = obj_bnd_only2(objrow2(rr2(1)),:);
+% calculate the distance from the hull boundary to the cell object boundary along the y direction 
+                for k=1:h;               
+                   x1 = hull_bnd_only1(k,1);
+                   y1 = hull_bnd_only1(k,2);
+                   curr = find(obj_bnd_only1(:,1)== x1);%%%%%
+                   if ~isempty(curr)
+                       x2 = obj_bnd_only1(curr(end),1);
+                       y2 = obj_bnd_only1(curr(end),2);
+                       maxdis(k,1) = sqrt(power((x1-x2),2)+power((y1-y2),2));
+                       objrow(k,1) = curr(end);   
+                    end
+                   
+               end
+               m12 = max(maxdis);
+               [r2,~] = find(maxdis == m12);
+p1 = hull_bnd_only1(r2(1),:);             
+p2 = obj_bnd_only1(objrow(r2(1)),:); 
+p12 = hull_bnd_only2(rr2(1),:);           
+p22 = obj_bnd_only2(objrow2(rr2(1)),:);
 
-x1 = pt2(1);   
-y1 = pt2(2);   
-x2 = pt22(1);
-y2 = pt22(2);
-a = (y1-y2)/(x1-x2);                  % draw a line through those points
-b = 0.5*((y1+y2) -a*(x1+x2));
-if x1<x2
-vect1 = x1:0.001:x2;
+xx1 = p2(1);   
+yy1 = p2(2);   
+xx2 = p22(1);
+yy2 = p22(2);
+a = (yy1-yy2)/(xx1-xx2);                  % draw a line through those points
+b = 0.5*((yy1+yy2) -a*(xx1+xx2));
+if xx1<xx2
+vect1 = xx1:0.001:xx2;
 else
-    vect1 = x2:0.001:x1;
+    vect1 = xx2:0.001:xx1;
 end
 ynew=round(a*vect1+b);
 toelim_y = cat(2,vect1',ynew');        

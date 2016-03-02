@@ -15,5 +15,6 @@ pos = position(jj);
 outfile = ([ num2str(pos) '_' num2str(outfile)]);
 
 
-rundataset3D(ilastikdirnuc,ilastikdircyto,imagedir,pos,paramfile,timegroup,outfile,paramfile3D,pl,strnuc,strcyto)
+rundataset3D(ilastikdirnuc,ilastikdircyto,imagedir1,imagedir2,pos,paramfile,timegroup,outfile,paramfile3D,pl,strnuc,strcyto)
+
 end

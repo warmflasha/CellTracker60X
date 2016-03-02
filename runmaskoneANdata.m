@@ -10,8 +10,10 @@ pmasks = primaryfilter(pnuc,userParam.logfilter, userParam.bthreshfilter, userPa
 
 % here can insert the UnmergeTwoNuclei function ( after the masks are
 % already binary
+if userParam.flag ==1
 for k=1:size(pmasks,3)
  pmasks(:,:,k) = Unmergetwonuclei(pmasks(:,:,k));
+end
 end
 % zrange: where the nuclei are in z
 [zrange, smasks] = secondaryfilter(pmasks, userParam.minstartobj, userParam.minsolidity, userParam.diskfilter, userParam.area2filter);

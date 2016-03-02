@@ -1,5 +1,5 @@
 
-function rundataset3D(ilastikdirnuc,ilastikdircyto,imagedir,pos,paramfile,timegroup,outfile,paramfile3D,pl,strnuc,strcyto)
+function rundataset3D(ilastikdirnuc,ilastikdircyto,imagedir1,imagedir2,pos,paramfile,timegroup,outfile,paramfile3D,pl,strnuc,strcyto)
 
 % run all timepoints and save into one peaks
 % main fnction
@@ -22,13 +22,16 @@ imgfiles = struct;
 nTprev = 0;
 for j = 1%:length(ilastikNucAll)      % loop over the same position's time groups; not length(ilastikNucAll) is not the number of time groups
     
-    nT = GetNumberTimePointsAN(imagedir,pos,timegroup);    % how many time point are within given time group
+    [nT,reader] = GetNumberTimePointsAN(imagedir1,pos,timegroup);    % how many time point are within given time group
         
-    
     for k = 1:nT                                                                       % loop over time points within a given time group
-        [pnuc, imgsnuc]   =  readmaskfiles1(ilastikNucAll,imagedir, pos,k, j,chan(1));        % get the raw images for that position and merge them into a 3d format
-        [pcyto, imgscyto] =  readmaskfiles1(ilastikCytoAll,imagedir2, pos,k, j,chan(2));
-        for m = 1:pl
+       % read pnuc and pcyto separately from images
+        [pnuc]=readmaskfiles1(ilastikNucAll,k);
+        [pcyto]=readmaskfiles1(ilastikCytoAll,k);
+       % read raw images
+        [imgsnuc]   =  getrawimgfiles(imagedir1,pl, pos,timegroup,chan(1));        % get the raw images for that position and merge them into a 3d format
+        [imgscyto] =   getrawimgfiles(imagedir2,pl, pos,timegroup,chan(1));
+        for m = 1:size(imgscyto,2)
             img_now = imgsnuc{m}{1}{k,1};
             img_now_cyto = imgscyto{m}{1}{k,1};
             inuc(:,:,m) = img_now;

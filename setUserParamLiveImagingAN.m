@@ -14,10 +14,10 @@ userParam.areanuchi = 15000;
 userParam.areanuclow2 = 600;%800
 
 userParam.flag = 0;% only if not 3d analysis is done
-userParam.areanuclow_unmerge = 6500;%4820;
+userParam.areanuclow_unmerge =  5600 ;%5600 6500 4820;
 
 userParam.probthresh_nuc = 0.98;
-userParam.probthresh_cyto = 0.8;
+userParam.probthresh_cyto = 0.9;
 
 userParam.dilate_cyto = 5;
 userParam.erode_nuc = 8;% 10
