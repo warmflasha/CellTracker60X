@@ -1,16 +1,16 @@
 %%
 %ilastikfile = ('/Users/warmflashlab/Desktop/IlastikMasks_headless_PluriW0/NucMaskPluri_tg56.h5');
-ilastikfile = ('/Users/warmflashlab/Desktop/JANYARY_8_DATA_ilasik/NucMsks3D/NucMasks3Dtg3.h5');
-ilastikfile2 = ('/Users/warmflashlab/Desktop/JANYARY_8_DATA_ilasik/CytoMasks3D/CytoMasks3Dtg3.h5');
+ilastikfile = ('/Users/warmflashlab/Desktop/JANYARY_8_DATA_ilasik/NucMsks3D/NucMasks3Djan8set1_z3.h5');
+ilastikfile2 = ('/Users/warmflashlab/Desktop/JANYARY_8_DATA_ilasik/CytoMasks3D/CytoMasks3Djan8set1_z3.h5');
 
 nuc = h5read(ilastikfile,'/exported_data');
 cyto = h5read(ilastikfile2,'/exported_data');
-  k =29;% 41 15,14,16; ,42 % 43,44 , 52,53,54- no
+  k =20;% 41 15,14,16; ,42 % 43,44 , 52,53,54- no
     nuc = nuc(2,:,:,k);% for probabilities exported
     nuc = squeeze(nuc);
     mask1 = nuc;
     
-    mask3 = imfill(mask1 > 0.8,'holes');
+    mask3 = imfill(mask1 > 0.9,'holes');
     
      cyto = cyto(2,:,:,k);% for probabilities exported
      cyto = squeeze(cyto);

@@ -16,6 +16,6 @@ userParam.area2filter = 600;%1000
 %userParam.zmatch = 4;% thisparameter is set in the function to be the size
 %of the zrange (so that the foud nuclei would be traced throughout all
 %nonempty zplanes)
-userParam.matchdistance = 15;%15 25
+userParam.matchdistance = 20;%15 25
 
 userParam.overlapthresh = 80;

@@ -13,26 +13,27 @@ for k=1:size(icyto_new,3)
     figure(3), subplot(2,size(icyto_new,3),k),imshow(icyto_new(:,:,k),[]);
     figure(4), subplot(2,size(icyto_new,3),k),imshow(inuc_new(:,:,k),[]);
 end
-
+%%
 for k=1:5
     figure(5), subplot(2,3,k),imshow(icyto(:,:,k),[]);
     figure(6), subplot(2,3,k),imshow(inuc(:,:,k),[]);
 end
 
 %%
-j = 2;
+
 Lnuc = imgfiles(j).NucMask;
+j = 2;
 for k=1:size(Lnuc,3)
- figure(7),subplot(1,size(Lnuc,3),k),imshow(Lnuc(:,:,k),[]);%(7),subplot(2,size(Lnuc,3),k),
+ figure(7+j),subplot(1,size(Lnuc,3),k),imshow(Lnuc(:,:,k),[]);%(7),subplot(2,size(Lnuc,3),k),
 end
-figure(7), subplot(1,size(Lnuc,3),2), hold on
-plot(peaks{j}(:,1),peaks{j}(:,2),'*r','markersize',15);
-figure(7), subplot(1,size(Lnuc,3),2), hold on
-text(peaks{j}(:,1)+10,peaks{j}(:,2),num2str(peaks{j}(:,6)./peaks{j}(:,7)),'Color','m');
+figure(7+j), subplot(1,size(Lnuc,3),2), hold on
+plot(outdat(:,1),outdat(:,2),'*r','markersize',15);
+figure(7+j), subplot(1,size(Lnuc,3),2), hold on
+text(outdat(:,1)+10,outdat(:,2),num2str(outdat(:,6)./outdat(:,7)),'Color','m');
 
 %%
-for k=1:5
-    figure(5), subplot(2,3,k),imshow(pmasks(:,:,k),[]);
+for k=1:size(pmasks,3)
+    figure(5), subplot(2,3,k),imshow(pmasks(:,:,k),[]);%pmasks
     
 end
 
@@ -56,5 +57,5 @@ end
 j = 10;
 Lnuc = imgfiles(j).NucMask;
 for k=1:size(Lnuc,3)
-figure(15),subplot(1,size(Lnuc,3),k),showMaskWithNumber(Lnuc(:,:,k))
+figure(16),subplot(1,size(Lnuc,3),k),showMaskWithNumber(Lnuc(:,:,k))
 end
