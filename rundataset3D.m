@@ -26,6 +26,7 @@ for j = 1%:length(ilastikNucAll)      % loop over the same position's time group
     % read raw images
     [imgsnuc]   =  getrawimgfiles(imagedir1,pl, pos,timegroup,chan(1));        % get the raw images for that position and merge them into a 3d format
     [imgscyto] =   getrawimgfiles(imagedir2,pl, pos,timegroup,chan(1));    
+    nT = 45;
     for k = 1:nT                                                                       % loop over time points within a given time group
        % read pnuc and pcyto separately from images
         [pnuc]=readmaskfiles1(ilastikNucAll,k);

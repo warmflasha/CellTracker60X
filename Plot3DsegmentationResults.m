@@ -5,8 +5,8 @@
 % useful for troubleshooting
 
 for k=1:size(newmask_lbl,3)
-    figure(1), subplot(2,size(newmask_lbl,3),imshow(newmask_lbl(:,:,k),[]);
-    figure(2), subplot(2,size(newmask_lbl,3),imshow(maskzcyto_lbl(:,:,k),[]);
+    figure(1), subplot(2,size(newmask_lbl,3),k),imshow(newmask_lbl(:,:,k),[]);
+    figure(2), subplot(2,size(newmask_lbl,3),k),imshow(maskzcyto_lbl(:,:,k),[]);
 end
 
 for k=1:size(icyto_new,3)
@@ -18,6 +18,14 @@ for k=1:5
     figure(5), subplot(2,3,k),imshow(icyto(:,:,k),[]);
     figure(6), subplot(2,3,k),imshow(inuc(:,:,k),[]);
 end
+
+%%
+
+for k=1:size(pmaskscyto,3)
+    figure(20), subplot(2,3,k),imshow(pmaskscyto(:,:,k),[]);
+    
+end
+
 
 %%
 
@@ -38,7 +46,7 @@ for k=1:size(pmasks,3)
 end
 
 %%
-
+j = 40;
 Lcytofin = imgfilescyto(j).NucMask;
 
 for k=1:size(Lcytofin,3)
@@ -54,7 +62,7 @@ for k=1:5
  figure(11),subplot(2,3,k),imshow(pcyto(:,:,k),[]);
 end
 %%
-j = 10;
+j = 40;
 Lnuc = imgfiles(j).NucMask;
 for k=1:size(Lnuc,3)
 figure(16),subplot(1,size(Lnuc,3),k),showMaskWithNumber(Lnuc(:,:,k))

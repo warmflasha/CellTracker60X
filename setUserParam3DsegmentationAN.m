@@ -10,7 +10,7 @@ userParam.diskfilter = 3;%4
 userParam.area1filter = 100;
 
 userParam.minstartobj = 1;
-userParam.minsolidity = [0.9, 0.75];
+userParam.minsolidity = [0.9, 0.8];
 userParam.area2filter = 600;%1000
 
 %userParam.zmatch = 4;% thisparameter is set in the function to be the size

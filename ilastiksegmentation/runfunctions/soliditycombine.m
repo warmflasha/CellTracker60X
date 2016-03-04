@@ -44,7 +44,21 @@ for z1 = zlim
         %%
         % If there is a overlap, set the pixel values corresponding to the new
         % object as 0.
-        oobj = unique([r{1}' c{2}']);
+        
+        if size(r{1},2)>size(c{2},2)
+        rnew = r{1}';
+        cnew = c{2};
+        end
+        if size(r{1},2)<size(c{2},2)
+        rnew = r{1};
+        cnew = c{2}';
+        end
+        if size(r{1},2) == size(c{2},2)
+        rnew = r{1}';
+        cnew = c{2}';
+        end
+        
+        oobj = unique([rnew cnew]);
         if(~isempty(oobj))
             for i = oobj
                 o21(obj.PixelIdxList{i}) = 0;

@@ -78,8 +78,40 @@ goodstats = st(goodindsfin);
 onebiglist = cat(1,goodstats.PixelIdxList);
 Inew = zeros(1024,1024,size(mask1,3));
 Inew(onebiglist) = true;
-LcytoIl(Inew==0) =0;   %   
+LcytoIl(Inew==0) =0;   %  this is the good cyto mask with only the cytos WITH nucleus
 
+% Next is similar processing to the obove: now to remove the nuclei tha
+% don't have the cytoplasms in them
+cc = bwconncomp(LcytoIl); % use good cytoplasms now to screen bad nuclei
+cnuc = bwconncomp(Lnuc);                        
+st = regionprops(cc,'PixelIdxList');         
+stnuc = regionprops(cnuc,'PixelIdxList','Area');  %
+goodindsnuc = zeros(length(stnuc),1);
+
+for i = 1:length(st);
+    x =st(i).PixelIdxList;
+        for k=1:length(stnuc);
+        y = stnuc(k).PixelIdxList;
+                in = intersect(x,y);
+        if ~isempty(in)  
+           goodindsnuc(k,1) = k;
+           
+        end
+    end
+    
+end
+goodindsfin = nonzeros(goodindsnuc); %
+goodstats = stnuc(goodindsfin);
+
+% here need to leave the PixelIds of the goodindsNUC 
+%
+onebiglist = cat(1,goodstats.PixelIdxList);
+Inew = zeros(1024,1024,size(mask1,3));
+Inew(onebiglist) = true;
+Lnuc(Inew==0) =0;   % now Lnuc has to have the same number of elements as the cytoplasm channel; Lnuc is still labeled
+
+% now subtract those nuclei from filled cytoplasms to get final good
+% labeled masks
 % erode nuclei a little since sometimes causes problems
 t = imerode(Lnuc,strel('disk',userParam.erode_nuc));      
 
