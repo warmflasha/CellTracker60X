@@ -14,7 +14,7 @@ chan = [1 2];
 paramfile = 'setUserParamLiveImagingAN';
 paramfile3D = 'setUserParam3DsegmentationAN';
 
-outfile = '3D_9hrs_xyz.mat';
+outfile = '3D_20hrs_xyz.mat';
 
 
 positions = [1 2 5 7 8 12 14 15 18 19 20 24 25 27 29 30]; %positions that were processed

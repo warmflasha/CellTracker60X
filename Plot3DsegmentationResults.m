@@ -30,7 +30,7 @@ end
 %%
 
 Lnuc = imgfiles(j).NucMask;
-j = 2;
+%j = 2;
 for k=1:size(Lnuc,3)
  figure(7+j),subplot(1,size(Lnuc,3),k),imshow(Lnuc(:,:,k),[]);%(7),subplot(2,size(Lnuc,3),k),
 end
@@ -46,7 +46,7 @@ for k=1:size(pmasks,3)
 end
 
 %%
-j = 40;
+%j = 15;
 Lcytofin = imgfilescyto(j).NucMask;
 
 for k=1:size(Lcytofin,3)
@@ -62,7 +62,7 @@ for k=1:5
  figure(11),subplot(2,3,k),imshow(pcyto(:,:,k),[]);
 end
 %%
-j = 40;
+j = 31;
 Lnuc = imgfiles(j).NucMask;
 for k=1:size(Lnuc,3)
 figure(16),subplot(1,size(Lnuc,3),k),showMaskWithNumber(Lnuc(:,:,k))

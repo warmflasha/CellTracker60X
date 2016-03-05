@@ -12,7 +12,7 @@ mask3new = bwareafilt(mask3,[userParam.areanuclow_unmerge 20000]);  % userParam.
 mask3old = bwareafilt(mask3,[userParam.areanuclow userParam.areanuclow_unmerge]);% create the mask without the merged object for later use
 stats = bwconncomp(mask3new);
 % check how many merged objects there are
-if (sum(sum(mask3new)) == 0) || (stats.NumObjects >1); % if there are no merged objects, return the same nuc mask as was input
+if (sum(sum(mask3new)) == 0) || (stats.NumObjects >1); % if there are no merged obj or more than one, return the same nuc mask as was input
 MaskFin2 = mask3;
 return
 end
@@ -162,10 +162,13 @@ end
   % COORDINATES OF CLOSEST POINTS,IF THE DISTANCES ARE CALCULATED ALONG THE X DIRECTION
 % pt2, pt22 represent the pixel coordinates on the merged cell objects that need to be connected and where the cut
 % should be made
-ptXb = hull_bnd_only1(rX(1),:);             % since some max distances are repeated , will take the first one
-ptX = obj_bnd_only1(objrow(rX(1)),:); 
-ptX2b = hull_bnd_only2(rX2(1),:);           % since some max distances are repeated , will take the first one
-ptX2 = obj_bnd_only2(objrow2(rX2(1)),:);
+if (objrow2(rX2(1)))~= 0 && objrow(rX(1))~=0
+    ptXb = hull_bnd_only1(rX(1),:);             % since some max distances are repeated , will take the first one
+    ptX = obj_bnd_only1(objrow(rX(1)),:);
+    ptX2b = hull_bnd_only2(rX2(1),:);           % since some max distances are repeated , will take the first one
+    ptX2 = obj_bnd_only2(objrow2(rX2(1)),:);
+
+    
 %  hold on                                         
 % plot(ptXb(:,1),ptXb(:,2),'m*','markersize',30);
 % plot(ptX(:,1),ptX(:,2),'b*','markersize',30);
@@ -189,6 +192,10 @@ y_X=round(a*vect1+b);
 toelim = cat(2,vect1',y_X');                
 %plot(toelim(:,1),toelim(:,2),'c*');
 toelim2 = intersect(data_mc,toelim,'rows');         % find where the line intersects with the cell object
+% else
+%     MaskFin2 = mask3;
+%     return
+end
 %----------------------------------------------------
 %  COORDINATES OF CLOSEST POINTS,IF THE DISTANCES ARE CALCULATED ALONG THE Y DIRECTION
 % calculate the distance from the hull boundary of the second object to the cell object boundary along the y direction 
@@ -232,11 +239,12 @@ objrowY = zeros(h,1);
                end
                mY = max(maxdistY);
                [rY,~] = find(maxdistY == mY);
-ptYb = hull_bnd_only1(rY(1),:);             
-ptY = obj_bnd_only1(objrowY(rY(1)),:); 
-ptY2b = hull_bnd_only2(rY2(1),:);           
-ptY2 = obj_bnd_only2(objrowY2(rY2(1)),:);
-
+               if objrowY(rY(1))~= 0 && objrowY2(rY2(1))~=0
+                   ptYb = hull_bnd_only1(rY(1),:);
+                   ptY = obj_bnd_only1(objrowY(rY(1)),:);
+                   ptY2b = hull_bnd_only2(rY2(1),:);
+                   ptY2 = obj_bnd_only2(objrowY2(rY2(1)),:);
+               
 xx1 = ptY(1);   
 yy1 = ptY(2);   
 xx2 = ptY2(1);
@@ -251,9 +259,23 @@ end
 y_Y=round(a*vect2+b);
 toelim_y = cat(2,vect2',y_Y');        
 toelim2_y = intersect(data_mc,toelim_y,'rows');         % find where the line intersects with the cello object
+else 
+MaskFin2 = mask3;
+return
+end
 % Choose which line has the least intersecting points with the merged
 % object = this is the line where the cut wll be made
-if size(toelim2_y,2)>size(toelim2,2)
+if ((objrow2(rX2(1)))~= 0 && objrow(rX(1))~=0)==0
+    toelimfin = toelim2_y;
+    I = zeros(1024,1024);                                                    
+    linearInd = sub2ind(size(I), toelimfin(:,2), toelimfin(:,1));
+    I(linearInd)=1;
+    II = imdilate(I,strel('disk',8)); % 'disk',4            
+
+    MaskFin = mask3new&~II;                                       
+    MaskFin2 = MaskFin + mask3old;                               
+else
+if size(toelim2_y,1)>size(toelim2,1)
 toelimfin = toelim2;
 else
 toelimfin = toelim2_y;
@@ -262,9 +284,10 @@ end
 I = zeros(1024,1024);                                    % create an image with only that element                 
 linearInd = sub2ind(size(I), toelimfin(:,2), toelimfin(:,1));
 I(linearInd)=1;
-II = imdilate(I,strel('disk',4)); % 'disk',4             % dilate a little in order to create a merged line 
+II = imdilate(I,strel('disk',5)); % 'disk',4             % dilate a little in order to create a merged line 
 
 MaskFin = mask3new&~II;                                       % remove those pixels from the merged object
 MaskFin2 = MaskFin + mask3old;                                % return to the original nuclear mask but with the cells unmerged
 %figure, imshow(MaskFin2);
+end
 end
