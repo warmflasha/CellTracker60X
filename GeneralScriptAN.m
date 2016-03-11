@@ -58,7 +58,7 @@ outfile = ([ num2str(pos) '_' num2str(outfile)]);
 
 %%
  
-outfile = '23_3D_45tpts.mat';
+outfile = '12_3D_20hr_test_xyz.mat';
 runTracker(outfile,'newTrackParamAN');
 global userParam;
 userParam.colonygrouping = 130;

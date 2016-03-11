@@ -23,4 +23,4 @@ userParam.probthresh_cyto = 0.95;
 userParam.dilate_cyto = 5;
 userParam.erode_nuc = 8;% 10
 
-userParam.areacytolow = 20;
+userParam.areacytolow = 200;

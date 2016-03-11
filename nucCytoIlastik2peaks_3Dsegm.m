@@ -59,12 +59,12 @@ goodinds = zeros(length(st),1);
 
 for i = 1:length(stnuc);
     x =stnuc(i).PixelIdxList;
-        for k=1:length(st);
+    for k=1:length(st);
         y = st(k).PixelIdxList;
-                in = intersect(x,y);
-        if ~isempty(in)  
-           goodinds(k,1) = k;
-           
+        in = intersect(x,y);
+        if ~isempty(in) && size(in,1)>userParam.areacytolow % the cytoplasms are at least 200 pixels ( bc if some junk was founf in nuclear channel it will likely have very small sytos
+            goodinds(k,1) = k;
+            
         end
     end
     
@@ -120,7 +120,7 @@ LcytoIl(t>0)=0;                                           % remove nuclei from t
 % and non-eroded nuc mask
 
 LcytoIl(Lcytonondil ==0)=0;
-LcytoIl(Lnuc >0)=0; 
+LcytoIl(Lnuc > 0)=0; 
 Lcytofin = LcytoIl;
 
 % at this point have the set of 3D masks (nuc and cyto); I2 is the GFP
@@ -136,8 +136,8 @@ I2proc = presubBackground_self(I2proc);
 statsnuc = regionprops(Lnuc,I2proc,'Area','Centroid','PixelIdxList','MeanIntensity');
 statsnucw0 = regionprops(Lnuc,Inuc,'Area','Centroid','PixelIdxList','MeanIntensity');% these are the stats for the actual nuclear image(rfp)
 
-badinds = [statsnuc.Area] < userParam.areanuclow2;                    
-badinds2 = [statsnucw0.Area] < userParam.areanuclow2;
+badinds = [statsnuc.Area] < 0;   % don't need to filter anything since the number of elements in nuc and cyto is already matched in the code above      
+badinds2 = [statsnucw0.Area] < 0;
 statsnuc(badinds) = [];
 statsnucw0(badinds2) = [];
 
@@ -145,7 +145,7 @@ statsnucw0(badinds2) = [];
 %get the cytoplasmic mean intensity for each labeled object
 
 statscyto = regionprops(Lcytofin,I2proc,'Area','Centroid','PixelIdxList','MeanIntensity');
-badinds = [statscyto.Area] < userParam.areacytolow; 
+badinds = [statscyto.Area] < 0;  % don't need to filter anything since the number of elements in nuc and cyto is already matched in the code above 
 statscyto(badinds) = [];
 
 

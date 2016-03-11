@@ -13,6 +13,7 @@ pmasks = primaryfilter(pnuc,userParam.logfilter, userParam.bthreshfilter, userPa
 if userParam.flag ==1
 for k=1:size(pmasks,3)
  pmasks(:,:,k) = Unmergetwonuclei(pmasks(:,:,k));
+ 
 end
 end
 % zrange: where the nuclei are in z

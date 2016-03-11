@@ -4,8 +4,10 @@ function [pnuc] = readmaskfiles1(ilastikNucAll,tpt)
 
 % reading masks
 
- nzslices = size(ilastikNucAll,2);
-for m=1:nzslices
+ %nzslices = size(ilastikNucAll,2);
+ 
+for m=1:size(ilastikNucAll,2)
+    
 ilastikfile=ilastikNucAll{m};
 io = h5read(ilastikfile,'/exported_data');
 io = io(2,:,:,:);

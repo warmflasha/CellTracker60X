@@ -4,7 +4,7 @@ function [MaskFin2] = Unmergetwonuclei(mask3)% input the nuclear mask
 % if yes, then splits them and returns a new mask where all the two merged
 % nuclei are separated
 % if there are no merged objects then returns the same mask as input
-
+clear MaskFin2
 % 
 % get the image with only the merged object
 global userParam;
@@ -60,18 +60,20 @@ stextra2 = regionprops(extrafilt,'Area','PixelIdxList');
 % leave the largest two (to be used for the splitting)
 if stextra.NumObjects > 2
 a = [stextra2.Area];
-a2 = sort(a,'descend');
+a1 = unique(a);
+a2 = sort(a1,'descend');
 edg1 = find(a == a2(1));
 edg2 = find(a == a2(2));
-extrafilt = zeros(1024,1024);
-extrafilt(stextra2(edg1).PixelIdxList) = 1;
-extrafilt(stextra2(edg2).PixelIdxList) = 1;
+inew = zeros(1024,1024);
+inew(stextra2(edg1(1)).PixelIdxList) = 1;
+inew(stextra2(edg2(1)).PixelIdxList) = 1;
 end
 % if the shape was so weird, that only one object is left in extra, then return
 if stextra.NumObjects == 1
 MaskFin2 = mask3;
 return
 end
+extrafilt = inew;
 % get the boundaries of the two extra objects
 %figure, imshow(extrafilt);hold on
 extra2= imerode(extrafilt,strel('disk',1));                                   
@@ -270,7 +272,7 @@ if ((objrow2(rX2(1)))~= 0 && objrow(rX(1))~=0)==0
     I = zeros(1024,1024);                                                    
     linearInd = sub2ind(size(I), toelimfin(:,2), toelimfin(:,1));
     I(linearInd)=1;
-    II = imdilate(I,strel('disk',8)); % 'disk',4            
+    II = imdilate(I,strel('disk',9)); % 'disk',4            
 
     MaskFin = mask3new&~II;                                       
     MaskFin2 = MaskFin + mask3old;                               
@@ -284,7 +286,7 @@ end
 I = zeros(1024,1024);                                    % create an image with only that element                 
 linearInd = sub2ind(size(I), toelimfin(:,2), toelimfin(:,1));
 I(linearInd)=1;
-II = imdilate(I,strel('disk',5)); % 'disk',4             % dilate a little in order to create a merged line 
+II = imdilate(I,strel('disk',6)); % 'disk',4             % dilate a little in order to create a merged line 
 
 MaskFin = mask3new&~II;                                       % remove those pixels from the merged object
 MaskFin2 = MaskFin + mask3old;                                % return to the original nuclear mask but with the cells unmerged
