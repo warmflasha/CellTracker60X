@@ -10,11 +10,11 @@ userParam.backdiskrad = 300;
 userParam.colonygrouping = 130;
 
 userParam.areanuclow = 600;
-userParam.areanuchi = 15000;
+userParam.areanuchi = 8000;
 userParam.areanuclow2 = 600;%800
 
 userParam.flag = 1;% 
-userParam.areanuclow_unmerge =  5600 ;%5600 6500 4820;
+userParam.areanuclow_unmerge =  5800 ;%5600 6500 4820;
 userParam.areanuchigh_unmerge =  6100 ;
 
 userParam.probthresh_nuc = 0.98;

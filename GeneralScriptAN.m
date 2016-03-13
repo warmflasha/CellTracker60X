@@ -58,7 +58,7 @@ outfile = ([ num2str(pos) '_' num2str(outfile)]);
 
 %%
  
-outfile = '12_3D_20hr_test_xyz.mat';
+outfile = '1_3D_20hr_test_xyz.mat';
 runTracker(outfile,'newTrackParamAN');
 global userParam;
 userParam.colonygrouping = 130;
@@ -144,7 +144,7 @@ C = {'b','r','g','m'};
         
         %outfile = ff(k).name; %nms{k};
         %cellsToDynColonies(outfile);
-        outfile = ('12_jan8set_test.mat');
+        outfile = ('2_3D_20hr_test_xyz.mat');
         load(outfile,'colonies','peaks');
         tps = length(peaks);
         numcol = size(colonies,2); % how many colonies were grouped within the frame

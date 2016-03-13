@@ -22,7 +22,7 @@ end
 %%
 
 for k=1:size(pmasks,3)
-    figure(20), subplot(2,3,k),imshow(pmasks(:,:,k),[]);
+    figure(21), subplot(2,3,k),imshow(pmasks(:,:,k),[]);
     
 end
 
@@ -45,10 +45,7 @@ for k=1:size(pmasks,3)
     
 end
 
-%%
-%j = 15;
-Lcytofin = imgfilescyto(j).Cyto;%uncompressBinaryImg(imgfilescyto(j).Cyto);
-figure, imshow(Lcytofin,[]);
+
 %%
 for k=1:size(Lnuc,3)
  figure(9),subplot(2,size(Lnuc,3),k),imshow(Lnuc(:,:,k),[]);
@@ -69,8 +66,13 @@ for k=1:size(pnuc,3)
  figure(11),subplot(2,3,k),imshow(pcyto(:,:,k),[]);
 end
 %%
-j = 53;
+j = 10;
 Lnuc = imgfiles(j).NucMask;%uncompressBinaryImg(imgfiles(j).NucMask);
 for k=1:size(Lnuc,3)
 figure(16),subplot(1,size(Lnuc,3),k),showMaskWithNumber(Lnuc(:,:,k))
 end
+
+
+%j = 15;
+Lcytofin = imgfilescyto(j).Cyto;%uncompressBinaryImg(imgfilescyto(j).Cyto);
+figure, imshow(Lcytofin,[]);

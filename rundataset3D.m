@@ -30,7 +30,7 @@ nT = imgsnuc_reader{1}.getSizeT;                                                
 %plane1 = img_nuc_reader.getIndex(0,0, k - 1) + 1;
 %nuc_img = bfGetPlane(img_nuc_reader,plane1);
 
-for k = 1:nT                                                                       % loop over time points within a given time group
+for k = 1:10;%1:nT                                                                      % loop over time points within a given time group
         
     % read pnuc and pcyto separately from images
     [pnuc]=readmaskfiles1(ilastikNucAll,k);
@@ -50,7 +50,7 @@ for k = 1:nT                                                                    
         
         imgfiles(nTprev+k).NucMask = (Lnuc(:,:,round(size(Lnuc,3)/2))); %compressBinaryImg(Lnuc(:,:,3)) round(size(Lnuc,3)/2) compressBinaryImg
         imgfilescyto(nTprev+k).Cyto = (Lcytofin(:,:,round(size(Lnuc,3)/2)));%round(size(Lcytofin,3)/2)
-        disp(k);
+        disp([k pos]);
     
 end
 

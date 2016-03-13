@@ -286,7 +286,7 @@ end
 I = zeros(1024,1024);                                    % create an image with only that element                 
 linearInd = sub2ind(size(I), toelimfin(:,2), toelimfin(:,1));
 I(linearInd)=1;
-II = imdilate(I,strel('disk',6)); % 'disk',4             % dilate a little in order to create a merged line 
+II = imdilate(I,strel('disk',11)); % 'disk',4             % dilate a little in order to create a merged line 
 
 MaskFin = mask3new&~II;                                       % remove those pixels from the merged object
 MaskFin2 = MaskFin + mask3old;                                % return to the original nuclear mask but with the cells unmerged
