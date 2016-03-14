@@ -68,11 +68,8 @@ end
 %%
 j = 10;
 Lnuc = imgfiles(j).NucMask;%uncompressBinaryImg(imgfiles(j).NucMask);
-for k=1:size(Lnuc,3)
-figure(16),subplot(1,size(Lnuc,3),k),showMaskWithNumber(Lnuc(:,:,k))
-end
-
-
-%j = 15;
 Lcytofin = imgfilescyto(j).Cyto;%uncompressBinaryImg(imgfilescyto(j).Cyto);
-figure, imshow(Lcytofin,[]);
+for k=1:2
+figure(16),subplot(1,2,1),showMaskWithNumber(Lnuc)
+figure(16),subplot(1,2,2),imshow(Lcytofin,[]);
+end
