@@ -54,6 +54,10 @@ end
         %     MaskFin2{ii} = masktmp{ii}&~II ;  %
         %     %MaskFin2 = MaskFin + mask3old;
         % else
+        if isempty(toelim2_y)&&isempty(toelim2)
+            
+             MaskFin2{ii} = masktmp{ii} ; %
+         end 
         if isempty(toelim2)
             toelimfin = toelim2_y;
             I = zeros(1024,1024);                                    % create an image with only that element
@@ -70,7 +74,8 @@ end
             I(linearInd)=1;
             II = imdilate(I,strel('disk',4));
             MaskFin2{ii} = masktmp{ii}&~II ; %
-        end
+         end
+        
          if size(toelim2_y,1)>=size(toelim2,1) && ~isempty(toelim2) && ~isempty(toelim2_y)
             toelimfin = toelim2;
             

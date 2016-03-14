@@ -21,7 +21,7 @@ end
 
 % get the acual tracking nucleilist = tracked objects, labled 1-N,CC -
 % pixelidxlist of all objects tracked in all planes
-[PILsn,PILsSourcen, masterCCn, stats, nucleilist, zrange,CC] = traceobjectsz(smasks, userParam.matchdistance, zrange, size(zrange,2));%size(zrange,2)userParam.zmatch
+[PILsn,PILsSourcen, masterCCn, stats, nucleilist, zrange,CC] = traceobjectszTEST(smasks, userParam.matchdistance, zrange, size(zrange,2));%size(zrange,2)userParam.zmatch
 
 % use nucleilist to relabel the tracked objects with unique labels
 [newmask_lbl] = lblmask_3Dnuc(CC,nucleilist);
