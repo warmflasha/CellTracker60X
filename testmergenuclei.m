@@ -1,4 +1,4 @@
-function [area1,area2,extrafilt,data_ch,data_mc,data_c2] = testmergenuclei(mask)
+function [area1,area2,rx,ry,ch_x,ch_y,extrafilt,data_ch,data_mc,data_c2] = testmergenuclei(mask)
 mask3new = mask;
 bw2 = bwconncomp(mask3new);
 stats3 = regionprops(bw2,'PixelList','ConvexHull','Area','ConvexArea','ConvexImage');
@@ -30,23 +30,60 @@ extrafilt = extra;
 stextra = bwconncomp(extrafilt);
 stextra2 = regionprops(extrafilt,'Area','PixelIdxList'); 
 
-% if after (object-filled convex hull) there are more than two ojects left,
-% leave the largest two (to be used for the splitting)
-if stextra.NumObjects > 2
-a = [stextra2.Area];
-a1 = unique(a);
-a2 = sort(a1,'descend');
-edg1 = find(a == a2(1));
-edg2 = find(a == a2(2));
-inew = zeros(1024,1024);
-inew(stextra2(edg1(1)).PixelIdxList) = 1;
-inew(stextra2(edg2(1)).PixelIdxList) = 1;
-end
+
 % if the shape was so weird, that only one object is left in extra, then return
 if stextra.NumObjects == 1
 extrafilt = mask;%%%%%%%%%%%%%%%%%%%%%
+area1 = 0;
+area2 = 0;
+rx=[];
+ry=[];
+ch_x=[];
+ch_y=[];
+data_ch = [];
+data_mc = [];
+data_c2 = [];
+
 return
 end
+
+% if after (object-filled convex hull) there are more than two ojects left,
+% leave the largest two (to be used for the splitting)
+
+if stextra.NumObjects > 2
+    a = [stextra2.Area];
+    a1 = unique(a);
+    a2 = sort(a1,'descend');
+end
+if size(a2,2) == 1
+extrafilt = mask;%%%%%%%%%%%%%%%%%%%%%
+area1 = 0;
+area2 = 0;
+rx=[];
+ry=[];
+ch_x=[];
+ch_y=[];
+data_ch = [];
+data_mc = [];
+data_c2 = [];
+    return
+end
+if size(a2,2) > 1
+    edg1 = find(a == a2(1));
+    edg2 = find(a == a2(2));
+    r = regionprops(im2bw(mask),'Centroid');
+    rx = round(r.Centroid(1));
+    ry = round(r.Centroid(2));
+    rch = regionprops(chi,'Centroid');
+    ch_x = round(r.Centroid(1));
+    ch_y = round(r.Centroid(2));
+    
+    
+    inew = zeros(1024,1024);
+    inew(stextra2(edg1(1)).PixelIdxList) = 1;
+    inew(stextra2(edg2(1)).PixelIdxList) = 1;
+end
+
 extrafilt = inew;
 area1 = stextra2(edg1(1)).Area;
 area2 = stextra2(edg2(1)).Area;

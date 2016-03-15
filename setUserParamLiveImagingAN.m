@@ -14,7 +14,7 @@ userParam.areanuchi = 8000;
 userParam.areanuclow2 = 600;%800
 
 userParam.flag = 1;% 
-userParam.areanuclow_unmerge =  5800 ;%5600 6500 4820;
+userParam.areanuclow_unmerge =  7500 ;%5600 6500 4820;
 userParam.areanuchigh_unmerge =  6100 ;
 
 userParam.probthresh_nuc = 0.98;

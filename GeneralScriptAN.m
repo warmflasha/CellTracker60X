@@ -148,7 +148,7 @@ C = {'g','r','b','m'};
   
         %outfile = ff(k).name; %nms{k};
         %cellsToDynColonies(outfile);
-        outfile = ('2_3D_20hr_test_xyz.mat');
+        outfile = ('12_3D_20hr_test_xyz.mat');
         load(outfile,'colonies','peaks');
         tps = length(peaks);
         numcol = size(colonies,2); % how many colonies were grouped within the frame
