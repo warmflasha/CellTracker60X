@@ -1,8 +1,10 @@
 % AW, get the labeled mask in 3D
 function newmask = getGoodMask(maskz,nucleilist)
 
-ncell = size(nucleilist,1);
-nimage = size(nucleilist,2);
+
+ncell =  size(nucleilist,1);
+%nimage = size(nucleilist,2);
+nimage = size(maskz,3);
 newmask = zeros(size(maskz));
 
 for ii = 1:nimage

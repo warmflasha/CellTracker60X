@@ -7,7 +7,7 @@ global userParam;
 userParam.logfilter = 9;
 userParam.bthreshfilter = 0.25;% 0.25
 userParam.diskfilter = 3;%4
-userParam.area1filter = 100;
+userParam.area1filter = 300;
 
 userParam.minstartobj = 1;
 userParam.minsolidity = [0.9, 0.8];

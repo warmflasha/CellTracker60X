@@ -21,22 +21,45 @@ end
 
 % get the acual tracking nucleilist = tracked objects, labled 1-N,CC -
 % pixelidxlist of all objects tracked in all planes
-[PILsn,PILsSourcen, masterCCn, stats, nucleilist, zrange,CC] = traceobjectszTEST(smasks, userParam.matchdistance, zrange, size(zrange,2));%size(zrange,2)userParam.zmatch
-
-% use nucleilist to relabel the tracked objects with unique labels
-[newmask_lbl] = lblmask_3Dnuc(CC,nucleilist);
+[PILsn, PILsSourcen, CC, masterCCn, stats, nuclein1, zrange] = traceobjectszdistinct(smasks, userParam.matchdistance, zrange, size(zrange,2));%size(zrange,2)userParam.zmatch
+if ~iscell(CC) 
+  pmasks = primaryfilter(pnuc,userParam.logfilter, userParam.bthreshfilter, userParam.diskfilter, userParam.area1filter);
+  [zrange, smasks] = secondaryfilter(pmasks, userParam.minstartobj, userParam.minsolidity, userParam.diskfilter, userParam.area2filter);
+  [PILsn, PILsSourcen, CC, masterCCn, stats, nuclein1, zrange] = traceobjectszdistinct(smasks, userParam.matchdistance, zrange, size(zrange,2));%size(zrange,2)userParam.zmatch  
+     
+end
+if zrange == 0;
+   outdat = [];
+   Lnuc = pmasks(:,:,3);
+   Lcytofin = [];
+  
+   return
+   
+end
+ % use nucleilist to relabel the tracked objects with unique labels
+[newmask_lbl] = lblmask_3Dnuc(CC,nuclein1);
 
 % [nucleilist, masterCC] =  overlapfilter(PILsn, PILsSourcen, masterCCn, nucleilist, inuc, zrange, userParam.overlapthresh);
 
 % leave only planes with cells in the cyto channel too
-
+goodk = zeros(size(zrange,2),1);
  for k=1:size(zrange,2)
-     
- pmaskscyto(:,:,k) = im2bw(pcyto(:,:,zrange(k)),userParam.probthresh_cyto);
- icyto_new(:,:,k) =icyto(:,:,zrange(k));                         % inuc, icyto = still have 5 layers instack, need to leave only the ones
- inuc_new(:,:,k) =inuc(:,:,zrange(k));                           % with the nuclei in them ( as was determined by zrange)
+ N = size(nuclein1,1);
+ a =  find(isnan(nuclein1(:,k)));
  
+ if size(a,1)< N 
+     goodk(k,1) = k;
  end
+ goodk = nonzeros(goodk);
+ end
+  
+ for k=1:size(goodk,1)
+ pmaskscyto(:,:,k) = im2bw(pcyto(:,:,zrange(goodk(k))),userParam.probthresh_cyto);
+ icyto_new(:,:,k) =icyto(:,:,zrange(goodk(k)));                         % inuc, icyto = still have 5 layers instack, need to leave only the ones
+ inuc_new(:,:,k) =inuc(:,:,zrange(goodk(k)));                           % with the nuclei in them ( as was determined by zrange)
+ end
+ 
+ 
 
  % get the labeled cyto masks ( nuclei not subtracted in the
  % GetVoronoiCells3D function since need them filled in order to remove
@@ -48,7 +71,7 @@ end
  % icyto,inuc, which are all now of the same dim
  % all the masks are labeled
    
- [datacell,Lnuc,Lcytofin] = nucCytoIlastik2peaks_3Dsegm(newmask_lbl,maskzcyto_lbl,inuc_new,icyto_new,paramfile);
+ [datacell,Lnuc,Lcytofin] = nucCytoIlastik2peaks_3Dsegm(newmask_lbl,maskzcyto_lbl,inuc_new,icyto_new,paramfile,zrange);
  outdat = datacell;
  
  

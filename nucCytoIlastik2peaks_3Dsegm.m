@@ -1,4 +1,4 @@
-function [datacell,Lnuc,Lcytofin] = nucCytoIlastik2peaks_3Dsegm(mask1,mask2,img_nuc,img_cyto,paramfile)
+function [datacell,Lnuc,Lcytofin] = nucCytoIlastik2peaks_3Dsegm(mask1,mask2,img_nuc,img_cyto,paramfile,zrange)
 % [datacell,Lnuc,Lcytofin] = nucCytoIlastik2peaks(mask1,mask2,img_nuc,img_cyto,paramfile)
 % --------------------------------------------------------------
 % takes masks produced by ilastik for two markers, and quantifies how much
@@ -150,11 +150,20 @@ statscyto(badinds) = [];
 
 
 % ncells = length(statsN);
+if size(Lcytofin,3) ==1
+    xyz = round([statsnucw0.Centroid]);
+xx =  xyz(1:2:end)';
+yy =  xyz(2:2:end)';
+zz =  (zrange*ones(1,size(statscyto,1)))';
+xyzall = cat(2,xx,yy,zz);
+else 
 xyz = round([statsnucw0.Centroid]);
 xx =  xyz(1:3:end)';
 yy =  xyz(2:3:end)';
 zz =  xyz(3:3:end)';
 xyzall = cat(2,xx,yy,zz);
+end
+
 nuc_avrw0  = [statsnucw0.MeanIntensity]';%
 nuc_areaw0  = [statsnucw0.Area]';%
 nuc_avrw1 = round([statsnuc.MeanIntensity]');

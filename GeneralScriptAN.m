@@ -58,7 +58,14 @@ outfile = ([ num2str(pos) '_' num2str(outfile)]);
 
 %%
  
-outfile = '14_3D_20hr_test_xyz.mat';
+outfile = '12_3D_20hr_test_xyz.mat';
+for k=1:length(peaks)
+    if ~isempty(peaks{k})
+       a = find(isnan(peaks{k}(:,1))) ;
+       peaks{k}(a,:) = [];
+    end
+end
+save(outfile,'imgfiles','imgfilescyto','peaks')
 runTracker(outfile,'newTrackParamAN');
 global userParam;
 userParam.colonygrouping = 130;
@@ -130,18 +137,15 @@ p = fr_stim*delta_t/60;
 %global userParam;
 colSZ = 3;
 resptime =80;% 15 50 36 in frames ( converted to hours later)
-jumptime = 15;% in frames
+jumptime = 5;% in frames
 p2 = (resptime+jumptime)*delta_t/60;
 coloniestoanalyze = 3;
 cmap = summer;
 flag = 1;
 
-C = {'b','r','g','m'};
+C = {'g','r','b','m'};
    % ff = dir('*12_jan8set_test*.mat');%jan8set 10ngmlDifferentiated_22hrs % Pluri_42hrs %Outfile
   
-    % for k=1:size(ff,1);
-    %  k=1;
-        
         %outfile = ff(k).name; %nms{k};
         %cellsToDynColonies(outfile);
         outfile = ('2_3D_20hr_test_xyz.mat');
@@ -152,62 +156,48 @@ C = {'b','r','g','m'};
         
         for j = 1:numcol
             
-%             if colSZ == colonies(j).numOfCells(fr_stim);
-%                 frames(k,1) =  k;% which outfile contains the traces for the colony size colSZ
-%             end
-            if flag ==1
+           
                 traces{j} = colonies(j).NucSmadRatio(:);
                 traces{j}((traces{j} == 0)) = nan;
-                figure(j+1), plot(traces{j},'-*','color',C{j});% cmap(j,:) 'r' traces
+                figure(j+10), plot(traces{j},'-*','color',C{j});% cmap(j,:) 'r' traces
                 ylim([0 2.5]);
                 ylabel('mean Nuc/Cyto smad4  ');
                 xlabel('frames');
-            end
+            
         end
-    %end
+  
 %%
 % NEW: get the before and after  plots
 clear all;
 fr_stim = 22;% 16 22 %38
-fldat = [2 3];
 delta_t = 12; % 12% in minutes
 p = fr_stim*delta_t/60;
 global userParam;
-%userParam.colonygrouping = 120;
-flag = 1;
-resptime =75;% 15 50 36 in frames ( converted to hours later)
-range = [26 20];
-jumptime = 5;% in frames 5
+resptime =72;                            % in frames, count starts after (fr_stim+resptime) frames
+range = [26 20];                         % if want to look at average signaling between specific frames
+jumptime = 5;                            % number of frames to achieve response to ligand
 p2 = (resptime+jumptime)*delta_t/60;
 coloniestoanalyze = 3;
-cmap = parula;
-C = {'b','g','r','k ','m','y'};
+cmap = summer;
+C = {'b','r','g','m','c'};
 for jj = 1:5
 q(jj) = 1;
 w(jj) = 1;
 s(jj) = 1; 
 end
-%for jj = 1:coloniestoanalyze
     
-    %colSZ = jj;
-    ff = dir('*jan8set_test*.mat');%jan8set 10ngmlDifferentiated_22hrs % Pluri_42hrs %Outfile  %dec31_set_Diff
+    ff = dir('*_test*.mat');       %jan8set 10ngmlDifferentiated_22hrs % Pluri_42hrs %Outfile  %dec31_set_Diff
     for k=1:size(ff,1)
         outfile = ff(k).name ;
-        %cellsToDynColonies(outfile);
         load(outfile,'colonies','peaks');
         tps = length(peaks);
-        
         numcol = size(colonies,2); % how many colonies were grouped within the frame
         for j = 1:numcol
-            if ~isempty(fr_stim) % && k~=22;
-                
-                %   if colSZ == colonies(j).numOfCells(fr_stim); % how many cells within colony at time fr_stim
-                
+            if ~isempty(fr_stim)   % for the case when                  
+                          
                 colSZ = colonies(j).numOfCells(fr_stim); % how many cells within colony at time fr_stim
-                %colSZaft = colonies(j).numOfCells(fr_stim+jumptime);
-                
-                if colSZ >0 %&& (colSZ==colSZaft)
-                   
+                              
+                if colSZ >0 && (colSZ<4)
                     stats =  colonies(j).DynNucSmadRatio(tps,fr_stim,resptime,range,jumptime);%,resptime
                     bf = (stats(:,1));
                     aft =(stats(:,2));
@@ -217,8 +207,7 @@ end
                     %b = find(isnan(bf));
                     bf(isnan(bf))=0;
                     aft(isnan(aft)) = 0;
-                    
-                    
+                                       
                     w = find(isnan(window));
                     window(w)=0;
                     
@@ -231,7 +220,7 @@ end
                     end
                     
                     bf_fin{colSZ}((q(colSZ):(q(colSZ)+currlengthbf)-1),1) = nonzeros(bf);
-                    disp([num2str(q(colSZ)) '   ' num2str(currlengthbf) '   ' num2str(bf_fin{colSZ}')]);
+                   % disp([num2str(q(colSZ)) '   ' num2str(currlengthbf) '   ' num2str(bf_fin{colSZ}')]);
                     aft_fin{colSZ}((s(colSZ):(s(colSZ)+currlengthaft)-1),1) = nonzeros(aft);
                     %disp([num2str(s) '   ' num2str(currlengthaft) '   ' num2str(aft_fin{colSZ}')]);
                     window_fin{colSZ }((w(colSZ):(w(colSZ)+currlengthgap)-1),1) = nonzeros(window);
@@ -242,12 +231,12 @@ end
                     s(colSZ) = s(colSZ)+currlengthaft;
                     
                     
-                    hold on,figure(4), plot(bf,aft,'*','color',C{colSZ},'markersize',15);%C{colSZ}
+                    hold on,figure(4), plot(bf,aft,'*','color',C{colSZ},'markersize',15);% cmap(colSZ,:,:)
                     title(['mean Nuc/Cyto smad4 ' num2str(p2) 'hrs after bmp4']);
                     ylim([0 2]);
                     hold on,figure(5),subplot(1,2,1), plot(colSZ,bf,'*','color',C{colSZ},'markersize',15);
                     ylim([0 2]);
-                    hold on,figure(5),subplot(1,2,2), plot(colSZ,aft,'*','color',C{colSZ},'markersize',15);
+                    hold on,figure(5),subplot(1,2,2), plot(colSZ,aft,'*','color',C{colSZ},'markersize',15);%cmap(colSZ*16,:,:)
                     ylim([0 2]);
                     hold on,figure(10), plot(colSZ,window,'*','color',C{colSZ},'markersize',15);%bf,window
                     title(['mean Nuc/Cyto smad4 between ' num2str((range(1)*delta_t)/60) 'and' num2str((range(2)*delta_t)/60) 'hours']);
@@ -257,16 +246,15 @@ end
                     title(['Amplitude of the jump, bf to ' num2str(((fr_stim+jumptime+range(2))*delta_t)/60) 'hours']);
                     ylim([0 2]);
                     xlim([0  (coloniestoanalyze+1)]);
-                    
-                    
+                                       
                     %  end
                     save('meansdiff.mat','bf_fin','aft_fin','window_fin');
                 end
             end
             
-            if isempty(fr_stim)
+            if isempty(fr_stim)   % for the pluri case
                 %if colSZ == colonies(j).numOfCells(10);%
-                colSZ = colonies(j).numOfCells(10);
+                colSZ = colonies(j).numOfCells(10);        
                 if colSZ > 0
                     stats =  colonies(j).DynNucSmadRatio(tps,fr_stim,resptime,range,jumptime);%,resptime
                     bf = (stats(:,1));
@@ -279,7 +267,7 @@ end
                     currlengthgap = size(nonzeros(window),1);
                     
                     bf_fin{colSZ}((q:(q+currlengthbf)-1),1) = nonzeros(bf);%sum(bf);
-                    disp([num2str(q) '   ' num2str(currlengthbf) '   ' num2str(bf_fin{colSZ }')]);
+                  %  disp([num2str(q) '   ' num2str(currlengthbf) '   ' num2str(bf_fin{colSZ }')]);
                     window_fin{colSZ}((w:(w+currlengthgap)-1),1) = nonzeros(window);%sum(window);
                     
                     q = q+currlengthbf;
@@ -331,7 +319,7 @@ flag = 1;
 test = cell(1,20);
 resptime =75;% 15 50 36 in frames ( converted to hours later)
 p2 = (resptime+jumptime)*delta_t/60;
-coloniestoanalyze = 4;
+coloniestoanalyze = 3;
 cmap = parula;
 C = {'b','g','r','m','m'};
 %test = cell(1,coloniestoanalyze);
@@ -351,6 +339,7 @@ for jj = 1:coloniestoanalyze
     if ~isempty(fr_stim)
         load('meansdiff.mat');
        aft_fin{jj}(aft_fin{jj} == inf)=0;
+       bf_fin{jj}(bf_fin{jj} == inf)=0;
         before(jj) = mean(nonzeros(bf_fin{jj})); %sum(bf_fin{jj}(:,1))/sum(bf_fin{jj}(:,2));
         after(jj) = mean(nonzeros(aft_fin{jj}));%sum(aft_fin{jj}(:,1))/sum(aft_fin{jj}(:,2));
             

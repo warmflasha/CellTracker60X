@@ -10,10 +10,17 @@ clear maskfin
 %
 % get the image with only the merged object
 global userParam;
-mask3new = bwareafilt(mask3,[600 20000]);  %  userParam.areanuclow
+mask3new = bwareafilt(mask3,[300 20000]);  %  userParam.areanuclow
 stats = bwconncomp(mask3new);
 
 nn = (stats.NumObjects);
+
+if nn == 0
+    MaskFin2 = mask3;
+    maskfin = mask3;
+    return
+end
+ 
 masktmp = cell(1, nn);
 
 for ii=1:nn
@@ -24,9 +31,14 @@ for ii=1:nn
 end
 for ii=1:nn
     [a,b,extrafilt,data_ch,data_mc,data_c2] = testmergenuclei(masktmp{ii});
-    if (a<30 || b<30) 
+    if (a<50 || b<50)              % refine this condition (not to split the nuc)
         MaskFin2{ii} = masktmp{ii};
-    else
+%     end 
+%     tt = regionprops(im2bw(masktmp{ii}),'Area');
+%     if   (a<50 || b<50) && tt.Area > 6000;             % refine this condition (not to split the nuc)
+%         MaskFin2{ii} = masktmp{ii};
+    else  
+       
 
 [v] = checkboundaries(extrafilt,data_ch,data_c2);
 if v == 1
@@ -36,27 +48,11 @@ end
         [toelim2] = maxalongX(extrafilt,data_ch,data_mc,data_c2);
         [toelim2_y] = maxalongY(extrafilt,data_ch,data_mc,data_c2);
         
-        
-        % if isempty(hull_bnd_only1)||isempty(hull_bnd_only2)||isempty(obj_bnd_only1)||isempty(obj_bnd_only2)
-        %   MaskFin2{ii} = masktmp{ii};
-        %   continue
-        % end
-        
-        % Choose which line has the least intersecting points with the merged
-        % object = this is the line where the cut wll be made
-        % if ((objrow2(rX2(1)))~= 0 && objrow(rX(1))~=0)==0
-        %     toelimfin = toelim2_y;
-        %     I = zeros(1024,1024);
-        %     linearInd = sub2ind(size(I), toelimfin(:,2), toelimfin(:,1));
-        %     I(linearInd)=1;
-        %     II = imdilate(I,strel('disk',4)); % 'disk',4
-        %
-        %     MaskFin2{ii} = masktmp{ii}&~II ;  %
-        %     %MaskFin2 = MaskFin + mask3old;
-        % else
+              
         if isempty(toelim2_y)&&isempty(toelim2)
             
-             MaskFin2{ii} = masktmp{ii} ; %
+             MaskFin2{ii} = masktmp{ii} ;
+             continue%
          end 
         if isempty(toelim2)
             toelimfin = toelim2_y;
@@ -64,7 +60,8 @@ end
             linearInd = sub2ind(size(I), toelimfin(:,2), toelimfin(:,1));
             I(linearInd)=1;
             II = imdilate(I,strel('disk',4));
-             MaskFin2{ii} = masktmp{ii}&~II ; %
+            MaskFin2{ii} = masktmp{ii}&~II ;
+            continue
         end
 
          if isempty(toelim2_y)
@@ -74,6 +71,7 @@ end
             I(linearInd)=1;
             II = imdilate(I,strel('disk',4));
             MaskFin2{ii} = masktmp{ii}&~II ; %
+            continue
          end
         
          if size(toelim2_y,1)>=size(toelim2,1) && ~isempty(toelim2) && ~isempty(toelim2_y)
@@ -96,7 +94,8 @@ end
                   
             
                                    % remove those pixels from the merged object
-            MaskFin2{ii} = masktmp{ii}&~II ; %  
+            MaskFin2{ii} = masktmp{ii}&~II ; % 
+            continue
         end
         
     end
@@ -109,4 +108,7 @@ for ii=1:size(MaskFin2,2)
     t = cat(1,stats.PixelIdxList);
     maskfin(t) = 1;
 end
+maskfin = im2bw(maskfin);
+maskfin = bwareafilt(maskfin,[300 20000]); 
+
 end
