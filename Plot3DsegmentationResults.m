@@ -79,7 +79,8 @@ for k=1:size(pnuc,3)
  figure(11),subplot(2,3,k),imshow(pcyto(:,:,k),[]);
 end
 %%
-for j=8
+for j=1:5
+        
 Lnuc = imgfiles(j).NucMask;%uncompressBinaryImg(imgfiles(j).NucMask);
 Lcytofin = imgfilescyto(j).Cyto;%uncompressBinaryImg(imgfilescyto(j).Cyto);
 for k=1:2

@@ -154,7 +154,7 @@ if size(Lcytofin,3) ==1
     xyz = round([statsnucw0.Centroid]);
 xx =  xyz(1:2:end)';
 yy =  xyz(2:2:end)';
-zz =  (zrange*ones(1,size(statscyto,1)))';
+zz =  (zrange*ones(1,size(statsnucw0,1)))';
 xyzall = cat(2,xx,yy,zz);
 else 
 xyz = round([statsnucw0.Centroid]);

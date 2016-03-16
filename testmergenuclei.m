@@ -1,11 +1,27 @@
 function [area1,area2,rx,ry,ch_x,ch_y,extrafilt,data_ch,data_mc,data_c2] = testmergenuclei(mask)
+
+global userParam 
 mask3new = mask;
 bw2 = bwconncomp(mask3new);
 stats3 = regionprops(bw2,'PixelList','ConvexHull','Area','ConvexArea','ConvexImage');
 ch = stats3.ConvexHull;
 chi = bwconvhull(mask3new);               % image that has the convex hull object filled
 data_mc = stats3.PixelList;               % pixels of the merged cell, needed for later
+% if the cell isnvery small don't even check if it is merged
+if  stats3.Area < userParam.areanuclow_unmerge
+extrafilt = mask;%%%%%%%%%%%%%%%%%%%%%
+area1 = 0;
+area2 = 0;
+rx=[];
+ry=[];
+ch_x=[];
+ch_y=[];
+data_ch = [];
+data_mc = [];
+data_c2 = [];
 
+return
+end
 % get the boundary of convex hull object
 mask_ch = imerode(chi,strel('disk',1));
 boundary_ch = chi&~mask_ch;

@@ -54,14 +54,14 @@ for ii=1:nn
             
             MaskFin2{ii} = masktmp{ii} ;
             disp('no extra');
-            % continue%
+             continue%
         end
         if isempty(toelim2)
             toelimfin = toelim2_y;
             I = zeros(1024,1024);                                    % create an image with only that element
             linearInd = sub2ind(size(I), toelimfin(:,2), toelimfin(:,1));
             I(linearInd)=1;
-            II = imdilate(I,strel('disk',2));
+            II = imdilate(I,strel('disk',1));
             MaskFin2{ii} = masktmp{ii}&~II ;
             disp('one empty');
             %continue
@@ -72,7 +72,7 @@ for ii=1:nn
             I = zeros(1024,1024);                                    % create an image with only that element
             linearInd = sub2ind(size(I), toelimfin(:,2), toelimfin(:,1));
             I(linearInd)=1;
-            II = imdilate(I,strel('disk',2));
+            II = imdilate(I,strel('disk',1));
             MaskFin2{ii} = masktmp{ii}&~II ; %
             disp('other empty');
             %continue
@@ -84,7 +84,7 @@ for ii=1:nn
             I = zeros(1024,1024);                                    % create an image with only that element
             linearInd = sub2ind(size(I), toelimfin(:,2), toelimfin(:,1));
             I(linearInd)=1;
-            II = imdilate(I,strel('disk',2)); % 'disk',4
+            II = imdilate(I,strel('disk',1)); % 'disk',4
             MaskFin2{ii} = masktmp{ii}&~II ;
             disp('split fine');
             
@@ -95,7 +95,7 @@ for ii=1:nn
             I = zeros(1024,1024);                                    % create an image with only that element
             linearInd = sub2ind(size(I), toelimfin(:,2), toelimfin(:,1));
             I(linearInd)=1;
-            II = imdilate(I,strel('disk',2)); % 'disk',4
+            II = imdilate(I,strel('disk',1)); % 'disk',4
             MaskFin2{ii} = masktmp{ii}&~II ;
             didsplit = bwconncomp(MaskFin2{ii});
             if didsplit.NumObjects ==1
@@ -104,7 +104,7 @@ for ii=1:nn
                 I = zeros(1024,1024);                                    % create an image with only that element
                 linearInd = sub2ind(size(I), toelimfin(:,2), toelimfin(:,1));
                 I(linearInd)=1;
-                II = imdilate(I,strel('disk',2)); % 'disk',4             % dilate a little in order to create a merged line
+                II = imdilate(I,strel('disk',1)); % 'disk',4             % dilate a little in order to create a merged line
                 
                 %remove those pixels from the merged object
                 MaskFin2{ii} = masktmp{ii}&~II; %
@@ -117,7 +117,7 @@ for ii=1:nn
             I = zeros(1024,1024);                                    % create an image with only that element
             linearInd = sub2ind(size(I), toelimfin(:,2), toelimfin(:,1));
             I(linearInd)=1;
-            II = imdilate(I,strel('disk',2)); % 'disk',4
+            II = imdilate(I,strel('disk',1)); % 'disk',4
             MaskFin2{ii} = masktmp{ii}&~II ;
             disp('split fine 2');
             
@@ -135,6 +135,6 @@ for ii=1:size(MaskFin2,2)
     maskfin(t) = 1;
 end
 maskfin = im2bw(maskfin);
-maskfin = bwareafilt(maskfin,[750 20000]);
+maskfin = bwareafilt(maskfin,[900 20000]);
 
 end

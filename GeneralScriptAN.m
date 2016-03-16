@@ -40,25 +40,19 @@ ilastikDirec1  = ('/Users/warmflashlab/Desktop/JANYARY_8_DATA_ilasik/Jan8Ilastik
 ilastikDirec2  = ('/Users/warmflashlab/Desktop/JANYARY_8_DATA_ilasik/Jan8IlastikMasks_newW1');
 imgDirec1 =('/Users/warmflashlab/Desktop/MaxProjections_Dif_Jan8run/W0');% already max projections
 imgDirec2 =('/Users/warmflashlab/Desktop/MaxProjections_Dif_Jan8run/W1') ;% already max projections
-
 dummy = ('/Users/warmflashlab/Desktop/Jan8setIlastikMasks_headless_DiffW1');
-
 [nums, ilastikCytoAll]=folderFilesFromKeyword(dummy,'CytoMask');%make two ilastik directories
-
 timegroups = 3;%
-
 positions = length(nums)/timegroups;
- 
-positions = 0:(positions-1);% vector with position numbers
-   
-    pos = 12;
+ positions = 0:(positions-1);% vector with position numbers
+       pos = 12;
     outfile = 'jan8set_test.mat';% basic name for all positions
 peaks = nucCytoIlastik2peaksLoop(ilastikDirec1,ilastikDirec2,imgDirec1,imgDirec2,zplane,pos,chan,paramfile,outfile);% tsted
 outfile = ([ num2str(pos) '_' num2str(outfile)]);
 
 %%
- 
-outfile = '12_3D_20hr_test_xyz.mat';
+ % run tracker on specific outfile
+outfile = '18_3D_20hr_test_xyz.mat';
 for k=1:length(peaks)
     if ~isempty(peaks{k})
        a = find(isnan(peaks{k}(:,1))) ;
@@ -71,26 +65,16 @@ global userParam;
 userParam.colonygrouping = 130;
 cellsToDynColonies(outfile);
 
-
-
 %%
 % h5 track
 ilstikfile3 = ('/Users/warmflashlab/Desktop/{test}_{track}.h5');
 ilstikfile4 = ('/Users/warmflashlab/Desktop/{test}_{trackCyto}.h5');
 k = 91;
-
 trac_nuc = h5read(ilstikfile3,'/exported_data');
 trac_nuc = squeeze(trac_nuc);
 trac1 = trac_nuc(:,:,k);
 bw2 = bwlabel(trac1);
 figure,imshow(bw2,[]);
-
-% trac_cyto = h5read(ilstikfile4,'/exported_data');
-% trac_cyto = squeeze(trac_cyto);
-% trac2 = trac_cyto(:,:,k);
-% bw3 = bwlabel(trac2);
-% figure,imshow(bw3,[]);
-
 
 %%
 % plot nuc and cyto masks, colorcoded for label matrix elements
@@ -101,21 +85,15 @@ nc = uncompressBinaryImg(imgfilescyto(N).compressNucMask);
 bwn = bwlabel(n);
 bwn2 = bwconncomp(bwn);
 a2 = label2rgb(bwn);
-
 bw2 = bwlabel(nc);
 bw3 = bwconncomp(bw2);
 a = label2rgb(bw2);
-
 figure(28),subplot(1,2,1),imshow(a2);
 hold on
 subplot(1,2,2),imshow(a);
 
-
-% badinds = [bwn2.PixelIdxList] < userParam.areanuclow; %this area should also be a parameter
-% badinds2 = [statsnucw0.Area] < userParam.areanuclow;
-% statsnuc(badinds) = [];
-% statsnucw0(badinds2) = [];
 %%
+% run tracker and colony grouping an directory of mat files
 %fr_stim = 16;
 ff = dir('*jan8set_newparams*.mat');
 for k=1:size(ff,1)
@@ -127,10 +105,10 @@ global userParam;
 % look at colonies around the stimulation frame (window of couple hours)?
 cellsToDynColonies(outfile);
 end
-
-
 %%
 % NEW: get new traces
+% get time dependent data for a given .mat file ( plot each colony in
+% different figure)
 fr_stim = 22 ;%22 %38 %16
 delta_t = 12; % 12 %15  in minutes
 p = fr_stim*delta_t/60;
@@ -140,23 +118,18 @@ resptime =80;% 15 50 36 in frames ( converted to hours later)
 jumptime = 5;% in frames
 p2 = (resptime+jumptime)*delta_t/60;
 coloniestoanalyze = 3;
-cmap = summer;
-flag = 1;
-
-C = {'g','r','b','m'};
+%cmap = summer;
+C = {'g','r','b','m','c'};
    % ff = dir('*12_jan8set_test*.mat');%jan8set 10ngmlDifferentiated_22hrs % Pluri_42hrs %Outfile
-  
         %outfile = ff(k).name; %nms{k};
         %cellsToDynColonies(outfile);
-        outfile = ('12_3D_20hr_test_xyz.mat');
+        outfile = ('18_3D_20hr_test_xyz.mat');
         load(outfile,'colonies','peaks');
         tps = length(peaks);
         numcol = size(colonies,2); % how many colonies were grouped within the frame
         traces = cell(1,numcol);
-        
         for j = 1:numcol
-            
-           
+                 
                 traces{j} = colonies(j).NucSmadRatio(:);
                 traces{j}((traces{j} == 0)) = nan;
                 figure(j+10), plot(traces{j},'-*','color',C{j});% cmap(j,:) 'r' traces
@@ -166,6 +139,58 @@ C = {'g','r','b','m'};
             
         end
   
+%%
+% Get means over time but separately for different colony sizes
+% new figure for each new colony size ( data drawn from multiple .mat
+% files)
+
+fr_stim = 22 ;        %22 %38 %16
+delta_t = 12; 
+p = fr_stim*delta_t/60;
+timecolSZ = 20;
+p2 = (timecolSZ)*delta_t/60;
+cmap = colorcube;close all
+%C = {'g','r','b','m'};
+ff = dir('*_test*.mat');%jan8set 10ngmlDifferentiated_22hrs % Pluri_42hrs %Outfile
+
+for k=1:length(ff)
+    outfile = ff(k).name; %nms{k};
+    
+    % outfile = ('12_3D_20hr_test_xyz.mat');
+    load(outfile,'colonies','peaks');
+    tps = length(peaks);
+    numcol = size(colonies,2); % how many colonies were grouped within the frame
+    traces = cell(1,numcol);
+    
+    for j = 1:numcol
+        colSZ = colonies(j).numOfCells(timecolSZ); % colony size determined at the time of stimulation
+        traces{j} = colonies(j).NucSmadRatio(:);
+        traces{j}((traces{j} == 0)) = nan;
+       
+        if colSZ>0 && colSZ<4
+            figure(colSZ), plot(traces{j},'*','color',cmap(k,:));hold on% cmap(j,:) 'r' traces
+            ylim([0 2.7]);
+            ylabel('mean Nuc/Cyto smad4 ');
+            xlabel('time, hours');
+            title(['All microColonies of size ' num2str(colSZ) ]);
+            text(60,2.5,['colony size teremined at time  ' num2str(p2) ' hours'] );           
+        end
+              
+    end
+end
+  
+%M = number of different colony sizes
+M = 3;
+% relabel the x axis into the correct time units
+for ii = 1:M
+            h = figure(ii);
+            mm = max(h.Children.XTick);
+            for k=1:mm
+            tnew(k) = k*delta_t/60;
+            end
+             h.Children.XTick = [(1:12:mm)];
+             h.Children.XTickLabel = [(tnew(1:12:mm))];
+end
 %%
 % NEW: get the before and after  plots
 clear all;
