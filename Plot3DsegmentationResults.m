@@ -48,14 +48,10 @@ plot(peaks{j}(:,1),peaks{j}(:,2),'*r','markersize',15);
 figure(7+j), subplot(1,size(Lnuc,3),2), hold on
 text(peaks{j}(:,1)+10,peaks{j}(:,2),num2str(peaks{j}(:,6)./peaks{j}(:,7)),'Color','m');
 
-%%
-for k=1:size(pmasks,3)
-    figure(7), subplot(2,3,k),imshow(pmasks(:,:,k),[]);%pmasks
-    
-end
+
 %%
 for k=1:size(smasks,3)
-    figure(7), subplot(2,3,k),imshow(smasks(:,:,k),[]);%pmasks
+    figure(8), subplot(2,3,k),imshow(smasks(:,:,k),[]);%smasks
     
 end
 
@@ -79,7 +75,7 @@ for k=1:size(pnuc,3)
  figure(11),subplot(2,3,k),imshow(pcyto(:,:,k),[]);
 end
 %%
-for j=1:5
+for j=1:10
         
 Lnuc = imgfiles(j).NucMask;%uncompressBinaryImg(imgfiles(j).NucMask);
 Lcytofin = imgfilescyto(j).Cyto;%uncompressBinaryImg(imgfilescyto(j).Cyto);

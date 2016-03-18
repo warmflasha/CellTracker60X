@@ -27,19 +27,19 @@ masktmp = cell(1, nn);
 
 for ii=1:nn
     masktmp{ii} = zeros(1024,1024);
-    % MaskFin2{ii} = masktmp{ii};
+     MaskFin2{ii} = masktmp{ii};
     masktmp{ii}(stats.PixelIdxList{ii}) = 1;
     
 end
 for ii=1:nn
     [a,b,rx,ry,ch_x,ch_y,extrafilt,data_ch,data_mc,data_c2] = testmergenuclei(masktmp{ii});
     % disp(a);disp(b);
-    if (a<50 || b<50)              % refine this condition (not to split the nuc)
+    if (a<60 || b<60)  || (a == 0) || (b == 0)             % refine this condition (not to split the nuc)
         MaskFin2{ii} = masktmp{ii};
         disp('no split');
         continue
+    
     else
-        
         
         [v] = checkboundaries(extrafilt,data_ch,data_c2);
         if v == 1

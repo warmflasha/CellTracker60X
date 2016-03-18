@@ -52,7 +52,7 @@ outfile = ([ num2str(pos) '_' num2str(outfile)]);
 
 %%
  % run tracker on specific outfile
-outfile = '18_3D_20hr_test_xyz.mat';
+outfile = '24_3D_20hr_test_xyz.mat';
 for k=1:length(peaks)
     if ~isempty(peaks{k})
        a = find(isnan(peaks{k}(:,1))) ;
@@ -123,7 +123,7 @@ C = {'g','r','b','m','c'};
    % ff = dir('*12_jan8set_test*.mat');%jan8set 10ngmlDifferentiated_22hrs % Pluri_42hrs %Outfile
         %outfile = ff(k).name; %nms{k};
         %cellsToDynColonies(outfile);
-        outfile = ('18_3D_20hr_test_xyz.mat');
+        outfile = ('24_3D_20hr_test_xyz.mat');
         load(outfile,'colonies','peaks');
         tps = length(peaks);
         numcol = size(colonies,2); % how many colonies were grouped within the frame

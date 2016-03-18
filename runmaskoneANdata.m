@@ -10,31 +10,49 @@ pmasks = primaryfilter(pnuc,userParam.logfilter, userParam.bthreshfilter, userPa
 
 % here can insert the UnmergeTwoNuclei function ( after the masks are
 % already binary
+
+% zrange: where the nuclei are in z
+[zrange, smasks] = secondaryfilter(pmasks, userParam.minstartobj, userParam.minsolidity, userParam.diskfilter, userParam.area2filter);
+ if zrange == 0;
+    outdat = [];
+    Lnuc = pmasks(:,:,3);
+    Lcytofin = [];
+    
+    return
+end
 if userParam.flag ==1
-for k=1:size(pmasks,3)
- [~,pmasks(:,:,k)] = UnmergetwonucleiGeneral(pmasks(:,:,k));
+for k=1:size(smasks,3)
+ [~,smasks(:,:,k)] = UnmergetwonucleiGeneral(smasks(:,:,k));
  
 end
 end
-% zrange: where the nuclei are in z
-[zrange, smasks] = secondaryfilter(pmasks, userParam.minstartobj, userParam.minsolidity, userParam.diskfilter, userParam.area2filter);
 
+if userParam.flag ==0
+    disp('no unmerge')
+end
 % get the acual tracking nucleilist = tracked objects, labled 1-N,CC -
 % pixelidxlist of all objects tracked in all planes
 [PILsn, PILsSourcen, CC, masterCCn, stats, nuclein1, zrange] = traceobjectszdistinct(smasks, userParam.matchdistance, zrange, size(zrange,2));%size(zrange,2)userParam.zmatch
+
 if ~iscell(CC) 
   pmasks = primaryfilter(pnuc,userParam.logfilter, userParam.bthreshfilter, userParam.diskfilter, userParam.area1filter);
   [zrange, smasks] = secondaryfilter(pmasks, userParam.minstartobj, userParam.minsolidity, userParam.diskfilter, userParam.area2filter);
+  if zrange == 0;
+    outdat = [];
+    Lnuc = pmasks(:,:,3);
+    Lcytofin = [];
+    
+    return
+end
   [PILsn, PILsSourcen, CC, masterCCn, stats, nuclein1, zrange] = traceobjectszdistinct(smasks, userParam.matchdistance, zrange, size(zrange,2));%size(zrange,2)userParam.zmatch  
      
 end
 if zrange == 0;
-   outdat = [];
-   Lnuc = pmasks(:,:,3);
-   Lcytofin = [];
-  
-   return
-   
+    outdat = [];
+    Lnuc = pmasks(:,:,3);
+    Lcytofin = [];
+    
+    return
 end
  % use nucleilist to relabel the tracked objects with unique labels
 [newmask_lbl] = lblmask_3Dnuc(CC,nuclein1);

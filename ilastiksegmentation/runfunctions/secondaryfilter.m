@@ -53,7 +53,11 @@ function [zrange,smasks] = secondaryfilter(pmasks, minobjzstart, minsolid, diskf
     consz = 2;
     overlap = 0;
     zrange = zstart:zend;
-    
+    if isempty(zrange)
+        zrange =0;
+        smasks = smasks(:,:,zend);
+        return
+    end
     tmpn = soliditycombine(tmp1, consz, overlap, zrange);
     for z = zrange
         smasks(:,:,z) = tmpn{1}{z};
