@@ -152,7 +152,7 @@ p2 = (timecolSZ)*delta_t/60;
 cmap = colorcube;close all
 %C = {'g','r','b','m'};
 ff = dir('*_test*.mat');%jan8set 10ngmlDifferentiated_22hrs % Pluri_42hrs %Outfile
- 
+clear traces 
 clear traces_one
 clear traces_two
 clear traces_three
@@ -202,7 +202,10 @@ for k=1:length(ff)
          
     end
 end
+traces_one = traces_two;
+colSZ = 2;
 traces_one(cellfun(@isempty,traces_one)==1)=[];
+
 d = size(traces_one,2);
 clear replace
 clear sm
@@ -222,17 +225,33 @@ for jj=1:size(nonzeros(sm),1)
     replace{jj}(1:sm1(jj),1) = traces_one{a(jj)}(:,1);
     traces_one{a(jj)} = replace{jj};
 end
+clear traces_one_new
+for k=1:d
+s = size(traces_one{k},2);
+traces_one_new(:,q:q+s-1) = traces_one{k}(:,:);
+q = q+1;
+end
 
+fin_data = zeros(99,2);
 
-    %traces_one_fin = cat(2,traces_one);
-% FINISH HERE
-fin_data = zeros(d,2);
-for kk = 1:d
-   
-    fin_data(kk,1) = mean(traces_one{kk}())
-    
+for j =1:size(traces_one_new,1)
+        fin_data(j,1) = mean(nonzeros(traces_one_new(j,:)));
+        fin_data(j,2) = std(nonzeros(traces_one_new(j,:)));
     
 end
+vect1 = (1:99);
+vect = (1:99)*12/60;
+figure(4), errorbar(vect',fin_data(:,1),fin_data(:,2));
+text(40,2.5,['colony size deremined at time  ' num2str(p2) ' hours'] ); 
+xlim([0 20]);
+ylim([0 2.5]);
+ylabel('mean Nuc/Cyto smad4 ');
+xlabel('time, hours');
+title(['All microColonies of size ' num2str(colSZ) ]);
+
+figure(2), hold on
+plot(vect1',fin_data(:,1),'-*r','linewidth',3)
+
   %%
   % relabel the x axis into the correct time units
 %M = number of different colony sizes
