@@ -23,7 +23,7 @@ pl = 5;
 strcyto = 'CytoMasks3Djan8set';
 strnuc = 'NucMasks3Djan8set';
 %for k=1:length(positions)
-k = 13;
+k = 14;
     pos = positions(k);
 rundataset3D(ilastikdirnuc,ilastikdircyto,imagedir1,imagedir2,pos,paramfile,timegroup,outfile,paramfile3D,pl,strnuc,strcyto,chanal);
 %end

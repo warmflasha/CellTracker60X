@@ -52,7 +52,7 @@ outfile = ([ num2str(pos) '_' num2str(outfile)]);
 
 %%
  % run tracker on specific outfile
-outfile = '24_3D_20hr_test_xyz.mat';
+outfile = '8_3D_20hr_test_xyz.mat';
 for k=1:length(peaks)
     if ~isempty(peaks{k})
        a = find(isnan(peaks{k}(:,1))) ;
@@ -123,7 +123,7 @@ C = {'g','r','b','m','c'};
    % ff = dir('*12_jan8set_test*.mat');%jan8set 10ngmlDifferentiated_22hrs % Pluri_42hrs %Outfile
         %outfile = ff(k).name; %nms{k};
         %cellsToDynColonies(outfile);
-        outfile = ('24_3D_20hr_test_xyz.mat');
+        outfile = ('8_3D_20hr_test_xyz.mat');
         load(outfile,'colonies','peaks');
         tps = length(peaks);
         numcol = size(colonies,2); % how many colonies were grouped within the frame
@@ -152,6 +152,14 @@ p2 = (timecolSZ)*delta_t/60;
 cmap = colorcube;close all
 %C = {'g','r','b','m'};
 ff = dir('*_test*.mat');%jan8set 10ngmlDifferentiated_22hrs % Pluri_42hrs %Outfile
+ 
+clear traces_one
+clear traces_two
+clear traces_three
+
+q = 1;
+r = 1;
+p = 1;
 
 for k=1:length(ff)
     outfile = ff(k).name; %nms{k};
@@ -165,23 +173,71 @@ for k=1:length(ff)
     for j = 1:numcol
         colSZ = colonies(j).numOfCells(timecolSZ); % colony size determined at the time of stimulation
         traces{j} = colonies(j).NucSmadRatio(:);
-        traces{j}((traces{j} == 0)) = nan;
-       
+        traces{j}(traces{j}==0) = NaN;
+        traces(cellfun(@isempty,traces)==1)=[];
         if colSZ>0 && colSZ<4
+           
             figure(colSZ), plot(traces{j},'*','color',cmap(k,:));hold on% cmap(j,:) 'r' traces
             ylim([0 2.7]);
             ylabel('mean Nuc/Cyto smad4 ');
             xlabel('time, hours');
             title(['All microColonies of size ' num2str(colSZ) ]);
-            text(60,2.5,['colony size teremined at time  ' num2str(p2) ' hours'] );           
+            text(60,2.5,['colony size deremined at time  ' num2str(p2) ' hours'] );  
+            
+            traces{j}(isnan(traces{j})==1) = 0;
+            d =  size(traces{j},2);
+            if colSZ == 1
+            traces_one{q}= traces{j};
+            end
+            if colSZ == 2
+            traces_two{r}= traces{j};
+            end
+            if colSZ == 3
+            traces_three{p}= traces{j};
+            end
         end
-              
+         q = q+1; 
+         p = p+1;
+         r = r+1;
+         
     end
 end
-  
+traces_one(cellfun(@isempty,traces_one)==1)=[];
+d = size(traces_one,2);
+clear replace
+clear sm
+
+for k=1:d
+a =size(traces_one{k},1);
+if a < 99;
+sm(k) = a;
+end
+end
+a = find(sm>0);
+sm1 = nonzeros(sm);
+
+for jj=1:size(nonzeros(sm),1)
+    
+    replace{jj} = zeros(99,1);
+    replace{jj}(1:sm1(jj),1) = traces_one{a(jj)}(:,1);
+    traces_one{a(jj)} = replace{jj};
+end
+
+
+    %traces_one_fin = cat(2,traces_one);
+% FINISH HERE
+fin_data = zeros(d,2);
+for kk = 1:d
+   
+    fin_data(kk,1) = mean(traces_one{kk}())
+    
+    
+end
+  %%
+  % relabel the x axis into the correct time units
 %M = number of different colony sizes
 M = 3;
-% relabel the x axis into the correct time units
+
 for ii = 1:M
             h = figure(ii);
             mm = max(h.Children.XTick);

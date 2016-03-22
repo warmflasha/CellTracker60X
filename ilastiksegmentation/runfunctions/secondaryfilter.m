@@ -12,6 +12,9 @@ function [zrange,smasks] = secondaryfilter(pmasks, minobjzstart, minsolid, diskf
     end
     
     zend = size(pmasks,3);
+    if size(z,1) == 1
+    zstart =z;
+    end
     zrange = [zstart:zend];
     
     smasks = false(size(pmasks));
