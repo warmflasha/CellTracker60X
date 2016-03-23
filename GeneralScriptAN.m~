@@ -150,8 +150,6 @@ p = fr_stim*delta_t/60;
 timecolSZ = 20;
 p2 = (timecolSZ)*delta_t/60;
 cmap = colorcube;close all
-cmap2 = hot;close all
-
 %C = {'g','r','b','m'};
 ff = dir('*_test*.mat');%jan8set 10ngmlDifferentiated_22hrs % Pluri_42hrs %Outfile
 clear traces 
@@ -245,40 +243,29 @@ findatanew{colSZ} = fin_data;
 
 vect1 = (1:99);
 vect = (1:99)*12/60;
-
-
-
-figure(2), hold on
-plot(vect1',fin_data(:,1),'-*r','linewidth',3)
-
- 
-for k=1:size(findatanew,2)
-figure(4), errorbar(vect',findatanew{k}(:,1),findatanew{k}(:,2),'color',cmap(k,:),'marker','*');hold on
-figure(5), plot(vect',findatanew{k}(:,1),'color',cmap(k,:),'marker','*'); hold on
-figure(6), plot(vect',power(findatanew{k}(:,2),2),'color',cmap(k,:),'marker','*');  hold on
-end
-
-figure(5),title('Mean Trajectories');
-legend('1-cell colonies','2-cell colonies','3-cell colonies')
-text(40,2.5,['colony size deremined at time  ' num2str(p2) ' hours'] ); 
-xlim([0 20]);
-ylim([0.6 1.6]);
-ylabel('mean Nuc/Cyto smad4 ');
-xlabel('time, hours');
-figure(6),title('Variance');
-text(40,2.5,['colony size deremined at time  ' num2str(p2) ' hours'] );
-legend('1-cell colonies','2-cell colonies','3-cell colonies')
-xlim([0 20]);
-ylim([0 0.5]);
-ylabel('Variance ');
-xlabel('time, hours');
-figure(4),title('All microColonies');
-legend('1-cell colonies','2-cell colonies','3-cell colonies')
+figure(4), errorbar(vect',fin_data(:,1),fin_data(:,2));
 text(40,2.5,['colony size deremined at time  ' num2str(p2) ' hours'] ); 
 xlim([0 20]);
 ylim([0 2.5]);
 ylabel('mean Nuc/Cyto smad4 ');
 xlabel('time, hours');
+title(['All microColonies of size ' num2str(colSZ) ]);
+
+figure(2), hold on
+plot(vect1',fin_data(:,1),'-*r','linewidth',3)
+
+ %%
+for k=1:size(findatanew,2)
+figure(5), plot(vect',findatanew{k}(:,1),'color',cmap(k,:)); legend(['colony size' num2str(k) ]); hold on
+figure(6), plot(vect',findatanew{k}(:,2),'color',cmap(k,:)); legend(['colony size' num2str(k) ]); hold on
+end
+
+text(40,2.5,['colony size deremined at time  ' num2str(p2) ' hours'] ); 
+xlim([0 20]);
+ylim([0 2.5]);
+ylabel('mean Nuc/Cyto smad4 ');
+xlabel('time, hours');
+title('Mean Trajectories');
 
 
   %%
