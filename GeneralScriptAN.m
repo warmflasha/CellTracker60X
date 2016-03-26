@@ -204,8 +204,8 @@ for k=1:length(ff)
          
     end
 end
-traces_one = traces_three;
-colSZ = 3;
+traces_one = traces_one;
+colSZ = 1;
 traces_one(cellfun(@isempty,traces_one)==1)=[];
 
 d = size(traces_one,2);
@@ -248,12 +248,19 @@ vect = (1:99)*12/60;
 
 
 
-figure(2), hold on
+figure(1), hold on
 plot(vect1',fin_data(:,1),'-*r','linewidth',3)
 
  
 for k=1:size(findatanew,2)
-figure(4), errorbar(vect',findatanew{k}(:,1),findatanew{k}(:,2),'color',cmap(k,:),'marker','*');hold on
+figure(10+k), errorbar(vect',findatanew{k}(:,1),findatanew{k}(:,2),'color',cmap(k,:),'marker','*');hold on
+figure(10+k),title('All microColonies');
+legend('1-cell colonies','2-cell colonies','3-cell colonies')
+text(40,2.5,['colony size deremined at time  ' num2str(p2) ' hours'] ); 
+xlim([0 20]);
+ylim([0 2.5]);
+ylabel('mean Nuc/Cyto smad4 ');
+xlabel('time, hours');
 figure(5), plot(vect',findatanew{k}(:,1),'color',cmap(k,:),'marker','*'); hold on
 figure(6), plot(vect',power(findatanew{k}(:,2),2),'color',cmap(k,:),'marker','*');  hold on
 end
@@ -272,7 +279,7 @@ xlim([0 20]);
 ylim([0 0.5]);
 ylabel('Variance ');
 xlabel('time, hours');
-figure(4),title('All microColonies');
+figure(10+k),title('All microColonies');
 legend('1-cell colonies','2-cell colonies','3-cell colonies')
 text(40,2.5,['colony size deremined at time  ' num2str(p2) ' hours'] ); 
 xlim([0 20]);
