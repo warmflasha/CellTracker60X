@@ -1,4 +1,4 @@
-function [outdat,Lnuc,Lcytofin] = runmaskoneANdata(pnuc,pcyto, inuc,icyto,timegroup,paramfile,paramfile3D)
+function [outdat,Lnuc,Lcytofin] = runmaskoneANdata(pnuc,pcyto, inuc,icyto,timegroup,paramfile,paramfile3D,pl)
 
 
 eval(paramfile);
@@ -15,13 +15,13 @@ pmasks = primaryfilter(pnuc,userParam.logfilter, userParam.bthreshfilter, userPa
 [zrange, smasks] = secondaryfilter(pmasks, userParam.minstartobj, userParam.minsolidity, userParam.diskfilter, userParam.area2filter);
  if zrange == 0;
     outdat = [];
-    Lnuc = pmasks(:,:,3);
-    Lcytofin = [];
+    Lnuc = pmasks;
+    Lcytofin = im2bw(pcyto,0.9);
     
     return
 end
 if userParam.flag ==1
-for k=1:size(smasks,3)
+for k=1:size(smasks,round(pl/2))
  [~,smasks(:,:,k)] = UnmergetwonucleiGeneral(smasks(:,:,k));
  
 end
@@ -39,8 +39,8 @@ if ~iscell(CC)
   [zrange, smasks] = secondaryfilter(pmasks, userParam.minstartobj, userParam.minsolidity, userParam.diskfilter, userParam.area2filter);
   if zrange == 0;
     outdat = [];
-    Lnuc = pmasks(:,:,3);
-    Lcytofin = [];
+    Lnuc = pmasks;
+    Lcytofin = im2bw(pcyto,0.9);
     
     return
 end
@@ -49,8 +49,8 @@ end
 end
 if zrange == 0;
     outdat = [];
-    Lnuc = pmasks(:,:,3);
-    Lcytofin = [];
+    Lnuc = pmasks;
+    Lcytofin = im2bw(pcyto,0.9);
     
     return
 end

@@ -1,7 +1,11 @@
+
+function [tr_new1,tr_new2] = histSignalingCol(timecolSZ, resptime,N,index,flag)
+%input
+
+%output
+
 % get distribution plots for each colony size
 
-
-function [tr_new1,tr_new2] = histSignalingCol(timecolSZ, resptime,N,flag)
 
 fr_stim = 22;          %22 %38 %16
 delta_t = 12; 
@@ -29,7 +33,12 @@ for k=1:length(ff)
     
     for j = 1:numcol
         colSZ = colonies(j).numOfCells(timecolSZ); % colony size determined at the time of stimulation
-        traces{j} = colonies(j).NucSmadRatio(:);
+        if size(index,2) > 1   % look at the nuc to smad ratio
+        traces{j} = colonies(j).NucSmadRatio(:); 
+        end
+        if size(index,2) == 1   % look at the nuc mean intensity in the rfp channel
+         traces{j} = colonies(j).NucOnlyData(:);    
+        end
         traces{j}(traces{j}==0) = NaN;
         traces(cellfun(@isempty,traces)==1)=[];
         if colSZ>0 && colSZ == N
@@ -94,8 +103,20 @@ tr_new1(isinf(tr_new1)==1) = [];
 
 tr_new2(tr_new2==0)=[];
 tr_new2(isinf(tr_new2)==1) = [];
-if flag == 1
+if flag == 1 && size(index,2)>1
 histogram(tr_new1,'Normalization','pdf');hold on
 histogram(tr_new2,'Normalization','pdf');
+ylabel('Frequency');
+xlabel('mean Nuc/Cyto smad4');
+title(['All microColonies of size ' num2str(N) ]);
 end
+clear tr_new_all
+if flag == 1 && size(index,2)==1
+    tr_new_all = cat(1,tr_new1,tr_new2);
+    histogram(tr_new_all,'Normalization','pdf');hold on
+    ylabel('Frequency');
+    xlabel('mean intensity in RFP channel');
+    title(['All microColonies of size ' num2str(N) ]);
+end
+
 end

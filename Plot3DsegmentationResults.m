@@ -14,9 +14,9 @@ for k=1:size(icyto_new,3)
     figure(4), subplot(2,size(icyto_new,3),k),imshow(inuc_new(:,:,k),[]);
 end
 %%
-for k=1:5
-    figure(5), subplot(2,3,k),imshow(icyto(:,:,k),[]);
-    figure(6), subplot(2,3,k),imshow(inuc(:,:,k),[]);
+for k=1:size(icyto,3)
+    figure(5), subplot(2,size(icyto,3),k),imshow(icyto(:,:,k),[]);
+    figure(6), subplot(2,size(icyto,3),k),imshow(inuc(:,:,k),[]);
 end
 
 %%

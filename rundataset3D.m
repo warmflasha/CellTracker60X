@@ -29,8 +29,8 @@ nTprev = 0;
 nT = imgsnuc_reader{1}.getSizeT;                                                    % how many time point are within given time group
 %plane1 = img_nuc_reader.getIndex(0,0, k - 1) + 1;
 %nuc_img = bfGetPlane(img_nuc_reader,plane1);
-
-for k = 35;%1:nT                                                                      % loop over time points within a given time group
+nT = 82;% only for the february dataset (usable 83 timepoints)
+for k = 1:10                                                                      % loop over time points within a given time group
         
     % read pnuc and pcyto separately from images
     [pnuc]=readmaskfiles1(ilastikNucAll,k);
@@ -44,7 +44,7 @@ for k = 35;%1:nT                                                                
         
     end
     
-        [outdat,Lnuc,Lcytofin] = runmaskoneANdata(pnuc,pcyto, inuc,icyto,timegroup,paramfile,paramfile3D);
+        [outdat,Lnuc,Lcytofin] = runmaskoneANdata(pnuc,pcyto, inuc,icyto,timegroup,paramfile,paramfile3D,pl);
         
         peaks{nTprev+k} = outdat;
         
