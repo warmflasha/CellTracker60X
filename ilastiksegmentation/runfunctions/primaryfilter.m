@@ -28,4 +28,6 @@ function pmasks = primaryfilter(pnuc, logfilter, bthreshfilter, diskfilter, area
         pmasks(:,:,z) = tmp;
     end
     
-    
+
+end
+
