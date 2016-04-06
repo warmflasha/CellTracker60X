@@ -15,13 +15,13 @@ pmasks = primaryfilter(pnuc,userParam.logfilter, userParam.bthreshfilter, userPa
 [zrange, smasks] = secondaryfilter(pmasks, userParam.minstartobj, userParam.minsolidity, userParam.diskfilter, userParam.area2filter);
  if zrange == 0;
     outdat = [];
-    Lnuc = pmasks;
-    Lcytofin = im2bw(pcyto,0.9);
+    Lnuc = pmasks(:,:,1);
+    Lcytofin = im2bw(pcyto(:,:,1),0.9);
     
     return
 end
 if userParam.flag ==1
-for k=1:size(smasks,round(pl/2))
+for k=1:size(smasks,3)
  [~,smasks(:,:,k)] = UnmergetwonucleiGeneral(smasks(:,:,k));
  
 end
@@ -39,8 +39,8 @@ if ~iscell(CC)
   [zrange, smasks] = secondaryfilter(pmasks, userParam.minstartobj, userParam.minsolidity, userParam.diskfilter, userParam.area2filter);
   if zrange == 0;
     outdat = [];
-    Lnuc = pmasks;
-    Lcytofin = im2bw(pcyto,0.9);
+    Lnuc = pmasks(:,:,1);
+    Lcytofin = im2bw(pcyto(:,:,1),0.9);
     
     return
 end
@@ -49,8 +49,8 @@ end
 end
 if zrange == 0;
     outdat = [];
-    Lnuc = pmasks;
-    Lcytofin = im2bw(pcyto,0.9);
+    Lnuc = pmasks(:,:,1);
+    Lcytofin = im2bw(pcyto(:,:,1),0.9);
     
     return
 end
