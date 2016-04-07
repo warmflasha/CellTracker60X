@@ -13,7 +13,7 @@ function [colonies] = runMicroColonyGrouping(dir,fr_stim,pos,isshift)
 % concatenate anything and the peaks is already containing all frames, so
 % need to go directly to running the tracker of them (end of this function)
 
-[nums, files]=folderFilesFromKeyword(dir,['Outfile_00' num2str(pos) '_t']);%'Outfile_0000_t' 
+[nums, files]=folderFilesFromKeyword(dir,['Outfile_000' num2str(pos)]);%'Outfile_0000_t' 
 
 peaksall = cell(1,length(nums));
 imgfiles_all = cell(1,length(nums));
@@ -30,9 +30,9 @@ imgfilescyto_all{j} = imgfilescyto;
 end
 % TO DO 2: cat in less stupid way
 for xx=1%:size(peaksall,2)
-peaks = cat(2,peaksall{xx},peaksall{xx+1},peaksall{xx+2},peaksall{xx+3});%,
-imgfiles = cat(2,imgfiles_all{xx},imgfiles_all{xx+1},imgfiles_all{xx+2},imgfiles_all{xx+3});
-imgfilescyto = cat(2,imgfilescyto_all{xx},imgfilescyto_all{xx+1},imgfilescyto_all{xx+2},imgfilescyto_all{xx+3});
+peaks = cat(2,peaksall{xx},peaksall{xx+1},peaksall{xx+2});%,,peaksall{xx+3},imgfiles_all{xx+3},imgfilescyto_all{xx+3}
+imgfiles = cat(2,imgfiles_all{xx},imgfiles_all{xx+1},imgfiles_all{xx+2});
+imgfilescyto = cat(2,imgfilescyto_all{xx},imgfilescyto_all{xx+1},imgfilescyto_all{xx+2});
 end
 % introducing the shift, if it occured during addition of bmp4
 if isshift == 1
@@ -62,19 +62,19 @@ end
 %peaks{1},peaks{3}
 peaks = peaks(~cellfun(@isempty, peaks)); % to ensure that the tracker gets input all nonempty peaks (otherwise if any of the peaks is empty the tracker does not run
 
-save(['Outfile_00' num2str(pos) '_tps'],'peaks','dims','imgfiles','imgfilescyto');% saves the new matfile, containing peaks data for all the timepoints
- matfile =(['Outfile_00' num2str(pos) '_tps'] );
+save(['Outfile_000' num2str(pos) '_tps'],'peaks','dims','imgfiles','imgfilescyto');% saves the new matfile, containing peaks data for all the timepoints
+ matfile =(['Outfile_000' num2str(pos) '_tps'] );
  load(matfile);
 % first run the colony grouping to give each cell it's colony size number
 [colonies,peaks]=peaksToMicroColoniesANadjusted(peaks);% for each time frame % here the colonies is a cell array : each cell is a colony object
-save(['Outfile_00' num2str(pos) '_tps'],'peaks','dims','imgfiles','imgfilescyto');
+save(['Outfile_000' num2str(pos) '_tps'],'peaks','dims','imgfiles','imgfilescyto');
 %matfile = ['Outfile_000' num2str(pos) '_tps'];  
 %load(matfile);
 
 % then run tracker on peaks that already contain all time points and the
 % colony size info (this gets putinto the cell().data column 5
 runTrackerEDS(matfile,'newTrackParam');
-save(['Outfile_00' num2str(pos) '_tps'],'peaks','dims','imgfiles','imgfilescyto','colonies','cells');
+save(['Outfile_000' num2str(pos) '_tps'],'peaks','dims','imgfiles','imgfilescyto','cells');
 % save('Outfile_0000_tps','peaks','dims','imgfiles','imgfilescyto','colonies','cells');
 
 

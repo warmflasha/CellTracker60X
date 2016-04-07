@@ -45,6 +45,19 @@ for z1 = zlim
         % If there is a overlap, set the pixel values corresponding to the new
         % object as 0.
         
+%<<<<<<< HEAD
+%         if size(r{1},2)>size(c{2},2)
+%         rnew = r{1}';
+%         cnew = c{2};
+%         end
+%         if size(r{1},2)<size(c{2},2)
+%         rnew = r{1};
+%         cnew = c{2}';
+%         end
+%         if size(r{1},2) == size(c{2},2)
+%         rnew = r{1}';
+%         cnew = c{2}';
+%=======
         if(size(r{1},2) < size(r{1},1))
             rnew = r{1}';
         else
@@ -55,6 +68,7 @@ for z1 = zlim
             cnew = c{2}';
         else
             cnew = c{2};
+%>>>>>>> upstream/master
         end
         
         oobj = unique([rnew cnew]);

@@ -1,7 +1,16 @@
-function [datacell,Lnuc,Lcytofin] = IlastikplusWatershed_AW(ilastikfile,ilastikfilecyto,pos,zplane,direc,img,dt,tg,imgs,imgs_nuc)
+function [datacell,Lnuc,Lcytofin] = IlastikplusWatershed_AWproj(ilastikfile,ilastikfilecyto,pos,img,dt,proj_nuc,proj_cyto)
 
-ff=readAndorDirectory(direc);
-chan = ff.w;
+
+% proj_nuc = mulitif composed of projections for the given time group,
+% obtained from  runing MaxProjTimeGroupsAN on nuc chanel
+% proj_cyto = mulitif composed of projections for the given time group,
+% obtained from  runing MaxProjTimeGroupsAN on cyto chanel
+% chan 
+% ff=readAndorDirectory(direc);
+% chan = ff.w;
+% img = the frame number, correcponds to one of time points (not separate
+% positions)
+
 
 global userParam;
 userParam.gaussRadius = 10;
@@ -39,7 +48,7 @@ Lcytofin = [];
    Lnuc = data>1;
    Lnuc =  bwareafilt(Lnuc',[areanuclow areanuchi]);
    
-%    data = data(1,:,:,img); % data = data(:,:,img);after squeeze, if really  exporting segmentation
+%    data = data(1,:,:,img);% data = data(:,:,img);after squeeze, if really  exporting segmentation
 %    data = squeeze(data);
 %    Lnuc = data<1;
 %    Lnuc =  bwareafilt(Lnuc',[areanuclow areanuchi]);
@@ -77,6 +86,7 @@ vImg = mkVoronoiImageFromPts([xx' yy'],[1024 1024]);
  
 % this type of reading in the images is useful only is the time points are
 % all saved separately
+% TO DO: replace this with using the max projections
 if dt == 1
 filename = getAndorFileName(ff,pos,ff.t(img),ff.z(zplane),chan(2)); % has to be channel 2 since all the masks should be applied to the gfp channel
 filename2 = getAndorFileName(ff,pos,ff.t(img),ff.z(zplane),chan(1)); % to get info from the nuc channel
@@ -86,16 +96,14 @@ end
 % the following is used if the images are not split by time points, but are
 % split by z and positions
 if dt == 0
-  timegroups = size(ff.t,2);
+  %timegroups = size(ff.t,2);
                               % tg = number of the time group that the image is in, likely will be part
                               % of the input arguments tg = 1 correcponds to ff.t(1) = 0;
-% filename = getAndorFileName(ff,pos,ff.t(tg),ff.z(zplane),ff.w(2)); % has to be channel 2 since all the masks should be applied to the gfp channel
-% filename2 = getAndorFileName(ff,pos,ff.t(tg),ff.z(zplane),ff.w(1)); % to get info from the nuc channel
-% imgs = bfopen(filename);
-% imgs_nuc = bfopen(filename2);
+% code below uses the maxZprojections obtained from MaxProjTimeGroupsAN as
+% a mulitif 
 
-fnm = imgs{1}{img,1};% fnm is an actual image , specified by pos, zplane, ff.w(2) and the real frame number is k
-fnm_nuc = imgs_nuc{1}{img,1};
+fnm = imread(proj_cyto,img);% fnm is an actual frame, specified by img
+fnm_nuc = imread(proj_nuc,img);
 I2 = (fnm);
 Inuc = (fnm_nuc);
 end
@@ -207,6 +215,4 @@ datacell=[xy(:,1) xy(:,2) nuc_areaw0 placeholder nuc_avrw0 nuc_avrw1 cyto_avrw1]
 
 
 end
-
-
 

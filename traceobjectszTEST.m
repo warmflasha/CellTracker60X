@@ -1,5 +1,4 @@
-%%
-function [PILsn, PILsSourcen, CC, masterCCn, stats, nuclein1, zrange] = traceobjectsz(smasks, matchdistance, zrange, zmatch)
+function [PILsn, PILsSourcen, CC, masterCCn, stats, nuclein1, zrange] = traceobjectszTEST(smasks, matchdistance, zrange, zmatch)
 
 % tracking objects
 %very simple matching
@@ -206,4 +205,3 @@ if(exist('zvalue'))
     
 end
 end
-
