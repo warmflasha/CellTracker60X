@@ -10,14 +10,14 @@ userParam.backdiskrad = 300;
 userParam.colonygrouping = 130;
 
 userParam.areanuclow = 600;
-userParam.areanuchi = 8000;
+userParam.areanuchi = 9000;
 userParam.areanuclow2 = 600;%800
 
-userParam.flag = 0;% 
+userParam.flag = 1;% 
 userParam.areanuclow_unmerge =  6500 ;%5600 6500 4820;
 
 userParam.probthresh_nuc = 0.98;
-userParam.probthresh_cyto = 0.95;
+userParam.probthresh_cyto = 0.85;
 
 userParam.dilate_cyto = 5;
 userParam.erode_nuc = 8;% 10

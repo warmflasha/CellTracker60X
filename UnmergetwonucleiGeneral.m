@@ -84,7 +84,7 @@ for ii=1:nn
             I = zeros(1024,1024);                                    % create an image with only that element
             linearInd = sub2ind(size(I), toelimfin(:,2), toelimfin(:,1));
             I(linearInd)=1;
-            II = imdilate(I,strel('disk',1)); % 'disk',4
+            II = imdilate(I,strel('disk',2)); % 'disk',4
             MaskFin2{ii} = masktmp{ii}&~II ;
             disp('split fine');
             
@@ -95,7 +95,7 @@ for ii=1:nn
             I = zeros(1024,1024);                                    % create an image with only that element
             linearInd = sub2ind(size(I), toelimfin(:,2), toelimfin(:,1));
             I(linearInd)=1;
-            II = imdilate(I,strel('disk',1)); % 'disk',4
+            II = imdilate(I,strel('disk',2)); % 'disk',4
             MaskFin2{ii} = masktmp{ii}&~II ;
             didsplit = bwconncomp(MaskFin2{ii});
             if didsplit.NumObjects ==1
@@ -117,7 +117,7 @@ for ii=1:nn
             I = zeros(1024,1024);                                    % create an image with only that element
             linearInd = sub2ind(size(I), toelimfin(:,2), toelimfin(:,1));
             I(linearInd)=1;
-            II = imdilate(I,strel('disk',1)); % 'disk',4
+            II = imdilate(I,strel('disk',5)); % 'disk',4
             MaskFin2{ii} = masktmp{ii}&~II ;
             disp('split fine 2');
             

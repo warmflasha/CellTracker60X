@@ -1,4 +1,4 @@
-function [outdat,Lnuc,Lcytofin] = runmaskoneANdata(pnuc,pcyto, inuc,icyto,timegroup,paramfile,paramfile3D,pl)
+function [outdat,Lnuc,Lcytofin] = runmaskoneANdata(pnuc,pcyto, inuc,icyto,timegroup,paramfile,paramfile3D)
 
 
 eval(paramfile);
@@ -72,7 +72,9 @@ goodk = zeros(size(zrange,2),1);
  end
   
  for k=1:size(goodk,1)
- pmaskscyto(:,:,k) = im2bw(pcyto(:,:,zrange(goodk(k))),userParam.probthresh_cyto);
+ %pmaskscyto1(:,:,k) = im2bw(pcyto(:,:,zrange(goodk(k))),userParam.probthresh_cyto);
+ pmaskscyto(:,:,k) = imfill(pcyto(:,:,zrange(goodk(k)))> userParam.probthresh_cyto,'holes');
+ %pmaskscyto(:,:,k) = bwareafilt(pmaskscyto1(:,:,k),[0 50000]);           % here filter the cyto masks by area ( remove realy huge cytoplasms )
  icyto_new(:,:,k) =icyto(:,:,zrange(goodk(k)));                         % inuc, icyto = still have 5 layers instack, need to leave only the ones
  inuc_new(:,:,k) =inuc(:,:,zrange(goodk(k)));                           % with the nuclei in them ( as was determined by zrange)
  end

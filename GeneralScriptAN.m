@@ -1,29 +1,31 @@
 %%
 %ilastikfile = ('/Users/warmflashlab/Desktop/IlastikMasks_headless_PluriW0/NucMaskPluri_tg56.h5');
 % ilastikfile = ('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/03-02-2016dataTrainingOutput/nuc_mask_{P}.h5');%('/Users/warmflashlab/Desktop/JANYARY_8_DATA_ilasik/NucMsks3D/NucMasks3Djan8set1_z3.h5');
-ilastikfile = ('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/03-02-2016dataTrainingOutput/nuc_mask_{P}.h5');
-ilastikfile2 = ('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/03-02-2016dataTrainingOutput/cyto_mask_{P}.h5');
-
+ilastikfile2 = ('/Users/warmflashlab/Desktop/Feb2016ilastik_CytoMasks/cytomask3DFebset15_z2.h5');
+ilastikfile = ('/Users/warmflashlab/Desktop/Feb2016ilastik_NucMasks/nucmask3DFebset15_z2.h5');
 nuc = h5read(ilastikfile,'/exported_data');
 cyto = h5read(ilastikfile2,'/exported_data');
-  k =80;% 41 15,14,16; ,42 % 43,44 , 52,53,54- no
+  k =75;% 41 15,14,16; ,42 % 43,44 , 52,53,54- no
     nuc1 = nuc(2,:,:,k);% for probabilities exported
     nuc1 = squeeze(nuc1);
     mask1 = nuc1;
     
     mask3 = imfill(mask1 > 0.9,'holes');
-    imshow(mask3);
+    %imshow(mask3);
     
      cyto = cyto(2,:,:,k);% for probabilities exported
      cyto = squeeze(cyto);
      mask2 = cyto;
-   % 
-    figure(1), subplot(1,3,1),imshow(mask1);
-    figure(1), subplot(1,3,2),imshow(mask2);
-    figure(1), subplot(1,3,3),imshow(mask3);
+     
+%    % look at probability masks output
+%     figure(1), subplot(1,3,1),imshow(mask1);
+%     figure(1), subplot(1,3,2),imshow(mask2);
+%     figure(1), subplot(1,3,3),imshow(mask3);
    
     Lnuc = mask3;%im2bw(mask1,0.5);
-    Lcyto = im2bw(mask2,0.85);
+    %Lcyto = im2bw(mask2,0.85);
+    Lcyto = imfill(mask2>0.85,'holes');
+   % Lcyto = bwareafilt(Lcyto1,[0 50000]);
     figure(2),subplot(1,2,1), imshow(Lnuc);
     figure(2),subplot(1,2,2), imshow(Lcyto&~Lnuc);
     
@@ -54,7 +56,7 @@ outfile = ([ num2str(pos) '_' num2str(outfile)]);
 
 %%
  % run tracker on specific outfile
-outfile = '8_3D_20hr_test_xyz.mat';
+outfile = '11_3Dsegm_febdata.mat';
 for k=1:length(peaks)
     if ~isempty(peaks{k})
        a = find(isnan(peaks{k}(:,1))) ;
@@ -125,7 +127,7 @@ C = {'g','r','b','m','c'};
    % ff = dir('*12_jan8set_test*.mat');%jan8set 10ngmlDifferentiated_22hrs % Pluri_42hrs %Outfile
         %outfile = ff(k).name; %nms{k};
         %cellsToDynColonies(outfile);
-        outfile = ('8_3D_20hr_test_xyz.mat');
+        outfile = ('11_3Dsegm_febdata.mat');
         load(outfile,'colonies','peaks');
         tps = length(peaks);
         numcol = size(colonies,2); % how many colonies were grouped within the frame
@@ -134,7 +136,7 @@ C = {'g','r','b','m','c'};
                  
                 traces{j} = colonies(j).NucSmadRatio(:);
                 traces{j}((traces{j} == 0)) = nan;
-                figure(j+10), plot(traces{j},'-*','color',C{j});% cmap(j,:) 'r' traces
+                figure(j), plot(traces{j},'-*','color',C{j});% cmap(j,:) 'r' traces
                 ylim([0 2.5]);
                 ylabel('mean Nuc/Cyto smad4  ');
                 xlabel('frames');
