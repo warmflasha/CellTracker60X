@@ -64,6 +64,12 @@ for ii=1:nn
             II = imdilate(I,strel('disk',1));
             MaskFin2{ii} = masktmp{ii}&~II ;
             disp('one empty');
+            didsplit = bwconncomp(MaskFin2{ii});
+            stats = regionprops(didsplit,'Area','Centroid');
+            if didsplit.NumObjects ==2 && (stats(1).Area < 2000 || stats(2).Area < 2000)
+                MaskFin2{ii} = masktmp{ii} ;
+                disp('no split, single nuc');
+            end
             %continue
         end
         
@@ -75,6 +81,12 @@ for ii=1:nn
             II = imdilate(I,strel('disk',1));
             MaskFin2{ii} = masktmp{ii}&~II ; %
             disp('other empty');
+            didsplit = bwconncomp(MaskFin2{ii});
+            stats = regionprops(didsplit,'Area','Centroid');
+            if didsplit.NumObjects ==2 && (stats(1).Area < 2000 || stats(2).Area < 2000)
+                MaskFin2{ii} = masktmp{ii} ;
+                disp('no split, single nuc');
+            end
             %continue
         end
         
@@ -87,6 +99,12 @@ for ii=1:nn
             II = imdilate(I,strel('disk',2)); % 'disk',4
             MaskFin2{ii} = masktmp{ii}&~II ;
             disp('split fine');
+            didsplit = bwconncomp(MaskFin2{ii});
+            stats = regionprops(didsplit,'Area','Centroid');
+            if didsplit.NumObjects ==2 && (stats(1).Area < 2000 || stats(2).Area < 2000)
+                MaskFin2{ii} = masktmp{ii} ;
+                disp('no split, single nuc');
+            end
             
         end
         if size(toelim2_y,1)>size(toelim2,1) && ~isempty(toelim2) && ~isempty(toelim2_y)
@@ -98,7 +116,8 @@ for ii=1:nn
             II = imdilate(I,strel('disk',2)); % 'disk',4
             MaskFin2{ii} = masktmp{ii}&~II ;
             didsplit = bwconncomp(MaskFin2{ii});
-            if didsplit.NumObjects ==1
+            stats = regionprops(didsplit,'Area','Centroid');
+            if didsplit.NumObjects ==1     %
                 
                 toelimfin = toelim2_y;
                 I = zeros(1024,1024);                                    % create an image with only that element
@@ -110,6 +129,12 @@ for ii=1:nn
                 MaskFin2{ii} = masktmp{ii}&~II; %
                 disp('use toelim2_y');
             end
+            %here check the area of the objects(in case split one nuc) 
+            if didsplit.NumObjects ==2 && (stats(1).Area < 2000 || stats(2).Area < 2000)
+                MaskFin2{ii} = masktmp{ii} ;
+                disp('no split, single nuc');
+            end
+            
         end
         if size(toelim2_y,1)<size(toelim2,1) && ~isempty(toelim2) && ~isempty(toelim2_y)
             toelimfin = toelim2_y;
@@ -120,7 +145,12 @@ for ii=1:nn
             II = imdilate(I,strel('disk',5)); % 'disk',4
             MaskFin2{ii} = masktmp{ii}&~II ;
             disp('split fine 2');
-            
+            didsplit = bwconncomp(MaskFin2{ii});
+            stats = regionprops(didsplit,'Area','Centroid');
+            if didsplit.NumObjects ==2 && (stats(1).Area < 2000 || stats(2).Area < 2000)
+                MaskFin2{ii} = masktmp{ii} ;
+                disp('no split, single nuc');
+            end
             % continue
         end
         

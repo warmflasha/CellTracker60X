@@ -14,17 +14,17 @@ chanal = 1;
 paramfile = 'setUserParamLiveImagingAN';
 paramfile3D = 'setUserParam3DsegmentationAN';
 
-outfile = 'frame_test.mat';
+outfile = '3Dsegm_febdata.mat';
 
 
 % janyary8 dataset : positions = [1 2 5 7 8 12 14 15 18 19 20 24 25 27 29 30]; %positions that were processed
-  positions = [0 1 2 3 4 5 8 9 11 12 13 14 15 16 17 18 20 21 22 25 26 27 32 33]; % 29 30 february 3 dataset
+  positions = [0 2 3 4 5 8 9 11 12 13 14 15 16 17 18 20 21 22 25 26 27 32 33]; % 29 30 february 3 dataset
 
 pl = 3;
 strcyto = 'cytomask3DFebset'; %CytoMasks3Djan8set
 strnuc = 'nucmask3DFebset';   %NucMasks3Djan8set
 %for k=1:length(positions)
-k = 13;
+k = 2;
     pos = positions(k);
 rundataset3D(ilastikdirnuc,ilastikdircyto,imagedir1,imagedir2,pos,paramfile,timegroup,outfile,paramfile3D,pl,strnuc,strcyto,chanal);
 %end

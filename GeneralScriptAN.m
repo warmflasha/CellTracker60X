@@ -56,7 +56,7 @@ outfile = ([ num2str(pos) '_' num2str(outfile)]);
 
 %%
  % run tracker on specific outfile
-outfile = '11_3Dsegm_febdata.mat';
+outfile = '0_3Dsegm_febdata.mat';
 for k=1:length(peaks)
     if ~isempty(peaks{k})
        a = find(isnan(peaks{k}(:,1))) ;
@@ -127,7 +127,7 @@ C = {'g','r','b','m','c'};
    % ff = dir('*12_jan8set_test*.mat');%jan8set 10ngmlDifferentiated_22hrs % Pluri_42hrs %Outfile
         %outfile = ff(k).name; %nms{k};
         %cellsToDynColonies(outfile);
-        outfile = ('11_3Dsegm_febdata.mat');
+        outfile = ('0_3Dsegm_febdata.mat');
         load(outfile,'colonies','peaks');
         tps = length(peaks);
         numcol = size(colonies,2); % how many colonies were grouped within the frame
