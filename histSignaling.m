@@ -3,7 +3,7 @@ function [peaksnew1,peaksnew2] = histSignaling(fr_stim, resptime, index)
 clear peaksnew1
 clear peaksnew2
 
-ff = dir('*_test*.mat');
+ff = dir('*_3Dsegm_febdata*.mat');
 q = 1;
 peaksnew1 = [];
 peaksnew2 = [];

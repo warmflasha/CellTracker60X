@@ -29,7 +29,7 @@ nTprev = 0;
 nT = imgsnuc_reader{1}.getSizeT;                                                    % how many time point are within given time group
 
 nT = 81;% only for the february dataset (usable 82 timepoints)
-for k = 1:10;%1:nT                                                                   % loop over time points within a given time group
+for k = 1:nT                                                                   % loop over time points within a given time group
         
     % read pnuc and pcyto separately from images
     [pnuc]=readmaskfiles1(ilastikNucAll,k);

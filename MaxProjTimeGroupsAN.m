@@ -14,8 +14,12 @@ filename = cell(1,nz);
 imgs = cell(1,nz);
 for xx = 1:size(tg,2)
 for j=1:nz
-    
+    if isempty(ff.t)
+        filename{j} = getAndorFileName(ff,pos,[],ff.z(j),ff.w(chan));
+    end
+    if ff.t > 0
     filename{j} = getAndorFileName(ff,pos,ff.t(tg(xx)),ff.z(j),ff.w(chan));
+    end
 end
 
 % filename{1} = plane z0000; now if open it with bfopen will uncover all

@@ -37,7 +37,7 @@ for k=1:size(MaskFin2,2)
 end
 
 %%
-j = 10;
+j = 27
 Lnuc = imgfiles(j).NucMask;
 %j = 2; % peaks{j}
 for k=1:size(Lnuc,3)
@@ -75,7 +75,7 @@ for k=1:size(pnuc,3)
  figure(11),subplot(2,3,k),imshow(pcyto(:,:,k),[]);
 end
 %%
-for j=1:10;
+for j=22:32;
                     
 Lnuc = imgfiles(j).NucMask;%uncompressBinaryImg(imgfiles(j).NucMask);
 Lcytofin = imgfilescyto(j).Cyto;%uncompressBinaryImg(imgfilescyto(j).Cyto);

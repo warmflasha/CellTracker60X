@@ -56,7 +56,7 @@ outfile = ([ num2str(pos) '_' num2str(outfile)]);
 
 %%
  % run tracker on specific outfile
-outfile = '0_3Dsegm_febdata.mat';
+outfile = '6_3Dsegm_febdata.mat';
 for k=1:length(peaks)
     if ~isempty(peaks{k})
        a = find(isnan(peaks{k}(:,1))) ;
@@ -123,7 +123,7 @@ jumptime = 5;% in frames
 p2 = (resptime+jumptime)*delta_t/60;
 coloniestoanalyze = 3;
 %cmap = summer;
-C = {'g','r','b','m','c'};
+C = {'r','b','g','m','c','b','g'};
    % ff = dir('*12_jan8set_test*.mat');%jan8set 10ngmlDifferentiated_22hrs % Pluri_42hrs %Outfile
         %outfile = ff(k).name; %nms{k};
         %cellsToDynColonies(outfile);
@@ -148,16 +148,16 @@ C = {'g','r','b','m','c'};
 % new figure for each new colony size ( data drawn from multiple .mat
 % files)
 
-fr_stim = 22 ;        %22 %38 %16
-delta_t = 12; 
+fr_stim = 16 ;        %22 %38 %16
+delta_t = 15; 
 p = fr_stim*delta_t/60;
-timecolSZ = 20;
+timecolSZ = 16;
 p2 = (timecolSZ)*delta_t/60;
 cmap = colorcube;close all
 cmap2 = hot;close all
-
+sz = 81;
 %C = {'g','r','b','m'};
-ff = dir('*_test*.mat');%jan8set 10ngmlDifferentiated_22hrs % Pluri_42hrs %Outfile
+ff = dir('*_3Dsegm_febdata*.mat');%jan8set 10ngmlDifferentiated_22hrs % Pluri_42hrs %Outfile
 clear traces 
 clear traces_one
 clear traces_two
@@ -185,6 +185,7 @@ for k=1:length(ff)
            
             figure(colSZ), plot(traces{j},'*','color',cmap(k,:));hold on% cmap(j,:) 'r' traces
             ylim([0 2.7]);
+            xlim([5 sz]);
             ylabel('mean Nuc/Cyto smad4 ');
             xlabel('time, hours');
             title(['All microColonies of size ' num2str(colSZ) ]);
@@ -208,26 +209,34 @@ for k=1:length(ff)
          
     end
 end
-traces_one = traces_one;
-colSZ = 1;
+%%
+%clear findatanew
+%findatanew = cell(1,3);
+traces_one = traces_three;
+colSZ = 3;
 traces_one(cellfun(@isempty,traces_one)==1)=[];
-
+%findatanew = cell(1,3);
 d = size(traces_one,2);
 clear replace
 clear sm
 
+
+sz = 81;
 for k=1:d
 a =size(traces_one{k},1);
-if a < 99;
+if a < sz;
 sm(k) = a;
+else
+    sm(k) = sz;
 end
 end
+
 a = find(sm>0);
 sm1 = nonzeros(sm);
 
 for jj=1:size(nonzeros(sm),1)
     
-    replace{jj} = zeros(99,1);
+    replace{jj} = zeros(sz,1);
     replace{jj}(1:sm1(jj),1) = traces_one{a(jj)}(:,1);
     traces_one{a(jj)} = replace{jj};
 end
@@ -238,7 +247,7 @@ traces_one_new(:,q:q+s-1) = traces_one{k}(:,:);
 q = q+1;
 end
 
-fin_data = zeros(99,2);
+fin_data = zeros(sz,2);
 
 for j =1:size(traces_one_new,1)
         fin_data(j,1) = mean(nonzeros(traces_one_new(j,:)));
@@ -246,22 +255,25 @@ for j =1:size(traces_one_new,1)
     
 end
 findatanew{colSZ} = fin_data;
+%%
 
-vect1 = (1:99);
-vect = (1:99)*12/60;
-
-
+save('meanTraj_SD','findatanew');
 
 figure(1), hold on
-plot(vect1',fin_data(:,1),'-*r','linewidth',3)
 
- 
+plot(vect1',fin_data(:,1),'-*r','linewidth',3)
+%%
+load 'meanTraj_SD1.mat'
+sz = 81;
+delta_t = 15;
+ vect1 = (1:sz);
+vect = (1:sz)*(delta_t)/60;
 for k=1:size(findatanew,2)
 figure(10+k), errorbar(vect',findatanew{k}(:,1),findatanew{k}(:,2),'color',cmap(k,:),'marker','*');hold on
 figure(10+k),title('All microColonies');
 legend('1-cell colonies','2-cell colonies','3-cell colonies')
 text(40,2.5,['colony size deremined at time  ' num2str(p2) ' hours'] ); 
-xlim([0 20]);
+xlim([0.5 20]);
 ylim([0 2.5]);
 ylabel('mean Nuc/Cyto smad4 ');
 xlabel('time, hours');
@@ -272,21 +284,21 @@ end
 figure(5),title('Mean Trajectories');
 legend('1-cell colonies','2-cell colonies','3-cell colonies')
 text(40,2.5,['colony size deremined at time  ' num2str(p2) ' hours'] ); 
-xlim([0 20]);
+xlim([0.5 20]);
 ylim([0.6 1.6]);
 ylabel('mean Nuc/Cyto smad4 ');
 xlabel('time, hours');
 figure(6),title('Variance');
 text(40,2.5,['colony size deremined at time  ' num2str(p2) ' hours'] );
 legend('1-cell colonies','2-cell colonies','3-cell colonies')
-xlim([0 20]);
+xlim([0.5 20]);
 ylim([0 0.5]);
 ylabel('Variance ');
 xlabel('time, hours');
 figure(10+k),title('All microColonies');
 legend('1-cell colonies','2-cell colonies','3-cell colonies')
 text(40,2.5,['colony size deremined at time  ' num2str(p2) ' hours'] ); 
-xlim([0 20]);
+xlim([0.5 20]);
 ylim([0 2.5]);
 ylabel('mean Nuc/Cyto smad4 ');
 xlabel('time, hours');

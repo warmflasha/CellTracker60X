@@ -19,13 +19,21 @@ pmasks = primaryfilter(pnuc,userParam.logfilter, userParam.bthreshfilter, userPa
     Lcytofin = im2bw(pcyto(:,:,1),0.9);
     
     return
-end
+ end
+% here can find the max object in the image and then based on this info set
+% the parameter for the minimum area to unmerge 
+
+
 if userParam.flag ==1
 for k=1:size(smasks,3)
- [~,smasks(:,:,k)] = UnmergetwonucleiGeneral(smasks(:,:,k));
- 
+         [~,smasks(:,:,k)] = UnmergetwonucleiGeneral(smasks(:,:,k));
+ end
 end
-end
+% do again, to make sure that if three cells were merged, they are cut
+% after the second round og Unmerge2nuclei
+for k=1:size(smasks,3)
+         [~,smasks(:,:,k)] = UnmergetwonucleiGeneral(smasks(:,:,k));
+ end
 
 if userParam.flag ==0
     disp('no unmerge')
@@ -49,7 +57,7 @@ end
 end
 if zrange == 0;
     outdat = [];
-    Lnuc = pmasks(:,:,1);
+    Lnuc = smasks(:,:,1);
     Lcytofin = im2bw(pcyto(:,:,1),0.9);
     
     return
