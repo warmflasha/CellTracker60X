@@ -12,12 +12,14 @@ clear trans
 %
 % get the image with only the merged object
 global userParam;
-mask3new = bwareafilt(mask3,[500 20000]);  %  userParam.areanuclow
+ 
+mask3new = bwareafilt(mask3,[userParam.areanuclow userParam.areanuclow*10]);  %  userParam.areanuclow
 stats = bwconncomp(mask3new);
 stats2 = regionprops(mask3new,'Area');
 mm = [stats2.Area];
 maxel = mm(mm==max(mm));
-userParam.minnucfragment =1000;%1500
+%userParam.minnucfragment =2000;%  2500set this value to useless , so that the cutting is not done on whole  cells( move this choice to before cutting)
+% decide whether to cut based on the values of a,b, below
 userParam.areanuclow_unmerge = mean(mm) ;
 
 nn = (stats.NumObjects);
@@ -39,8 +41,8 @@ end
 
 for ii=1:nn
     [a,b,rx,ry,ch_x,ch_y,extrafilt,data_ch,data_mc,data_c2] = testmergenuclei(masktmp{ii});
-    % disp(a);disp(b);
-    if (a<60 || b<60)  || (a == 0) || (b == 0)             % refine this condition (not to split the nuc)
+     disp(a);disp(b);
+    if (a < userParam.tocut || b < userParam.tocut)  || (a == 0) || (b == 0)             % 245 refine this condition (not to split the nuc)
         MaskFin2{ii} = masktmp{ii};
         disp('no split');
         continue
@@ -72,7 +74,7 @@ for ii=1:nn
             trans = masktmp{ii}&~II;
             didsplit = bwconncomp(trans);
             stats = regionprops(didsplit,'Area','Centroid');
-            if didsplit.NumObjects ==2 && (stats(1).Area < userParam.minnucfragment || stats(2).Area < userParam.minnucfragment)
+            if didsplit.NumObjects ==2 && (stats(1).Area <= userParam.minnucfragment || stats(2).Area <= userParam.minnucfragment)
                 MaskFin2{ii} = masktmp{ii} ;
                 disp('no split, single nuc1');
             else
@@ -185,6 +187,6 @@ for ii=1:size(MaskFin2,2)
     maskfin(t) = 1;
 end
 maskfin = im2bw(maskfin);
-maskfin = bwareafilt(maskfin,[900 20000]);
+maskfin = bwareafilt(maskfin,[userParam.areanuclow2 userParam.areanuclow2*10]);
 
 end

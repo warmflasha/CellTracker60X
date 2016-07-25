@@ -2,8 +2,8 @@
 function [peaksnew1,peaksnew2] = histSignaling(fr_stim, resptime, index)
 clear peaksnew1
 clear peaksnew2
-
-ff = dir('*_3Dsegm_febdata*.mat');
+% count cells multiple times (use one time point
+ff = dir('*_60X_testparam_allT.mat');%'*_3Dsegm_febdata*.mat'
 q = 1;
 peaksnew1 = [];
 peaksnew2 = [];

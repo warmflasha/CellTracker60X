@@ -11,8 +11,14 @@ filename = cell(1,nz);
 imgs = cell(1,nz);
 img_nuc_reader = cell(1,nz);
 %dirinfo1(start1).name
+if isempty(timegroup) == 1
+   for j=1:nz
+    filename{j} = getAndorFileName(ff,pos,[],ff.z(j),ff.w(chan));%%%
+   end
+else
 for j=1:nz
     filename{j} = getAndorFileName(ff,pos,ff.t(timegroup),ff.z(j),ff.w(chan));%%%
+end
 end
 for m = 1:nz
 img_nuc_reader{m} = bfGetReader(filename{m});

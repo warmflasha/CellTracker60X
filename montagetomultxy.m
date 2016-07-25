@@ -1,6 +1,7 @@
 %function montagetomultxy(filep)
 
-filep = 'an4.xyz';
+filep = 'anuCol_july25.xyz';
+
 %%
 %transforming montage to multi-XY scan text file.
 % reading file
@@ -76,7 +77,7 @@ i11 = strfind(str11, '=');
 str4 = strcat(str11(1:i11), str2);
 
 %%
-newfilename = 'multiplexy_AN.xyz';
+newfilename = 'jul25multiplexy_AN.xyz';
 
 % writing a new file
 

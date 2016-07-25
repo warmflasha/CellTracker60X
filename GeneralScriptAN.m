@@ -1,34 +1,41 @@
 %%
 %ilastikfile = ('/Users/warmflashlab/Desktop/IlastikMasks_headless_PluriW0/NucMaskPluri_tg56.h5');
 % ilastikfile = ('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/03-02-2016dataTrainingOutput/nuc_mask_{P}.h5');%('/Users/warmflashlab/Desktop/JANYARY_8_DATA_ilasik/NucMsks3D/NucMasks3Djan8set1_z3.h5');
-ilastikfile2 = ('/Users/warmflashlab/Desktop/Feb2016ilastik_CytoMasks/cytomask3DFebset15_z2.h5');
-ilastikfile = ('/Users/warmflashlab/Desktop/Feb2016ilastik_NucMasks/nucmask3DFebset15_z2.h5');
+% ilastikfile2 = ('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/2016-07-07-LiveCellTiling_28hr10ngmlBMP4/trainingset/cyto_mask_15_z1.h5');
+% ilastikfile = ('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/2016-07-07-LiveCellTiling_28hr10ngmlBMP4/trainingset/nuc_mask_15_z1.h5');
+
+ilastikfile2 = ('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/2016-07-07-LiveCellTiling_28hr10ngmlBMP4/July7TilingLCellilastik_CytoMasks/cytomask3DJuly7set1_z0.h5');%/cyto_mask_z1.h5'
+ilastikfile = ('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/2016-07-07-LiveCellTiling_28hr10ngmlBMP4/July7TilingLCellilastik_NucMasks/nucmask3DJuly7set1_z0.h5');%/nuc_mask_z1.h5'
+
 nuc = h5read(ilastikfile,'/exported_data');
 cyto = h5read(ilastikfile2,'/exported_data');
-  k =75;% 41 15,14,16; ,42 % 43,44 , 52,53,54- no
-    nuc1 = nuc(2,:,:,k);% for probabilities exported
+
+   k=95;% 41 15,14,16; ,42 % 43,44 , 52,53,54- no
+    nuc1 = nuc(1,:,:,k);% for probabilities exported % for the nuc dataset (for the tiled expteimtne) the labels are reversed
     nuc1 = squeeze(nuc1);
     mask1 = nuc1;
     
     mask3 = imfill(mask1 > 0.9,'holes');
+    mask3 = bwareafilt(mask3,[850 850*10]);
     %imshow(mask3);
     
      cyto = cyto(2,:,:,k);% for probabilities exported
      cyto = squeeze(cyto);
      mask2 = cyto;
      
-%    % look at probability masks output
-%     figure(1), subplot(1,3,1),imshow(mask1);
-%     figure(1), subplot(1,3,2),imshow(mask2);
-%     figure(1), subplot(1,3,3),imshow(mask3);
+    % look at probability masks output
+    figure(1), subplot(1,2,1),imshow(mask1');
+    %figure(1), subplot(1,3,2),imshow(mask2');
+    figure(1), subplot(1,2,2),imshow(mask3');
    
-    Lnuc = mask3;%im2bw(mask1,0.5);
+    Lnuc = mask3';%im2bw(mask1,0.5);
     %Lcyto = im2bw(mask2,0.85);
-    Lcyto = imfill(mask2>0.85,'holes');
+    Lcyto = imfill(mask2>0.7,'holes');
    % Lcyto = bwareafilt(Lcyto1,[0 50000]);
     figure(2),subplot(1,2,1), imshow(Lnuc);
-    figure(2),subplot(1,2,2), imshow(Lcyto&~Lnuc);
+   figure(2),subplot(1,2,2), imshow(Lcyto'&~Lnuc);
     
+   
    %%
    [MaskFin2] = Unmergetwonuclei(mask3);
    %[MaskFin3] = Unmergetwonuclei(MaskFin2);
@@ -36,6 +43,8 @@ cyto = h5read(ilastikfile2,'/exported_data');
    
 %%
 % obtain peaks for one frame 
+% these functions are for the non3D segmentation (if have only one plane)
+
 zplane = [];
 chan = [0 1];
 paramfile = 'setUserParamLiveImagingAN';
@@ -56,30 +65,23 @@ outfile = ([ num2str(pos) '_' num2str(outfile)]);
 
 %%
  % run tracker on specific outfile
-outfile = '6_3Dsegm_febdata.mat';
+outfile = '4_40X_newBGS.mat';
+%ff = dir('*0_40X_RnosmoothZ1*.mat');
+% for k=1:size(ff,1)
+%     outfile = ff(k).name;
+load(outfile);
 for k=1:length(peaks)
     if ~isempty(peaks{k})
        a = find(isnan(peaks{k}(:,1))) ;
        peaks{k}(a,:) = [];
     end
 end
-save(outfile,'imgfiles','imgfilescyto','peaks')
+save(outfile,'peaks','imgfiles','imgfilescyto','-append');
 runTracker(outfile,'newTrackParamAN');
 global userParam;
-userParam.colonygrouping = 130;
+userParam.colonygrouping = 90;%130
 cellsToDynColonies(outfile);
-
-%%
-% h5 track
-ilstikfile3 = ('/Users/warmflashlab/Desktop/{test}_{track}.h5');
-ilstikfile4 = ('/Users/warmflashlab/Desktop/{test}_{trackCyto}.h5');
-k = 91;
-trac_nuc = h5read(ilstikfile3,'/exported_data');
-trac_nuc = squeeze(trac_nuc);
-trac1 = trac_nuc(:,:,k);
-bw2 = bwlabel(trac1);
-figure,imshow(bw2,[]);
-
+end
 %%
 % plot nuc and cyto masks, colorcoded for label matrix elements
 N =20;
@@ -113,51 +115,55 @@ end
 % NEW: get new traces
 % get time dependent data for a given .mat file ( plot each colony in
 % different figure)
-fr_stim = 22 ;%22 %38 %16
+fr_stim = 16 ;%22 %38 %16
 delta_t = 12; % 12 %15  in minutes
 p = fr_stim*delta_t/60;
 %global userParam;
 colSZ = 3;
-resptime =80;% 15 50 36 in frames ( converted to hours later)
+resptime =80;% 15 50 36 in frames ( converted to hours later)close all
 jumptime = 5;% in frames
 p2 = (resptime+jumptime)*delta_t/60;
 coloniestoanalyze = 3;
 %cmap = summer;
-C = {'r','b','g','m','c','b','g'};
+C = {'r','b','g','m','b','c','g'};
    % ff = dir('*12_jan8set_test*.mat');%jan8set 10ngmlDifferentiated_22hrs % Pluri_42hrs %Outfile
         %outfile = ff(k).name; %nms{k};
         %cellsToDynColonies(outfile);
-        outfile = ('0_3Dsegm_febdata.mat');
+        outfile = ('4_40X_newBGS.mat');%3Dsegm_febdata    3D_20hr_test_xyz   % 7 ,16, 15, 18 29 26 31  reanalyze
         load(outfile,'colonies','peaks');
         tps = length(peaks);
         numcol = size(colonies,2); % how many colonies were grouped within the frame
         traces = cell(1,numcol);
+        
         for j = 1:numcol
-                 
-                traces{j} = colonies(j).NucSmadRatio(:);
-                traces{j}((traces{j} == 0)) = nan;
-                figure(j), plot(traces{j},'-*','color',C{j});% cmap(j,:) 'r' traces
+            
+            traces{j} = colonies(j).NucSmadRatio(:);
+            traces{j}((traces{j} == 0)) = nan;
+            for h = 1:size(traces{j},2)
+               if length(traces{j}(isnan(traces{j}(:,h))==0))>0
+                figure(j), plot(traces{j}(:,h),'-*','color',C{j});hold on% cmap(j,:) 'r' traces
                 ylim([0 2.5]);
                 ylabel('mean Nuc/Cyto smad4  ');
                 xlabel('frames');
-            
+               end
+            end
         end
-  
+                 
 %%
 % Get means over time but separately for different colony sizes
 % new figure for each new colony size ( data drawn from multiple .mat
 % files)
 
-fr_stim = 16 ;        %22 %38 %16
-delta_t = 15; 
+fr_stim = 22 ;        %22(jan8data)  %38    %16 (feb16 and     july7 data)
+delta_t = 15;%15       % 12 min                 15min           17min
 p = fr_stim*delta_t/60;
-timecolSZ = 16;
+timecolSZ = fr_stim;%10
 p2 = (timecolSZ)*delta_t/60;
 cmap = colorcube;close all
 cmap2 = hot;close all
-sz = 81;
+sz = 99;%81 99
 %C = {'g','r','b','m'};
-ff = dir('*_3Dsegm_febdata*.mat');%jan8set 10ngmlDifferentiated_22hrs % Pluri_42hrs %Outfile
+ff = dir('*60Xjan8_R*.mat');%'*_60X_testparam_allT.mat'ff = dir('*60Xjan8_R*.mat');
 clear traces 
 clear traces_one
 clear traces_two
@@ -180,109 +186,149 @@ for k=1:length(ff)
         colSZ = colonies(j).numOfCells(timecolSZ); % colony size determined at the time of stimulation
         traces{j} = colonies(j).NucSmadRatio(:);
         traces{j}(traces{j}==0) = NaN;
-        traces(cellfun(@isempty,traces)==1)=[];
-        if colSZ>0 && colSZ<4
-           
-            figure(colSZ), plot(traces{j},'*','color',cmap(k,:));hold on% cmap(j,:) 'r' traces
-            ylim([0 2.7]);
-            xlim([5 sz]);
-            ylabel('mean Nuc/Cyto smad4 ');
-            xlabel('time, hours');
-            title(['All microColonies of size ' num2str(colSZ) ]);
-            text(60,2.5,['colony size deremined at time  ' num2str(p2) ' hours'] );  
-            
-            traces{j}(isnan(traces{j})==1) = 0;
-            d =  size(traces{j},2);
-            if colSZ == 1
-            traces_one{q}= traces{j};
-            end
-            if colSZ == 2
-            traces_two{r}= traces{j};
-            end
-            if colSZ == 3
-            traces_three{p}= traces{j};
-            end
-        end
-         q = q+1; 
-         p = p+1;
-         r = r+1;
-         
+       %  traces{j}(traces{j}(1:6,1)>1.2) = NaN;           % these cells already have very high ratio value in the first couple frames, most likely junk
+%        traces{j}(traces{j}<0.6) = NaN;       % these outliers are dead cells ot junk
+       % traces(cellfun(@isempty,traces)==1)=[];
+       if colSZ>0 && colSZ<6  
+           for h = 1:size(traces{j},2)
+               if length(traces{j}(isnan(traces{j}(:,h))==0))>30        % FILTER OUT SHORT TRAJECTORIES
+                   figure(colSZ), plot(traces{j}(:,h),'*','color',cmap(k,:));hold on% cmap(j,:) 'r' traces
+                   ylim([0 2.7]);
+                   xlim([5 sz]);
+                   ylabel('mean Nuc/Cyto smad4 ');
+                   xlabel('time, hours');
+                   title(['All microColonies of size ' num2str(colSZ) ]);
+                   %text(60,2.5,['colony size deremined at time  ' num2str(p2) ' hours'] );
+                   
+                   traces{j}(isnan(traces{j})==1) = 0;
+                   d =  size(traces{j},2);
+                   if colSZ == 1
+                       traces_one{q}= traces{j}(:,h);
+                   end
+                   if colSZ == 2
+                       traces_two{r}= traces{j}(:,h);
+                   end
+                   if colSZ >2% == 3 || colSZ == 4
+                       traces_three{p}= traces{j}(:,h);
+                   end
+                   %             if colSZ == 4
+                   %             traces_four{p}= traces{j};
+                   %             end
+               end
+               q = q+1;
+               p = p+1;
+               r = r+1;
+           end
+       end
     end
 end
 %%
 %clear findatanew
 %findatanew = cell(1,3);
-traces_one = traces_three;
-colSZ = 3;
-traces_one(cellfun(@isempty,traces_one)==1)=[];
+traces_curr = traces_one;
+colSZ =1;
+traces_curr(cellfun(@isempty,traces_curr)==1)=[];
+
 %findatanew = cell(1,3);
-d = size(traces_one,2);
+d = size(traces_curr,2);
 clear replace
 clear sm
 
 
-sz = 81;
+%sz = 81; %81                % see if any positions have traces end earlier than the latest time point in peaks (sz) 
 for k=1:d
-a =size(traces_one{k},1);
-if a < sz;
+a =size(traces_curr{k},1);
+if a < sz && a ~= sz;%a ~= sz
 sm(k) = a;
-else
-    sm(k) = sz;
-end
-end
 
-a = find(sm>0);
-sm1 = nonzeros(sm);
-
-for jj=1:size(nonzeros(sm),1)
-    
-    replace{jj} = zeros(sz,1);
-    replace{jj}(1:sm1(jj),1) = traces_one{a(jj)}(:,1);
-    traces_one{a(jj)} = replace{jj};
+ else
+     sm(k) = sz;
+ end
+end
+b = find(sm < sz);
+if ~isempty(b)
+    % need to do this only if above , some traces were ended earlier than sz
+%     a = find(sm>0);
+%     sm1 = nonzeros(sm);
+    replace = cell(1,sz);
+    for jj=1:size(b,2)%nonzeros(sm)
+        replace{jj} = zeros(sz,size(traces_curr{b(jj)},2));
+        replace{jj}(1:size(traces_curr{b(jj)},1),1) = traces_curr{b(jj)}(:,1);
+        traces_curr{b(jj)} = replace{jj};
+    end
 end
 clear traces_one_new
+q = 1;
 for k=1:d
-s = size(traces_one{k},2);
-traces_one_new(:,q:q+s-1) = traces_one{k}(:,:);
+s = size(traces_curr{k},2);
+if s<=10
+traces_one_new(:,q:q+s-1) = traces_curr{k}(:,:);
 q = q+1;
+end
 end
 
 fin_data = zeros(sz,2);
 
 for j =1:size(traces_one_new,1)
+    for k=1:size(traces_one_new,2)
+        if size(nonzeros(traces_one_new(:,k)),1)>60;% don't include short traces into the analysis
         fin_data(j,1) = mean(nonzeros(traces_one_new(j,:)));
         fin_data(j,2) = std(nonzeros(traces_one_new(j,:)));
-    
+        end
+    end
 end
 findatanew{colSZ} = fin_data;
 %%
 
-save('meanTraj_SD','findatanew');
+save('meanTraj_Rsegm','findatanew');
 
 figure(1), hold on
-
 plot(vect1',fin_data(:,1),'-*r','linewidth',3)
+
 %%
-load 'meanTraj_SD1.mat'
-sz = 81;
-delta_t = 15;
+% smooth
+%yy =  rand(1,1000);
+load 'meanTraj.mat'%
+smoothwindow = 10;
+one = power(findatanew{1}(:,2),2);
+three = power(findatanew{3}(:,2),2);
+ a = find(isnan(three));
+ three(a) = 0;
+onecell = imfilter(one,ones(smoothwindow,1))/smoothwindow;
+threecell = imfilter(three,ones(smoothwindow,1))/smoothwindow;
+findatanewnew{1} = onecell;
+findatanewnew{3} = threecell;
+plot(one); hold on; plot(onecell);
+%%
+load 'meanTraj_Rsegm.mat'%meanTraj_SDrmjunktraces
+fr_stim = 22 ;        %22(jan8data) %38 %16(feb16 and july7 data)
+delta_t = 15;%15       % 12 min              15min           17min
+p = fr_stim*delta_t/60;
+timecolSZ = fr_stim;%10
+p2 = (timecolSZ)*delta_t/60;
+cmap = colorcube;close all
+cmap2 = hot;close all
+sz = 99;%81 
  vect1 = (1:sz);
-vect = (1:sz)*(delta_t)/60;
+ startplot = 7;   %        START FROM TIME POITN5 SINCE THERE IS SOME JUNK IN THE FIRST TPT THAT MAKES THE SIGNAL JUMP UP
+vect = (startplot:sz)*(delta_t)/60;
+colN = {'b','g','r'};
+
 for k=1:size(findatanew,2)
-figure(10+k), errorbar(vect',findatanew{k}(:,1),findatanew{k}(:,2),'color',cmap(k,:),'marker','*');hold on
-figure(10+k),title('All microColonies');
+figure(10), errorbar(vect',findatanew{k}(startplot:end,1),findatanew{k}(startplot:end,2),'color',colN{k},'marker','*');hold on%findatanew{k}(:,2)
+figure(10),title('All microColonies');
 legend('1-cell colonies','2-cell colonies','3-cell colonies')
 text(40,2.5,['colony size deremined at time  ' num2str(p2) ' hours'] ); 
 xlim([0.5 20]);
 ylim([0 2.5]);
 ylabel('mean Nuc/Cyto smad4 ');
 xlabel('time, hours');
-figure(5), plot(vect',findatanew{k}(:,1),'color',cmap(k,:),'marker','*'); hold on
-figure(6), plot(vect',power(findatanew{k}(:,2),2),'color',cmap(k,:),'marker','*');  hold on
+figure(5), plot(vect',findatanew{k}(startplot:end,1),'color',colN{k},'marker','*'); hold on
+figure(6), plot(vect',power(findatanew{k}(startplot:end,2),2),'color',colN{k},'marker','*');  hold on% power(findatanew{k}(:,2),2))
 end
 
 figure(5),title('Mean Trajectories');
-legend('1-cell colonies','2-cell colonies','3-cell colonies')
+legend('1-cell colonies','2-cell colonies','3- and 4-cell colonies')
 text(40,2.5,['colony size deremined at time  ' num2str(p2) ' hours'] ); 
 xlim([0.5 20]);
 ylim([0.6 1.6]);
@@ -290,13 +336,13 @@ ylabel('mean Nuc/Cyto smad4 ');
 xlabel('time, hours');
 figure(6),title('Variance');
 text(40,2.5,['colony size deremined at time  ' num2str(p2) ' hours'] );
-legend('1-cell colonies','2-cell colonies','3-cell colonies')
+legend('1-cell colonies','2-cell colonies','3- and 4-cell colonies')
 xlim([0.5 20]);
 ylim([0 0.5]);
 ylabel('Variance ');
 xlabel('time, hours');
 figure(10+k),title('All microColonies');
-legend('1-cell colonies','2-cell colonies','3-cell colonies')
+legend('1-cell colonies','2-cell colonies','3- and 4-cell colonies')
 text(40,2.5,['colony size deremined at time  ' num2str(p2) ' hours'] ); 
 xlim([0.5 20]);
 ylim([0 2.5]);
