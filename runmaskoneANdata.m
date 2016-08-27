@@ -12,7 +12,9 @@ pmasks = primaryfilterAN(pnuc,userParam.probthresh_nuc, userParam.area1filter);
 % already binary
 
 % zrange: where the nuclei are in z
-[zrange, smasks] = secondaryfilterAN(pmasks, userParam.minstartobj, userParam.minsolidity);
+[zrange] = secondaryfilterAN(pmasks, userParam.minstartobj);
+smasks = pmasks;
+%[zrange, smasks] = secondaryfilterAN(pmasks, userParam.minstartobj, userParam.minsolidity);
  if zrange == 0;
     outdat = [];
     Lnuc = pmasks(:,:,1);
@@ -26,6 +28,7 @@ pmasks = primaryfilterAN(pnuc,userParam.probthresh_nuc, userParam.area1filter);
 
 if userParam.flag ==1
     for k=1:size(smasks,3) % test once for 40X
+        [~,smasks(:,:,k)] = UnmergetwonucleiGeneral(smasks(:,:,k));
         [~,smasks(:,:,k)] = UnmergetwonucleiGeneral(smasks(:,:,k));
     end
     
@@ -45,8 +48,8 @@ end
 [PILsn, PILsSourcen, CC, masterCCn, stats, nuclein1, zrange] = traceobjectszdistinct(smasks, userParam.matchdistance, zrange, size(zrange,2));%size(zrange,2)userParam.zmatch
 
 if ~iscell(CC) 
-  pmasks = primaryfilter(pnuc,userParam.logfilter, userParam.bthreshfilter, userParam.diskfilter, userParam.area1filter);
-  [zrange, smasks] = secondaryfilter(pmasks, userParam.minstartobj, userParam.minsolidity, userParam.diskfilter, userParam.area2filter);
+  pmasks = primaryfilterAN(pnuc,userParam.probthresh_nuc, userParam.area1filter);
+  [zrange, smasks] = secondaryfilterAN(pmasks, userParam.minstartobj);
   if zrange == 0;
     outdat = [];
     Lnuc = pmasks(:,:,1);
@@ -84,7 +87,7 @@ goodk = zeros(size(zrange,2),1);
  for k=1:size(goodk,1)
  %pmaskscyto1(:,:,k) = im2bw(pcyto(:,:,zrange(goodk(k))),userParam.probthresh_cyto);
  pmaskscyto(:,:,k) = imfill(pcyto(:,:,zrange(goodk(k)))> userParam.probthresh_cyto,'holes');
- %pmaskscyto(:,:,k) = bwareafilt(pmaskscyto(:,:,k),[userParam.areacytolow userParam.areacytolow*10]);           % here filter the cyto masks by area ( remove realy huge cytoplasms )
+ %pmaskscyto(:,:,k) = bwareafilt(pmaskscyto(:,:,k),[userParam.areacytolow userParam.areacytolow*100]);           % here filter the cyto masks by area ( remove realy huge cytoplasms )
  icyto_new(:,:,k) =icyto(:,:,zrange(goodk(k)));                         % inuc, icyto = still have 5 layers instack, need to leave only the ones
  inuc_new(:,:,k) =inuc(:,:,zrange(goodk(k)));                           % with the nuclei in them ( as was determined by zrange)
  end

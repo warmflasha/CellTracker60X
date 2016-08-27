@@ -1,6 +1,7 @@
 function [pnuc] = readmaskfiles1(ilastikNucAll,tpt,lblN)
 %[pnuc, inuc] = readmaskfiles1(maskno, segfiledir, rawfiledir, dirinfo, dirinfo1, nzslices, imageno);
 % if all the z slices are separate files
+% if don't have time point will have less-dim .h5 file
 
 % reading masks
 

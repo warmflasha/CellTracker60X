@@ -27,23 +27,24 @@ imagedir2 = ('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllI
 %pos = 12;
 %tpt =1;
 timegroup = [];%1
+
 chan = [1 2];
 chanal = 1;
 paramfile = 'setUserParamLiveImagingAN_40X';%'setUserParamLiveImagingAN_40X setUserParamLiveImagingAN';
 paramfile3D = 'setUserParam3DsegmentationAN_40X';%'setUserParam3DsegmentationAN    setUserParam3DsegmentationAN_40X'
 
-outfile = '40X_oldBGS.mat';%3Dsegm_febdata
-
- % positions = [1 2 5 7 8 12 14 15 18 19 20 24 25 27 29 30]; %janyary8 dataset positions that were processed
+outfile = '40X_imprBGandSegm.mat';%3Dsegm_febdata
+positions = [2];
+  %positions = [12 14 15 18 19 20 24 25 27 29 30]; %janyary8 dataset positions that were processed
   %positions = [0 2 3 4 5 8 11 15 16 17 18 20 21 22 25 26 29 30 32 33 10]; %  february 3 dataset
-    positions = [1];
- % July 7 dataset 40 positions there
-
+    %positions = [5 7 8 9 11 13 15 16 17 18 20 21 23 25 27 28 29 33 34 35 36 37 38 39 40];
+ % July 7 dataset 40 positions therelastpart
+positions = [12 15 22 23 28 31 32 33 34 35 36 37 38 39 40];
 pl =2;%2,3 5
 strcyto = 'cytomask3DJuly7set'; %CytoMasks3Djan8set  %cytomask3DFebset % nucmask3DJuly7setcyto_mask_
 strnuc = 'nucmask3DJuly7set';   %NucMasks3Djan8set   %nucmask3DFebset %nuc_mask_cytomask3DJuly7set
-%k = 25;
-for k = 1:size(positions,2)
+%k = 5;
+for k = 1%1:size(positions,2)
     pos = positions(k);
     rundataset3D(ilastikdirnuc,ilastikdircyto,imagedir1,imagedir2,pos,paramfile,timegroup,outfile,paramfile3D,pl,strnuc,strcyto,chanal);
 end

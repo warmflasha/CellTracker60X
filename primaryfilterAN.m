@@ -5,12 +5,12 @@ function pmasks = primaryfilterAN(pnuc, probthresh,areafilter)
 %     logim2 = zeros(size(pnuc));
 %     s = logfilter;
 %     h  = fspecial('log',s);
-   se = strel('disk',3);
+   se = strel('disk',2);
     
     for z= 1:size(pnuc,3)
         im = pnuc(:,:,z);
         im2 = imfill(im > probthresh,'holes');% for probabilities exported
-        im3 = bwareafilt(im2,[areafilter areafilter*1000]);
+        im3 = bwareafilt(im2,[areafilter areafilter*10]);
         im4 = imopen(im3,se);
         pmasks(:,:,z) = im4; 
        

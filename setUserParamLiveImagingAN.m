@@ -10,15 +10,15 @@ userParam.presubNucBackground = 1;
 userParam.backdiskrad = 300;
 userParam.colonygrouping = 130; 
 
-userParam.areanuclow = 1100;
+userParam.areanuclow = 900;
 userParam.areanuchi = 9000;
 userParam.areanuclow2 = 1000;%800
 
 userParam.flag = 1;% two parameters below are determined dynamically
 %userParam.areanuclow_unmerge = 3000 ;  % min area of the merged object to start the split ( very specific to the image, need to generalize(select this parameter based on each inpit image)
 userParam.minnucfragment =800;       % 1800 make this relatively small to cut off the junk stuff, then after unmerge use areanuclow2
-userParam.linedil = 5;                 % size of the strel to dilate the line cut
-userParam.tocut = 125;% 2450 if less then this parameter, don't cut
+userParam.linedil = 4;                 % size of the strel to dilate the line cut
+userParam.tocut = 125;% 245 if less then this parameter, don't cut
 
 
 userParam.probthresh_nuc = 0.75;

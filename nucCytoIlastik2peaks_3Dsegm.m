@@ -50,7 +50,7 @@ Inuc = img_nuc;
 
 %this removes cytoplasms that don't have any nucleus inside.
 % need this for the 3D case as well
-
+%LcytoIl = bwareafilt(LcytoIl,[userParam.areacytolow userParam.areacytolow*100]);   
 cc = bwconncomp(LcytoIl);
 cnuc = bwconncomp(Lnuc);                        
 st = regionprops(cc,'PixelIdxList');         
@@ -128,8 +128,9 @@ Lcytofin = LcytoIl;
 
 %I2proc = imopen(I2,strel('disk',userParam.small_rad));         % remove small bright stuff
 %I2proc = smoothImage(I2proc,userParam.gaussRadius,userParam.gaussSigma); %smooth 
-I2proc = presubBackground_self(I2);%I2proc
-%I2proc = simplebg(Lcytofin,Lnuc,I2);
+%I2proc = presubBackground_self(I2proc);%I2proc           old 
+
+I2proc = simplebg(Lcytofin,Lnuc,I2);                                                           % new method to subtract background
 
 % NOTE, the nuclear channel is not pre processed...
 
@@ -147,8 +148,8 @@ badinds = [statsnuc.Area] <= 0;   % don't need to filter anything since the numb
 %get the cytoplasmic mean intensity for each labeled object
 
 statscyto = regionprops(Lcytofin,I2proc,'Area','Centroid','PixelIdxList','MeanIntensity');
-%badinds = [statscyto.Area] <= 0;  % don't need to filter anything since the number of elements in nuc and cyto is already matched in the code above 
-%statscyto(badinds) = [];
+badinds = [statscyto.Area] <= 0;  % don't need to filter anything since the number of elements in nuc and cyto is already matched in the code above 
+statscyto(badinds) = [];
 % ncells = length(statsN);
 if size(statsnucw0,1) ~= size(statscyto,1)
  datacell = [];
