@@ -50,7 +50,7 @@ Inuc = img_nuc;
 
 %this removes cytoplasms that don't have any nucleus inside.
 % need this for the 3D case as well
-
+%LcytoIl = bwareafilt(LcytoIl,[userParam.areacytolow userParam.areacytolow*100]);   
 cc = bwconncomp(LcytoIl);
 cnuc = bwconncomp(Lnuc);                        
 st = regionprops(cc,'PixelIdxList');         
@@ -62,7 +62,7 @@ for i = 1:length(stnuc);
     for k=1:length(st);
         y = st(k).PixelIdxList;
         in = intersect(x,y);
-        if ~isempty(in) && size(in,1)>userParam.areacytolow % the cytoplasms are at least 200 pixels ( bc if some junk was founf in nuclear channel it will likely have very small sytos
+        if ~isempty(in) && size(in,1)>50 % the cytoplasms are at least 200 pixels ( bc if some junk was founf in nuclear channel it will likely have very small sytos
             goodinds(k,1) = k;
             
         end
@@ -126,9 +126,12 @@ Lcytofin = LcytoIl;
 % at this point have the set of 3D masks (nuc and cyto); I2 is the GFP
 % channel 3D stack icyto(1024,1024,zrange)
 
-I2proc = imopen(I2,strel('disk',userParam.small_rad));         % remove small bright stuff
-I2proc = smoothImage(I2proc,userParam.gaussRadius,userParam.gaussSigma); %smooth
-I2proc = presubBackground_self(I2proc);
+%I2proc = imopen(I2,strel('disk',userParam.small_rad));         % remove small bright stuff
+%I2proc = smoothImage(I2proc,userParam.gaussRadius,userParam.gaussSigma); %smooth 
+%I2proc = presubBackground_self(I2proc);%I2proc           old 
+
+I2proc = simplebg(Lcytofin,Lnuc,I2);                                                           % new method to subtract background
+
 % NOTE, the nuclear channel is not pre processed...
 
 %get the NUCLEAR mean intensity for each labeled object
@@ -136,29 +139,35 @@ I2proc = presubBackground_self(I2proc);
 statsnuc = regionprops(Lnuc,I2proc,'Area','Centroid','PixelIdxList','MeanIntensity');
 statsnucw0 = regionprops(Lnuc,Inuc,'Area','Centroid','PixelIdxList','MeanIntensity');% these are the stats for the actual nuclear image(rfp)
 
-badinds = [statsnuc.Area] < 0;   % don't need to filter anything since the number of elements in nuc and cyto is already matched in the code above      
-badinds2 = [statsnucw0.Area] < 0;
-statsnuc(badinds) = [];
-statsnucw0(badinds2) = [];
+badinds = [statsnuc.Area] == 0;   % don't need to filter anything since the number of elements in nuc and cyto is already matched in the code above      
+badinds2 = [statsnucw0.Area] == 0;
 
+statsnucw0(badinds2) = [];
+statsnuc(badinds) = [];
 
 %get the cytoplasmic mean intensity for each labeled object
 
 statscyto = regionprops(Lcytofin,I2proc,'Area','Centroid','PixelIdxList','MeanIntensity');
-badinds = [statscyto.Area] < 0;  % don't need to filter anything since the number of elements in nuc and cyto is already matched in the code above 
+badinds = [statscyto.Area] == 0;  % don't need to filter anything since the number of elements in nuc and cyto is already matched in the code above 
 statscyto(badinds) = [];
 
+if size(statsnucw0,1) ~= size(statscyto,1)
+ datacell = [];
+ disp('N of elements is not the same1')
+    return;
+end
 
-% ncells = length(statsN);
 if size(Lcytofin,3) ==1
     xyz = round([statsnucw0.Centroid]);
 xx =  xyz(1:2:end)';
+xyzall = zeros(size(xx,1),3); % initialize the atrix for the data once the number of rows is known (ftom size of xx)
 yy =  xyz(2:2:end)';
-zz =  (zrange*ones(1,size(statsnucw0,1)))';
+zz =  round([statscyto.Area])';%(zrange*ones(1,size(statsnucw0,1)))';% save the area of the cyto if only one z plane
 xyzall = cat(2,xx,yy,zz);
 else 
 xyz = round([statsnucw0.Centroid]);
 xx =  xyz(1:3:end)';
+xyzall = zeros(size(xx,1),3); % initialize the atrix for the data once the number of rows is known (ftom size of xx)
 yy =  xyz(2:3:end)';
 zz =  xyz(3:3:end)';
 xyzall = cat(2,xx,yy,zz);
@@ -179,8 +188,9 @@ end
 %this is done for whne all the previous clean up failed and still there is
 %a mismatch between the nuc and cyto number of elements , only then remove
 %that datapoint
-if size(cyto_area,1) < size(nuc_areaw0,1) ||  size(cyto_area,1) > size(nuc_areaw0,1)
+if size(cyto_area,1) < size(nuc_areaw0,1) ||  size(cyto_area,1) > size(nuc_areaw0,1) || isempty(xyzall)
     datacell = [];
+    disp('N of elements is not the same2')
     return;
 end
 

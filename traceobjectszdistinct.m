@@ -21,7 +21,7 @@ objectsz(1:zend) = 0;
 
 for z = zstart:zend
     objects = bwconncomp(smasks(:,:,z));
-    if(objects.NumObjects > 2);
+    if(objects.NumObjects > 0);
         zvalue(1,m) = z;
         m = m+1;
     end

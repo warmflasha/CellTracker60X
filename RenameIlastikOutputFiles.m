@@ -11,7 +11,7 @@ function RenameIlastikOutputFiles(ilastikdir,positions,pl,str)
 % (numbered consecutively)
 % str = string that specified the basic name for the masks IlastikNucMasks_f0000_
 
-[~, ff]=folderFilesFromKeyword(ilastikdir, ['Mask']);
+[~, ff]=folderFilesFromKeyword(ilastikdir, ['CytoMasks3Dtile2_40x']);
 % ff = dir(ilastikdir);
 oldnames = cell(1, size(ff,2));
 oldnames = {ff.name};

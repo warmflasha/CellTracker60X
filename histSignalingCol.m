@@ -13,7 +13,7 @@ p = fr_stim*delta_t/60;
 p2 = (timecolSZ)*delta_t/60;
 
 %C = {'g','r','b','m'};
-ff = dir('*_test*.mat');%jan8set 10ngmlDifferentiated_22hrs % Pluri_42hrs %Outfile
+ff = dir('*_3Dsegm_febdata*.mat');%jan8set 10ngmlDifferentiated_22hrs % Pluri_42hrs %Outfile
 clear traces 
 clear traces_one
 clear traces_two

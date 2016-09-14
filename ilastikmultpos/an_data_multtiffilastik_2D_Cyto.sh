@@ -11,19 +11,19 @@
 i=0
 num=1
 
-ndir=/Users/warmflashlab/Desktop/Feb2016ilastik_CytoMasks/
+ndir=/Users/warmflashlab/Desktop/JANYARY_8_DATA_ilasik/2016-09-08-cytomask
 
-projectpath=/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/TrainingSet03-02-2016data_cyto.ilp
+projectpath=/Users/warmflashlab/Desktop/JANYARY_8_DATA_ilasik/2016-09-08-Retrain/Retraining_cyto.ilp
 
-savepath=/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/03-02-2016dataTrainingOutput/cyto_mask.h5
+savepath=/Users/warmflashlab/Desktop/JANYARY_8_DATA_ilasik/2016-09-08-cytomask/jan8datacytomask_11.h5
 
 #segchannel=1
 
-mkdir $ndir
+#mkdir $ndir
 
-samplepath=/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/03-02-2016-uCol_diff_AF\(83tptsusable\)/Cyto_raw_data/;
+samplepath=/Users/warmflashlab/Desktop/JANYARY_8_DATA_ilasik/2D_ToProcess_Jan8Data/W1/;
 
-files=/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/03-02-2016-uCol_diff_AF\(83tptsusable\)/Cyto_raw_data/*;
+files=/Users/warmflashlab/Desktop/JANYARY_8_DATA_ilasik/2D_ToProcess_Jan8Data/W1/*;
 
 for f in $files
 do
@@ -31,7 +31,7 @@ do
 
 i=$((i+num))
 
-scp $savepath ${ndir}CytoMasks3D${i}.h5
+scp $savepath ${ndir}cytomasks2D${i}.h5
 
 echo $f $i
 done

@@ -1,4 +1,4 @@
-function [outdat,Lnuc,Lcytofin] = runmaskoneANdata(pnuc,pcyto, inuc,icyto,timegroup,paramfile,paramfile3D)
+function [outdat,Lnuc,Lcytofin] = runmaskoneANdataonlynucsegm(pnuc,pcyto, inuc,icyto,timegroup,paramfile,paramfile3D)
 
 
 eval(paramfile);
@@ -109,8 +109,3 @@ goodk = zeros(size(zrange,2),1);
  
  
 end
-
-
-
-
-

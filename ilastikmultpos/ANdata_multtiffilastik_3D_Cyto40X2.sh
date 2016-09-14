@@ -11,19 +11,19 @@
 i=0
 num=1
 
-ndir=/Users/warmflashlab/Desktop/Feb2016ilastik_CytoMasks/
+ndir=/Users/warmflashlab/Desktop/July26Tiling2_CytoMasks/
 
-projectpath=/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/TrainingSet03-02-2016data_cyto.ilp
+projectpath=/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/2016-07-26-Tiling2_24hrtotalBMP410ngml/2016-07-29-trainingsetTiling240X/cyto_training.ilp
 
-savepath=/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/03-02-2016dataTrainingOutput/cyto_mask.h5
+savepath=/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/2016-07-26-Tiling2_24hrtotalBMP410ngml/2016-07-29-trainingsetTiling240X/cytomask.h5
 
 #segchannel=1
 
 mkdir $ndir
 
-samplepath=/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/03-02-2016-uCol_diff_AF\(83tptsusable\)/Cyto_raw_data/;
+samplepath=/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/2016-07-26-Tiling2_24hrtotalBMP410ngml/uColTiling2_20hrinBMP4_20160726_24717PM/cytorawdata_z2z3/;
 
-files=/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/03-02-2016-uCol_diff_AF\(83tptsusable\)/Cyto_raw_data/*;
+files=/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/2016-07-26-Tiling2_24hrtotalBMP410ngml/uColTiling2_20hrinBMP4_20160726_24717PM/cytorawdata_z2z3/*;
 
 for f in $files
 do
@@ -31,7 +31,7 @@ do
 
 i=$((i+num))
 
-scp $savepath ${ndir}CytoMasks3D${i}.h5
+scp $savepath ${ndir}CytoMasks3Dtile2_40x${i}.h5 
 
 echo $f $i
 done

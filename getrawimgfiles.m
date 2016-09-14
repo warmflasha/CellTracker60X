@@ -11,20 +11,40 @@ filename = cell(1,nz);
 imgs = cell(1,nz);
 img_nuc_reader = cell(1,nz);
 %dirinfo1(start1).name
-for j=1:nz
-    filename{j} = getAndorFileName(ff,pos,ff.t(timegroup),ff.z(j),ff.w(chan));
+if (isempty(timegroup) == 1) && (isempty(ff.z) == 1)
+    for j=1:nz
+        filename{j} = getAndorFileName(ff,pos,[],[],ff.w(chan));%%%
+    end
+else if isempty(timegroup) == 1
+        for j=1:nz
+            filename{j} = getAndorFileName(ff,pos,[],ff.z(j),ff.w(chan));%%%
+        end
+    else if (isempty(ff.z) == 1)
+            for j=1:nz
+                filename{j} = getAndorFileName(ff,pos,ff.t(timegroup),[],ff.w(chan));%%%
+            end
+            
+        else
+            for j=1:nz
+                filename{j} = getAndorFileName(ff,pos,ff.t(timegroup),ff.z(j),ff.w(chan));%%%
+            end
+            
+            
+        end
+    end
 end
-for m = 1:nz
-img_nuc_reader{m} = bfGetReader(filename{m});
-end
 
-% plane1 = img_nuc_reader.getIndex(0,0, k - 1) + 1;
-% nuc_img = bfGetPlane(img_nuc_reader,plane1);%reader.getIndex(z, c, t)
+    for m = 1:nz
+        img_nuc_reader{m} = bfGetReader(filename{m});
+    end
 
-% for m = 1:nz
-%     imgs{m} = bfopen(filename{m});  %
-%  
-% end
-
-
+    % plane1 = img_nuc_reader.getIndex(0,0, k - 1) + 1;
+    % nuc_img = bfGetPlane(img_nuc_reader,plane1);%reader.getIndex(z, c, t)
+    
+    % for m = 1:nz
+    %     imgs{m} = bfopen(filename{m});  %
+    %
+    % end
+    
+    
 end

@@ -1,5 +1,4 @@
-
-function  MaxProjTimeGroupsAN(direc,direc2,pos,tg,chan)
+function  MaxProjsimpleAN(direc,direc2,pos,chan)
 % direc = directory with raw images
 % pos = the position to be processed
 % tg = time group, vector
@@ -8,11 +7,11 @@ function  MaxProjTimeGroupsAN(direc,direc2,pos,tg,chan)
 %
 
 ff=readAndorDirectory(direc);
-timegroups = size(ff.t,2);
+
 nz = size(ff.z,2);
 filename = cell(1,nz);
 imgs = cell(1,nz);
-for xx = 1:size(tg,2)
+tg = size(ff.t,1);
 for j=1:nz
     if isempty(ff.t)
         filename{j} = getAndorFileName(ff,pos,[],ff.z(j),ff.w(chan));
@@ -24,7 +23,7 @@ end
 
 % filename{1} = plane z0000; now if open it with bfopen will uncover all
 % the timepoints within first time group taken at z0000
-
+img_nuc_reader = getrawimgfiles(direc,nz, pos,tg,chan);
 for x = 1:nz
     imgs{x} = bfopen(filename{x});% open each timegroup and each z slice
     
@@ -56,5 +55,3 @@ for k=1:nframes
     % Maxprojection_f0000_t0000_w000
 end
 end
-end
-
