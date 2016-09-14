@@ -4,25 +4,15 @@
 % load outfile
 % load the last peaks and make an image with peaks(:,1:2) as the centroids of objects/ or even colonies; make a directory of such images named as Andor
 % then make a montage out of those peaks and transform it as above)
+direc2 = ('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/2016-07-07-LiveCellTiling_28hr10ngmlBMP4/lastTlivecellset/');
+[ac, fi]=alignManyPanelsAndorZstackMontage(direc2,[10 4],0,1);% 
+ff = dir('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/2016-07-07-LiveCellTiling_28hr10ngmlBMP4/FinalOutfiles_completeTraces');
+[ac2, fi2]=alignManyPanelsAndorZstackMontage('good_Backtocoord40xBF2_20160709_53148 PM',[7 11],0,1);
 
-% direc2 = ('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/2016-07-07-LiveCellTiling_28hr10ngmlBMP4/lastTlivecellset/');
-% [ac, fi]=alignManyPanelsAndorZstackMontage(direc2,[10 4],0,1);% 
-% ff = dir('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/2016-07-07-LiveCellTiling_28hr10ngmlBMP4/FinalOutfiles_completeTraces');
-% [ac2, fi2]=alignManyPanelsAndorZstackMontage('good_Backtocoord40xBF2_20160709_53148 PM',[7 11],0,1);
-
-% from DATAStorage
-
-% direc2 = ('/Volumes/data2/Anastasiia/totestClonyGrouping/lastTlivecellset');
-% [ac, fi]=alignManyPanelsAndorZstackMontage(direc2,[10 4],0,1);% 
-% ff = dir('/Volumes/data2/Anastasiia/totestClonyGrouping/FinalOutfiles_completeTraces');
-% [ac2, fi2]=alignManyPanelsAndorZstackMontage('good_Backtocoord40xBF2_20160709_53148 PM',[7 11],0,1);
-
-load('/Volumes/data2/Anastasiia/totestClonyGrouping/align.mat');
 
 %direc3 = ('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/2016-07-07-LiveCellTiling_28hr10ngmlBMP4/PeaksIntoMontage_lastT/');
 %imagedir1 = ('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/2016-07-07-LiveCellTiling_28hr10ngmlBMP4/nuc_raw');%rawimages_nuc%
-t = imread('/Volumes/data2/Anastasiia/totestClonyGrouping/test4mid.tif');
-%t = imread('test4mid.tif');
+t = imread('test4mid.tif');
 imshow(t(:,:,2),[]); % 2 - green chanel, 1 - red(4x10)
 imcontrast
 clear peaksnew
@@ -40,7 +30,7 @@ l = size(peaks,2);
         load(outfile,'peaks','imgfiles','imgfilescyto');
 
         peaksnew(1:size(peaks{l-N},1),1) = peaks{l-N}(:,1) + ac(k).absinds(1)*ones(size(peaks{l-N},1),1);%+toTranslate2(1)*ones(size(peaks{l-N},1),1)
-        peaksnew(1:size(peaks{l-N},1),2) = peaks{l-N}(:,2) + ac(k).absinds(2)*ones(size(peaks{l-N},1),1);%+toTranslate2(2)*ones(size(peaks{l-N},1),1)
+        peaksnew(1:size(peaks{l-N},1),2) = peaks{l-N}(:,2) + ac(k).absinds(2)*ones(size(peaks{l-N},1),1)+toTranslate2(2)*ones(size(peaks{l-N},1),1);
         figure(1), hold on
         plot(peaksnew(:,1),peaksnew(:,2),'*b','markersize',12);
     end
