@@ -29,10 +29,10 @@ nTprev = 0;
 nT = imgsnuc_reader{1}.getSizeT;                                                    % how many time point are within given time group
 
 %nT = 81;% only for the february dataset (usable 82 timepoints)
-for k =1:nT                                          % loop over time points within a given time group
+for k =1:nT                                        % loop over time points within a given time group
         
     % read pnuc and pcyto separately from images
-    [pnuc]=readmaskfiles1(ilastikNucAll,k,1); % readmaskfiles1(ilastikNucAll,k,lblN)    lblN = which ilastik label to use as cell nuc. and which as cyto
+    [pnuc]=readmaskfiles1(ilastikNucAll,k,2); % readmaskfiles1(ilastikNucAll,k,lblN)    lblN = which ilastik label to use as cell nuc. and which as cyto
     [pcyto]=readmaskfiles1(ilastikCytoAll,k,2);
     
     for m = 1:size(imgscyto_reader,2) %
@@ -42,9 +42,11 @@ for k =1:nT                                          % loop over time points wit
         icyto(:,:,m) = bfGetPlane(imgscyto_reader{m},planecyto);
         
     end
-         
-        [outdat,Lnuc,Lcytofin] = runmaskoneANdata(pnuc(:,:,1),pcyto(:,:,1),inuc(:,:,1),icyto(:,:,1),timegroup,paramfile,paramfile3D);
-        
+         if pos == 39 || pos == 40 
+             [outdat,Lnuc,Lcytofin] = runmaskoneANdata(pnuc(:,:,1),pcyto(:,:,1),inuc(:,:,1),icyto(:,:,1),timegroup,paramfile,paramfile3D);
+         else
+        [outdat,Lnuc,Lcytofin] = runmaskoneANdata(pnuc,pcyto,inuc,icyto,timegroup,paramfile,paramfile3D);
+         end
         peaks{nTprev+k} = outdat;
         
         imgfiles(nTprev+k).NucMask = (Lnuc(:,:,round(size(Lnuc,3)/2))); %(Lnuc(:,:,1:size(Lnuc,3)))%round(size(Lnuc,3)/2) compressBinaryImg(Lnuc(:,:,3)) round(size(Lnuc,3)/2) compressBinaryImg

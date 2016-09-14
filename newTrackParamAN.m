@@ -3,7 +3,7 @@ function newTrackParamAN
 global userParam;
 
 
-userParam.L = 120;% 120 for 60X  % 70 for 40X
+userParam.L = 70;% 120 for 60X  % 70 for 40X
 userParam.sizeImg = [1024, 1024];
 
 userParam.verboseCellTrackerEDS = 0;

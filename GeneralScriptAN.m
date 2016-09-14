@@ -78,11 +78,11 @@ k = 1;
 
 %%
 % run tracking and colony grouping on the live cell dataset
-strdir = '0_40X_imprBGandSegm.mat';
-paramfiletrack = 'newTrackParamAN_40X';
-TrackGroupuCol(strdir,paramfiletrack);
+strdir = '39_40X_imprBGandSegm.mat';%[33 35 36 39 40] 
+paramfiletrack = 'newTrackParamAN';
+TrackGroupuCol(strdir,paramfiletrack);   %TrackGroupuCol60X
 %%
-outfile ='0_40X_imprBGandSegm.mat';%1_test_3DsegmJul26data40x
+outfile ='37_40X_imprBGandSegm.mat';%1_test_3DsegmJul26data40x
 trajmin =1;
 plotcelltraces(outfile,trajmin)
 %%

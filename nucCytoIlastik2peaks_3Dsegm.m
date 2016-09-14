@@ -139,18 +139,18 @@ I2proc = simplebg(Lcytofin,Lnuc,I2);                                            
 statsnuc = regionprops(Lnuc,I2proc,'Area','Centroid','PixelIdxList','MeanIntensity');
 statsnucw0 = regionprops(Lnuc,Inuc,'Area','Centroid','PixelIdxList','MeanIntensity');% these are the stats for the actual nuclear image(rfp)
 
-badinds = [statsnuc.Area] <= 0;   % don't need to filter anything since the number of elements in nuc and cyto is already matched in the code above      
-% badinds2 = [statsnucw0.Area] <= 0;
-% statsnuc(badinds) = [];
-% statsnucw0(badinds2) = [];
+badinds = [statsnuc.Area] == 0;   % don't need to filter anything since the number of elements in nuc and cyto is already matched in the code above      
+badinds2 = [statsnucw0.Area] == 0;
 
+statsnucw0(badinds2) = [];
+statsnuc(badinds) = [];
 
 %get the cytoplasmic mean intensity for each labeled object
 
 statscyto = regionprops(Lcytofin,I2proc,'Area','Centroid','PixelIdxList','MeanIntensity');
-badinds = [statscyto.Area] <= 0;  % don't need to filter anything since the number of elements in nuc and cyto is already matched in the code above 
+badinds = [statscyto.Area] == 0;  % don't need to filter anything since the number of elements in nuc and cyto is already matched in the code above 
 statscyto(badinds) = [];
-% ncells = length(statsN);
+
 if size(statsnucw0,1) ~= size(statscyto,1)
  datacell = [];
  disp('N of elements is not the same1')

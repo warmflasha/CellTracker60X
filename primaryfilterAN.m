@@ -5,7 +5,7 @@ function pmasks = primaryfilterAN(pnuc, probthresh,areafilter)
 %     logim2 = zeros(size(pnuc));
 %     s = logfilter;
 %     h  = fspecial('log',s);
-   se = strel('disk',2);
+   se = strel('disk',1);
     
     for z= 1:size(pnuc,3)
         im = pnuc(:,:,z);

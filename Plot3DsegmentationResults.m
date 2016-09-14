@@ -85,7 +85,7 @@ for k=1:size(pnuc,3)
  figure(11),subplot(2,3,k),imshow(pcyto(:,:,k),[]);
 end
 %%
-for j=100
+for j=98
     plane =1;                 
 Lnuc = imgfiles(j).NucMask(:,:,plane);%uncompressBxinaryImg(imgfiles(j).NucMask);
 Lcytofin = imgfilescyto(j).Cyto(:,:,plane);%uncompressBinaryImg(imgfilescyto(j).Cyto);
