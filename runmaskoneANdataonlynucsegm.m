@@ -58,7 +58,12 @@ end
 [newmask_lbl] = lblmask_3Dnuc(CC,nuclein1);
 
 % here can select the good plane, make different var pl and set it to the numeric value of the zslice that is the best   
-selectZ = 3;
+
+if size(pnuc,3)>1
+    selectZ = [2 3];
+else
+    selectZ = 2;
+end
  [datacell,Lnuc] = nucOnlyIlastik2peaks_3Dsegm(newmask_lbl,inuc,paramfile,imagedir,selectZ,pos,timegroup);
  outdat = datacell;
  

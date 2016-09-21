@@ -10,8 +10,8 @@ function pmasks = primaryfilterAN(pnuc, probthresh,areafilter)
     for z= 1:size(pnuc,3)
         im = pnuc(:,:,z);
         im2 = imfill(im > probthresh,'holes');% for probabilities exported
-        im3 = bwareafilt(im2,[areafilter areafilter*10]);
-        im4 = imopen(im3,se);
+        im3 = bwareafilt(im2,[areafilter areafilter*50]);
+        im4 = imopen(im3,se);%% if no unmerge don' need to open 
         pmasks(:,:,z) = im4; 
        
     end

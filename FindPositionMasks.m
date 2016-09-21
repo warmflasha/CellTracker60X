@@ -17,7 +17,7 @@ ff = dir(ilastikdir);
 goodfile = cell(1,pl);
 for k=1:size(ff,1)
     if ~isdir(ff(k).name)
-        K = strfind(ff(k).name,[ str  num2str(pos) '_']);
+        K = strfind(ff(k).name,[ str '_'  num2str(pos) '_']);% str '_'  num2str(pos) '_'
         if ~isempty(K)
             goodfile{k} = ff(k).name;
         end

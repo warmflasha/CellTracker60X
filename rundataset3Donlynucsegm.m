@@ -10,7 +10,7 @@ function rundataset3Donlynucsegm(ilastikdirnuc,imagedir,pos,paramfile,timegroup,
 %
 
     % get the specific position ilastik masks (all z projections)
-[ilastikNucAll] = FindPositionMasks(ilastikdirnuc,pl,(pos-1),strnuc);
+[ilastikNucAll] = FindPositionMasks(ilastikdirnuc,pl,pos,strnuc);
 imgfiles = struct;
 
 

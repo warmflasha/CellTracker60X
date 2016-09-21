@@ -4,25 +4,25 @@
 % ilastikfile2 = ('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/2016-07-07-LiveCellTiling_28hr10ngmlBMP4/trainingset/cyto_mask_15_z1.h5');
 % ilastikfile = ('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/2016-07-07-LiveCellTiling_28hr10ngmlBMP4/trainingset/nuc_mask_15_z1.h5');
 
-ilastikfile2 = ('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/2016-07-07-LiveCellTiling_28hr10ngmlBMP4/July7TilingLCellilastik_CytoMasks/cytomask3DJuly7set1_z0.h5');%/cyto_mask_z1.h5'
-ilastikfile = ('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/2016-07-07-LiveCellTiling_28hr10ngmlBMP4/July7TilingLCellilastik_NucMasks/nucmask3DJuly7set1_z0.h5');%/nuc_mask_z1.h5'
+ilastikfile2 = ('/Users/warmflashlab/Desktop/July26Tiling2_CytoMasks/cytomask1_z0.h5');%/cyto_mask_z1.h5'
+ilastikfile = ('/Users/warmflashlab/Desktop/July26Tiling2_NucMasks/nucmask1_z0.h5');%/nuc_mask_z1.h5'
 
 nuc = h5read(ilastikfile,'/exported_data');
 cyto = h5read(ilastikfile2,'/exported_data');
-
-   k=95;% 41 15,14,16; ,42 % 43,44 , 52,53,54- no
-    nuc1 = nuc(1,:,:,k);% for probabilities exported % for the nuc dataset (for the tiled expteimtne) the labels are reversed
+lblN = 2;
+   k=47;% 41 15,14,16; ,42 % 43,44 , 52,53,54- no
+    nuc1 = nuc(lblN,:,:,k);% for probabilities exported % for the nuc dataset (for the tiled expteimtne) the labels are reversed
     nuc1 = squeeze(nuc1);
     mask1 = nuc1;
     
-    mask3 = imfill(mask1 > 0.9,'holes');
-    mask3 = bwareafilt(mask3,[850 850*10]);
+    mask3 = imfill(mask1 > 0.82,'holes');
+   % mask3 = bwareafilt(mask3,[850 850*10]);
     %imshow(mask3);
     
-     cyto = cyto(2,:,:,k);% for probabilities exported
+     cyto = cyto(lblN,:,:,k);% for probabilities exported
      cyto = squeeze(cyto);
      mask2 = cyto;
-     
+     Lcyto = imfill(mask2>0.85,'holes');
     % look at probability masks output
     figure(1), subplot(1,2,1),imshow(mask1');
     %figure(1), subplot(1,3,2),imshow(mask2');
@@ -30,7 +30,7 @@ cyto = h5read(ilastikfile2,'/exported_data');
    
     Lnuc = mask3';%im2bw(mask1,0.5);
     %Lcyto = im2bw(mask2,0.85);
-    Lcyto = imfill(mask2>0.7,'holes');
+    Lcyto = imfill(mask2>0.85,'holes');
    % Lcyto = bwareafilt(Lcyto1,[0 50000]);
     figure(2),subplot(1,2,1), imshow(Lnuc);
    figure(2),subplot(1,2,2), imshow(Lcyto'&~Lnuc);
@@ -59,7 +59,7 @@ chanal = [1 2];
 paramfile = 'setUserParamLiveImagingAN_40X';       %'setUserParamLiveImagingAN_40X   setUserParamLiveImagingAN';
 paramfile3D = 'setUserParam3DsegmentationAN_40X';  %'setUserParam3DsegmentationAN    setUserParam3DsegmentationAN_40X'
 
-outfile = 'testtest.mat';%3Dsegm_febdata
+outfile = 'tiling2.mat';%3Dsegm_febdata
 
   positions = [1]; %july 26 tiling 2 position (40X)
   %positions = [0 2 3 4 5 8 11 15 16 17 18 20 21 22 25 26 29 30 32 33 10]; %  february 3 dataset
@@ -78,13 +78,111 @@ k = 1;
 
 %%
 % run tracking and colony grouping on the live cell dataset
-strdir = '39_40X_imprBGandSegm.mat';%[33 35 36 39 40] 
+strdir = '0_testBacktocoord.mat';%[33 35 36 39 40] 
 paramfiletrack = 'newTrackParamAN';
 TrackGroupuCol(strdir,paramfiletrack);   %TrackGroupuCol60X
 %%
-outfile ='37_40X_imprBGandSegm.mat';%1_test_3DsegmJul26data40x
+outfile ='0_tiling2.mat';%1_test_3DsegmJul26data40x
 trajmin =1;
 plotcelltraces(outfile,trajmin)
+%%
+% correlations between the signaling cells in  2-cell colonies (cells within the same
+% colony)
+% sampling rate: 1/T (T seconds after each measitement is taken)
+
+% fluctuations of signali of the cell should correlate with the
+% fluctuations of the neighboring cell (in the same colony)
+% these should not correlate, if the cells are within different colonies
+%direc = ('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/2016-07-07-LiveCellTiling_28hr10ngmlBMP4/2016-19-09-Correlations_analysis');
+load('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/2016-07-07-LiveCellTiling_28hr10ngmlBMP4/2016-19-09-Correlations_analysis/2celltotestcorr.mat');
+str = 'testcorr';
+file = '2celltotestcorr.mat';
+maxval2 = zeros(19,2);
+for i=1:19 %( how many 2-cell colonies there are
+
+var = [ str num2str(i) ] ;
+h = load(file,var);
+hh = struct2cell(h);
+%varcor{i} = zeros(size(hh{1},1),2); % to store the correlations vector
+
+delta_t = 17*60;% seconds
+sr = 1/delta_t; % sampling rate
+y1 = hh{1};
+%correlations between the cells within the same colony
+[X1,lag1] = xcorr(y1(:,1),y1(:,2));
+
+varcor{i} = zeros(size(X1,1),2); % to store the correlations vector
+varcor{i}(:,1) = X1;
+varcor{i}(:,2) = lag1';
+maxval = max(varcor{i}(:,1));
+[r,~] = find(varcor{i}(:,1) == maxval);
+maxval2(i,1:2) = varcor{i}(r,:);
+
+
+
+figure(1), subplot(211),plot((0:numel(y1(:,1))-1)/sr,y1(:,1),'-*r'); hold on
+plot((0:numel(y1(:,2))-1)/sr,y1(:,2),'-*b'); 
+
+figure(1),subplot(212), plot(lag1/sr,X1,'.k');hold on
+ylabel('Amplitude');
+xlabel('Time,s');
+title('Cross-correlation between two cells in same 2-cell colony');
+end
+
+figure(4), plot(maxval2(:,1),'b.','markersize',14);
+mean(maxval2(:,1));
+%%
+% corr btw cells in different 2-cell colonies
+load('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/2016-07-07-LiveCellTiling_28hr10ngmlBMP4/2016-19-09-Correlations_analysis/2celltotestcorr.mat');
+str = 'testcorr';
+file = '2celltotestcorr.mat';
+maxval2diffcol = zeros(18,2);
+
+
+for i=2:19 %( how many 2-cell colonies there are
+
+var = [ str num2str(i) ] ;
+h = load(file,var);
+hh = struct2cell(h);
+
+var2 = [ str num2str(1) ] ;% take the first cell 
+h2 = load(file,var2);
+hh2 = struct2cell(h2);
+y2 = hh2{1};            % fixed cell within a different colony
+
+delta_t = 17*60;% seconds
+sr = 1/delta_t; % sampling rate
+y1 = hh{1};
+% here need to make sure that the y1 and y2 are the same length
+s1 = size(y2,1);
+s2 = size(y1,1);
+if s1<=s2
+    [X1,lag1] = xcorr(y2(:,2),y1(1:s1,1));
+else
+    [X1,lag1] = xcorr(y2(1:s1,2),y1(:,1));
+end
+varcor{i} = zeros(size(X1,1),2); % to store the correlations vector
+varcor{i}(:,1) = X1;
+varcor{i}(:,2) = lag1';
+maxval = max(varcor{i}(:,1));
+[r,~] = find(varcor{i}(:,1) == maxval);
+maxval2diffcol(i,1:2) = varcor{i}(r,:);
+
+% figure(3), subplot(211),plot((0:numel(y1(:,1))-1)/sr,y1(:,1),'-*r'); hold on
+% plot((0:numel(y1(:,2))-1)/sr,y1(:,2),'-*b'); 
+
+figure(3),subplot(212), plot(lag1/sr,X1,'k'); hold on
+ylabel('Amplitude');
+xlabel('Time,s');
+title('Cross-correlation between two cells in different 2-cell colonies');
+end
+
+figure(2),hold on
+plot(maxval2diffcol(:,1),'r.','markersize',14);
+mean(maxval2diffcol(:,1));
+
+
+
 %%
 n1 = 1;
 n2 = 10;m = 1;matfile = '0_test2.mat';

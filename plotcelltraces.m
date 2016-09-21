@@ -14,13 +14,13 @@
  numcol = size(colonies,2); % how many colonies were grouped within the frame
  traces = cell(1,numcol);
  for j = 1:numcol
-     traces{j} = colonies(j).NucSmadRatio(:);
+     traces{j} = colonies(j).NucSmadRatio;%colonies(j).NucSmadRatio(:)
      %colSZ = colonies(j).numOfCells(timecolSZ);
      traces{j}((traces{j} == 0)) = nan;
      for h = 1:size(traces{j},2)
          if length(traces{j}(isnan(traces{j}(:,h))==0))>trajmin
              figure(j), plot(traces{j}(:,h),'-*','color',C{j});hold on% cmap(j,:) 'r' traces
-             q = 1;
+            
              ylim([0 2.5]);
              ylabel('mean Nuc/Cyto smad4  ');
              xlabel('frames');

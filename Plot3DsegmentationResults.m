@@ -43,10 +43,10 @@ for k=1:size(MaskFin2,2)
 end
 
 %%
-j =82; 
+j =1; 
 f = 10;
 Lnuc = imgfiles(j).NucMask;
-Lnuc = imgfilescyto(j).Cyto;
+%Lnuc = imgfilescyto(j).Cyto;
 %j = 2; % peaks{j}
 for k=1:size(Lnuc,3)
  figure(f),subplot(1,size(Lnuc,3),k),imshow(Lnuc(:,:,k),[]);%(7),subplot(2,size(Lnuc,3),k),
@@ -54,8 +54,8 @@ end
 figure(f),hold on
 plot(peaks{j}(:,1),peaks{j}(:,2),'*r','markersize',15);
 figure(f),  hold on
-text(peaks{j}(:,1)+10,peaks{j}(:,2),num2str(peaks{j}(:,6)./peaks{j}(:,7)),'Color','m');
-
+text(peaks{j}(:,1)+10,peaks{j}(:,2),num2str(peaks{j}(:,7)./mean(peaks{j}(:,5))),'Color','m');
+title('CDX2/RFPh2b')
 
 
 
@@ -85,7 +85,7 @@ for k=1:size(pnuc,3)
  figure(11),subplot(2,3,k),imshow(pcyto(:,:,k),[]);
 end
 %%
-for j=98
+for j=1
     plane =1;                 
 Lnuc = imgfiles(j).NucMask(:,:,plane);%uncompressBxinaryImg(imgfiles(j).NucMask);
 Lcytofin = imgfilescyto(j).Cyto(:,:,plane);%uncompressBinaryImg(imgfilescyto(j).Cyto);
