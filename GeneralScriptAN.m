@@ -82,9 +82,15 @@ strdir = '0_testBacktocoord.mat';%[33 35 36 39 40]
 paramfiletrack = 'newTrackParamAN';
 TrackGroupuCol(strdir,paramfiletrack);   %TrackGroupuCol60X
 %%
-outfile ='0_tiling2.mat';%1_test_3DsegmJul26data40x
+k = 1;
+dirlive = ('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/2016-07-07-LiveCellTiling_28hr10ngmlBMP4/FinalOutfiles_completeTraces');
+strdir = '_40X_imprBGandSegm.mat';
+outfile = [ dirlive '/' num2str(k-1) strdir ];
+
 trajmin =1;
-plotcelltraces(outfile,trajmin)
+%plotcelltraces(outfile,trajmin)
+plotcelltracesandFixedData(outfile,trajmin)
+hold on
 %%
 % correlations between the signaling cells in  2-cell colonies (cells within the same
 % colony)
