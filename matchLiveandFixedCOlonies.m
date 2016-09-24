@@ -63,13 +63,13 @@ save('fixedandLivematched','datatogether');
  load('fixedandLivematched.mat');
  positions = (0:39);
  last = 100;
- trajmin = 10;
+ trajmin = 40;
  findata1 = [];
  findata2 = [];
  fr_stim = 16;
  traces = [];
  colormap = prism;
- for k=1:size(datatogether,2)% loop over colonies
+ for k=10:20 % size(datatogether,2)     loop over colonies
      
      traces{k} = datatogether(k).colony.NucSmadRatio;%colonies(j).NucSmadRatio(:)
      colSZ = datatogether(k).colony.numOfCells(fr_stim);
@@ -82,15 +82,21 @@ save('fixedandLivematched','datatogether');
          
      end
      
- text(datatogether(k).colony.cells(h).onframes(end),traces{k}(end,h),num2str(datatogether(k).fixedData(1,3)),'color','b','fontsize',15);%['mean ColCdx2 ' num2str(colonies2(j).cells(h).fluorData(1,end))]
+ text(datatogether(k).colony.cells(h).onframes(end),traces{k}(end,h),num2str(datatogether(k).fixedData(:,3)/datatogether(k).fixedData(:,2)),'color','b','fontsize',20);%['mean ColCdx2 ' num2str(colonies2(j).cells(h).fluorData(1,end))]
      figure(k), hold on
+ text(datatogether(k).colony.cells(h).onframes(end)-0.5,traces{k}(end,h)-0.5,num2str(colSZ),'color','m','fontsize',20);%['mean ColCdx2 ' num2str(colonies2(j).cells(h).fluorData(1,end))]
+
      ylim([0 2.5]);
      ylabel('mean Nuc/Cyto smad4  ');
      xlabel('frames');
-     findata1 = [findata1 ; datatogether(k).fixedData(1,3)];
+     findata1 = [findata1 ; datatogether(k).fixedData(1,3)/datatogether(k).fixedData(1,2)];
      findata2 = [findata2; colSZ];
  end
      
 findat = cat(2,findata1,findata2);
-
+%%
+figure,plot(findat(:,2),findat(:,1),'.','markersize',15);
+figure,plot(fluordata(:,4),fluordata(:,3)./fluordata(:,2),'m.','markersize',20);
+% colorcode the traces by the Cdx2 valye and pur all of them on the same
+% plot
 

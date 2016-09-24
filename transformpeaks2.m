@@ -262,11 +262,12 @@ if ~isempty(colonies)
 for j=1:size(colonies,2)
     colfix(:,1) = mean(colonies(j).cells(:,1)+ac2(k).absinds(2)); % mean of the x coord if the clony
     colfix(:,2) = mean(colonies(j).cells(:,2)+ac2(k).absinds(1)); % mean of y
+    colSZ = size(colonies(j).cells(:,1),1);
     fluordata1 = mean(colonies(j).cells(:,5));% RFP h2b
     fluordata2 = mean(colonies(j).cells(:,6));% signaling
     fluordata3 = mean(colonies(j).cells(:,7));% cdx2
     colfixall = [colfixall;colfix]; % put data in the matrix
-    fluordata = [fluordata;fluordata1 fluordata2 fluordata3];
+    fluordata = [fluordata;fluordata1 fluordata2 fluordata3 colSZ];
     %allcell = [allcell;colonies(j).cells(:,1)+ac2(k).absinds(2); colonies(j).cells(:,2)+ac2(k).absinds(1)];
 %figure(1), hold on, plot(colonies(j).cells(:,1)+ac2(k).absinds(2),colonies(j).cells(:,2)+ac2(k).absinds(1),'.','color',colormap(j+8,:,:));hold on
 figure(1), hold on, plot(colfix(:,1),colfix(:,2),'.','color',colormap(j+8,:,:),'markersize',10);hold on
