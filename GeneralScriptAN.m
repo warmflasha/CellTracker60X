@@ -225,8 +225,8 @@ timecolSZ = fr_stim;%10
 p2 = (timecolSZ)*delta_t/60;
 cmap = colorcube;close all
 cmap2 = hot;close all
-sz = 81;%81 99 83 
- strdir = '*_60X_testparam_allT.mat';
+sz = 100;%81 99 83 
+ strdir = '*_40X_imprBGandSegm.mat';
 ff = dir(strdir);%'*_60X_testparam_allT.mat'ff = dir('*60Xjan8_R*.mat');
 clear traces 
 clear traces_one
@@ -252,13 +252,13 @@ for k=1:length(ff)
     
     for j = 1:numcol
         colSZ = colonies(j).numOfCells(timecolSZ-1); % colony size determined at the time of stimulation
-        
-        traces{j} = colonies(j).NucSmadRatio(:);
+        if colSZ>0 && colSZ<5 
+        traces{j} = colonies(j).NucSmadRatio;%colonies(j).NucSmadRatio(:)
         traces{j}(traces{j}==0) = NaN;
         %(traces{j}(traces{j}(1:fr_stim,1)>1.2) = NaN;           % these cells already have very high ratio value in the first couple frames, most likely junk
        %traces{j}(traces{j}>1.4) = NaN;       % these outliers are dead cells ot junk
        % traces(cellfun(@isempty,traces)==1)=[];
-       if colSZ>0 && colSZ<5  
+        
            
            for h = 1:size(traces{j},2)
                if length(traces{j}(isnan(traces{j}(:,h))==0))>75       % FILTER OUT SHORT TRAJECTORIES

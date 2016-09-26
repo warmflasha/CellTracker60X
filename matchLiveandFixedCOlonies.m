@@ -63,13 +63,13 @@ save('fixedandLivematched','datatogether');
 load('fixedandLivematched.mat');
 positions = (0:39);
 last = 100;
-trajmin = 2;
+trajmin = 60;
 findata1 = [];
 findata2 = [];
 fr_stim = 16;
 traces = [];
 colormap = customap;%prism;
-colormapcustom = [];
+cdx2tosmad4 = [];
 
 for k=1:size(datatogether,2)   %  loop over colonies
     colSZ = datatogether(k).colony.numOfCells(fr_stim);
@@ -85,19 +85,19 @@ for k=1:size(datatogether,2)   %  loop over colonies
             
         end
         
-        text(datatogether(k).colony.cells(h).onframes(end),traces{k}(end,h),num2str(datatogether(k).fixedData(:,3)/datatogether(k).fixedData(:,2)),'color','b','fontsize',7);%['mean ColCdx2 ' num2str(colonies2(j).cells(h).fluorData(1,end))]
+        text(datatogether(k).colony.cells(h).onframes(end),traces{k}(end,h),num2str(datatogether(k).fixedData(:,3)/datatogether(k).fixedData(:,2)),'color','b','fontsize',11);%['mean ColCdx2 ' num2str(colonies2(j).cells(h).fluorData(1,end))]
         
         figure(colSZ), hold on
-        colormapcustom = [colormapcustom; datatogether(k).fixedData(:,3)/datatogether(k).fixedData(:,2)];
-        text(datatogether(k).colony.cells(h).onframes(end)-0.5,traces{k}(end,h)-0.5,num2str(colSZ),'color','m','fontsize',7);%['mean ColCdx2 ' num2str(colonies2(j).cells(h).fluorData(1,end))]
-        figure(colSZ), hold on
+        cdx2tosmad4 = [cdx2tosmad4; datatogether(k).fixedData(:,3)/datatogether(k).fixedData(:,2)];
+%         text(datatogether(k).colony.cells(h).onframes(end)-0.5,traces{k}(end,h)-0.5,num2str(colSZ),'color','m','fontsize',7);%['mean ColCdx2 ' num2str(colonies2(j).cells(h).fluorData(1,end))]
+%         figure(colSZ), hold on
     
     ylim([0 2.5]);
     xlim([0 115])
     ylabel('mean Nuc/Cyto smad4  ');
     xlabel('frames');
-    findata1 = [findata1 ; datatogether(k).fixedData(1,3)/datatogether(k).fixedData(1,2)];
-    findata2 = [findata2; colSZ];
+%     findata1 = [findata1 ; datatogether(k).fixedData(1,3)/datatogether(k).fixedData(1,2)];
+%     findata2 = [findata2; colSZ];
     end
 end
 
@@ -110,19 +110,18 @@ findat = cat(2,findata1,findata2);
 % plot
 % make a custom colormap from Cdx2 values
 
-customap = zeros(size(colormapcustom,1),3); % rgb
-a = max(colormapcustom);% max cdx2 value
-b = min(colormapcustom);
+customap = zeros(size(cdx2tosmad4,1),3); % rgb
+a = max(cdx2tosmad4);% max cdx2 value
 binSZ = a/3 ;
-binSZ = [a/3 1.8];
-for k=1:size(colormapcustom,1)
-    if colormapcustom(k)<binSZ(1)
+binSZ = [a/3 1.9];
+for k=1:size(cdx2tosmad4,1)
+    if cdx2tosmad4(k)<binSZ(1)
         
-        customap(k,1)= abs((colormapcustom(k)))*0.35;
-    else if (binSZ(1)<=colormapcustom(k)) && (colormapcustom(k)<=binSZ(2))
-            customap(k,2)= abs((colormapcustom(k)))*0.35;
-        else if colormapcustom(k)>binSZ(2)
-                customap(k,3)= abs((colormapcustom(k)))*0.22;
+        customap(k,3)= 1;
+    else if (binSZ(1)<=cdx2tosmad4(k)) && (cdx2tosmad4(k)<=binSZ(2))
+            customap(k,2)= 1;
+        else if cdx2tosmad4(k)>binSZ(2)
+                customap(k,1)= 1;
             end
         end
     end
