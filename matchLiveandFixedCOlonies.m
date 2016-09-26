@@ -60,43 +60,72 @@ for k=1:size(positions,2)
 end
 save('fixedandLivematched','datatogether');
 %% plot traces with fixed data
- load('fixedandLivematched.mat');
- positions = (0:39);
- last = 100;
- trajmin = 40;
- findata1 = [];
- findata2 = [];
- fr_stim = 16;
- traces = [];
- colormap = prism;
- for k=10:20 % size(datatogether,2)     loop over colonies
-     
-     traces{k} = datatogether(k).colony.NucSmadRatio;%colonies(j).NucSmadRatio(:)
-     colSZ = datatogether(k).colony.numOfCells(fr_stim);
-     traces{k}((traces{k} == 0)) = nan;
-     for h = 1:size(traces{k},2)
-         if length(traces{k}(isnan(traces{k}(:,h))==0))>trajmin
-             figure(k), plot(traces{k}(:,h),'-*','color',colormap(k,:,:));hold on
-   
-         end
-         
-     end
-     
- text(datatogether(k).colony.cells(h).onframes(end),traces{k}(end,h),num2str(datatogether(k).fixedData(:,3)/datatogether(k).fixedData(:,2)),'color','b','fontsize',20);%['mean ColCdx2 ' num2str(colonies2(j).cells(h).fluorData(1,end))]
-     figure(k), hold on
- text(datatogether(k).colony.cells(h).onframes(end)-0.5,traces{k}(end,h)-0.5,num2str(colSZ),'color','m','fontsize',20);%['mean ColCdx2 ' num2str(colonies2(j).cells(h).fluorData(1,end))]
+load('fixedandLivematched.mat');
+positions = (0:39);
+last = 100;
+trajmin = 2;
+findata1 = [];
+findata2 = [];
+fr_stim = 16;
+traces = [];
+colormap = customap;%prism;
+colormapcustom = [];
 
-     ylim([0 2.5]);
-     ylabel('mean Nuc/Cyto smad4  ');
-     xlabel('frames');
-     findata1 = [findata1 ; datatogether(k).fixedData(1,3)/datatogether(k).fixedData(1,2)];
-     findata2 = [findata2; colSZ];
- end
-     
+for k=1:size(datatogether,2)   %  loop over colonies
+    colSZ = datatogether(k).colony.numOfCells(fr_stim);
+    if colSZ>0
+        traces{k} = datatogether(k).colony.NucSmadRatio;%colonies(j).NucSmadRatio(:)
+        traces{k}((traces{k} == 0)) = nan;
+        
+        for h = 1:size(traces{k},2)
+            if length(traces{k}(isnan(traces{k}(:,h))==0))>trajmin
+                figure(colSZ), plot(traces{k}(:,h),'-*','color',colormap(k,:,:));hold on
+                
+            end
+            
+        end
+        
+        text(datatogether(k).colony.cells(h).onframes(end),traces{k}(end,h),num2str(datatogether(k).fixedData(:,3)/datatogether(k).fixedData(:,2)),'color','b','fontsize',7);%['mean ColCdx2 ' num2str(colonies2(j).cells(h).fluorData(1,end))]
+        
+        figure(colSZ), hold on
+        colormapcustom = [colormapcustom; datatogether(k).fixedData(:,3)/datatogether(k).fixedData(:,2)];
+        text(datatogether(k).colony.cells(h).onframes(end)-0.5,traces{k}(end,h)-0.5,num2str(colSZ),'color','m','fontsize',7);%['mean ColCdx2 ' num2str(colonies2(j).cells(h).fluorData(1,end))]
+        figure(colSZ), hold on
+    
+    ylim([0 2.5]);
+    xlim([0 115])
+    ylabel('mean Nuc/Cyto smad4  ');
+    xlabel('frames');
+    findata1 = [findata1 ; datatogether(k).fixedData(1,3)/datatogether(k).fixedData(1,2)];
+    findata2 = [findata2; colSZ];
+    end
+end
+
 findat = cat(2,findata1,findata2);
 %%
-figure,plot(findat(:,2),findat(:,1),'.','markersize',15);
-figure,plot(fluordata(:,4),fluordata(:,3)./fluordata(:,2),'m.','markersize',20);
-% colorcode the traces by the Cdx2 valye and pur all of them on the same
+%figure,plot(findat(:,2),findat(:,1),'.','markersize',15);
+%figure,plot(fluordata(:,4),fluordata(:,3)./fluordata(:,2),'m.','markersize',20);
+
+%% colorcode the traces by the Cdx2 value and put all of them on the same
 % plot
+% make a custom colormap from Cdx2 values
+
+customap = zeros(size(colormapcustom,1),3); % rgb
+a = max(colormapcustom);% max cdx2 value
+b = min(colormapcustom);
+binSZ = a/3 ;
+binSZ = [a/3 1.8];
+for k=1:size(colormapcustom,1)
+    if colormapcustom(k)<binSZ(1)
+        
+        customap(k,1)= abs((colormapcustom(k)))*0.35;
+    else if (binSZ(1)<=colormapcustom(k)) && (colormapcustom(k)<=binSZ(2))
+            customap(k,2)= abs((colormapcustom(k)))*0.35;
+        else if colormapcustom(k)>binSZ(2)
+                customap(k,3)= abs((colormapcustom(k)))*0.22;
+            end
+        end
+    end
+end
+
 
