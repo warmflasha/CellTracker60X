@@ -1,4 +1,4 @@
-% code to transform the paeks nto the coordinates of the montage nd then 
+% code to transform the peaks nto the coordinates of the montage nd then 
 % find the colonies
 %%
 % load outfile

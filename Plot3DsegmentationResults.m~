@@ -55,7 +55,7 @@ figure(f),hold on
 plot(peaks{j}(:,1),peaks{j}(:,2),'*r','markersize',15);
 figure(f),  hold on
 text(peaks{j}(:,1)+10,peaks{j}(:,2),num2str(peaks{j}(:,8)./peaks{j}(:,5)),'Color','m'); % cdx2:dapi
-title('CDX2/DAPI')
+title('CDX2/RFPh2b')
 
 
 
