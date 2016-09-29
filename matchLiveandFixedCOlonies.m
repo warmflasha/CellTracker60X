@@ -102,9 +102,7 @@ for k=1:size(datatogether,2)   %  loop over colonies
 end
 
 findat = cat(2,findata1,findata2);
-%%
-%figure,plot(findat(:,2),findat(:,1),'.','markersize',15);
-%figure,plot(fluordata(:,4),fluordata(:,3)./fluordata(:,2),'m.','markersize',20);
+
 
 %% colorcode the traces by the Cdx2 value and put all of them on the same
 % plot

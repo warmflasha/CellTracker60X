@@ -24,7 +24,7 @@ outfile = 'fixedwithDAPI.mat';%3Dsegm_febdata
 pl =1;%2,3 5
 strnuc = 'nucmask';   %NucMasks3Djan8set   %nucmask3DFebset %nuc_mask_cytomask3DJuly7set
 %k = 1;
-for k = 8:size(positions,2)
+for k = 59
     pos = k;%positions(k);
     rundataset3Donlynucsegm(ilastikdirnuc,imagedir,pos,paramfile,timegroup,outfile,paramfile3D,pl,strnuc,chanal(1))
 end

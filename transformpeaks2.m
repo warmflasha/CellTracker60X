@@ -73,8 +73,12 @@ plot(xyall_rot_trans(:,1),xyall_rot_trans(:,2),'c.');
 
 %%
 % directory with segmented files
-fixedsegm = '/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/2016-07-07-LiveCellTiling_28hr10ngmlBMP4/2016-09-20-nucmasks_backtocoord/Segmented_backtoCoordTile1';
-strdirfix = '_testBacktocoord';
+%fixedsegm = '/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/2016-07-07-LiveCellTiling_28hr10ngmlBMP4/2016-09-20-nucmasks_backtocoord/Segmented_backtoCoordTile1';
+fixedsegm = '/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/2016-07-07-LiveCellTiling_28hr10ngmlBMP4/2016-09-28-SegmentedFixedData_withDapi';
+
+%strdirfix = '_testBacktocoord';
+strdirfix = '_fixedwithDAPI';
+
 ff = dir(fixedsegm);
 xyallfix = [];
 positions2 = (0:76); % saved outfiles starting from 0

@@ -62,7 +62,7 @@ end
 if size(pnuc,3)>1
     selectZ = [2 3];
 else
-    selectZ = 3;
+    selectZ = 2
 end
  [datacell,Lnuc] = nucOnlyIlastik2peaks_3Dsegm(newmask_lbl,inuc,paramfile,imagedir,selectZ,pos,timegroup);
  outdat = datacell;

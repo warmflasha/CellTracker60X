@@ -9,7 +9,7 @@ direc2 = ('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImag
 [ac, fi]=alignManyPanelsAndorZstackMontage(direc2,[10 4],0,1);% 
 ff = dir('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/2016-07-07-LiveCellTiling_28hr10ngmlBMP4/FinalOutfiles_completeTraces');
 [ac2, fi2]=alignManyPanelsAndorZstackMontage('good_Backtocoord40xBF2_20160709_53148 PM',[7 11],0,1);
-
+%%
 % from DATAStorage
 
 % direc2 = ('/Volumes/data2/Anastasiia/totestClonyGrouping/lastTlivecellset');
