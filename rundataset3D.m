@@ -42,11 +42,11 @@ for k =1:nT                                        % loop over time points withi
         icyto(:,:,m) = bfGetPlane(imgscyto_reader{m},planecyto);
         
     end
-         if pos == 39 || pos == 40 
-             [outdat,Lnuc,Lcytofin] = runmaskoneANdata(pnuc(:,:,1),pcyto(:,:,1),inuc(:,:,1),icyto(:,:,1),timegroup,paramfile,paramfile3D);
-         else
+%          if pos == 39 || pos == 40 
+%              [outdat,Lnuc,Lcytofin] = runmaskoneANdata(pnuc(:,:,1),pcyto(:,:,1),inuc(:,:,1),icyto(:,:,1),timegroup,paramfile,paramfile3D);
+%          else
         [outdat,Lnuc,Lcytofin] = runmaskoneANdata(pnuc,pcyto,inuc,icyto,timegroup,paramfile,paramfile3D);
-         end
+%          end
         peaks{nTprev+k} = outdat;
         
         imgfiles(nTprev+k).NucMask = (Lnuc(:,:,round(size(Lnuc,3)/2))); %(Lnuc(:,:,1:size(Lnuc,3)))%round(size(Lnuc,3)/2) compressBinaryImg(Lnuc(:,:,3)) round(size(Lnuc,3)/2) compressBinaryImg

@@ -54,15 +54,18 @@ allchanels=cell(1,(size(ff.w,2))) ;
 
 for jj=1:(size(ff.w,2)) % start from 1 so to select the nuc image plane correctly (selectZ)
 [imgsnuc_reader]   =  getrawimgfilesselectZ(imagedir,selectZ,(pos-1),timegroup,jj);  
-k = 1;% first and only tme point
+k = 1;% first and only time point
  
     for m = 1:size(imgsnuc_reader,2) %
         planenuc = imgsnuc_reader{m}.getIndex(0,0, k - 1) + 1;
         inuc(:,:,m) = bfGetPlane(imgsnuc_reader{m},planenuc);
-             
+         
     end
+    % here need the adjusment if these are more than one slices
       allchanels{jj} = inuc;
+   
 end
+
 I2proc = zeros(1024,1024,size(ff.w,2));
 for ll=1:size(ff.w,2)
 I2proc(:,:,ll) = simplebg([],Lnuc,allchanels{ll}); % here I2proc contains the bg-subtracted images for the good zplane for all existing chanels
@@ -83,7 +86,7 @@ xyzall = cat(2,xx,yy,zz);
 else 
 xyz = round([statsnuc.Centroid]);
 xx =  xyz(1:3:end)';
-xyzall = zeros(size(xx,1),3); % initialize the atrix for the data once the number of rows is known (ftom size of xx)
+xyzall = zeros(size(xx,1),3); % initialize the matrix for the data once the number of rows is known (ftom size of xx)
 yy =  xyz(2:3:end)';
 zz =  xyz(3:3:end)';
 xyzall = cat(2,xx,yy,zz);

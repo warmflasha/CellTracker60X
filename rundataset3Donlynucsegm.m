@@ -10,7 +10,7 @@ function rundataset3Donlynucsegm(ilastikdirnuc,imagedir,pos,paramfile,timegroup,
 %
 
     % get the specific position ilastik masks (all z projections)
-[ilastikNucAll] = FindPositionMasks(ilastikdirnuc,pl,(pos-1),strnuc);
+[ilastikNucAll] = FindPositionMasks(ilastikdirnuc,pl,pos,strnuc);
 imgfiles = struct;
 
 
@@ -24,7 +24,7 @@ nT = imgsnuc_reader{1}.getSizeT;                                                
 for k =1  % loop over time points the fixed images have only one datapoint
         
     % read pnuc and pcyto separately from images
-    [pnuc]=readmaskfiles1(ilastikNucAll,k,2); % readmaskfiles1(ilastikNucAll,k,lblN)    lblN = which ilastik label to use as cell nuc. and which as cyto
+    [pnuc]=readmaskfiles1(ilastikNucAll,k,1); % readmaskfiles1(ilastikNucAll,k,lblN)    lblN = which ilastik label to use as cell nuc. and which as cyto
         
     for m = 1:size(imgsnuc_reader,2) %
         planenuc = imgsnuc_reader{m}.getIndex(0,0, k - 1) + 1;
