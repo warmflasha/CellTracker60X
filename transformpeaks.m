@@ -34,16 +34,7 @@ N = 2;
 chan = [1];
 chanal = 1;
 timegroup = [];
-l = size(peaks,2);
-xyall = [];
-    for k=1:size(positions,2) % same as the loop over image numbers
-        outfile = [ num2str(positions(k)) strdir ];
-        load(outfile,'peaks','imgfiles','imgfilescyto');
-        xyall = [xyall; bsxfun(@plus,peaks{l-N}(:,1:2),ac(k).absinds)];
-%         peaksnew(1:size(peaks{l-N},1),1) = peaks{l-N}(:,1) + ac(k).absinds(2)*ones(size(peaks{l-N},1),1);%+toTranslate2(1)*ones(size(peaks{l-N},1),1)
-%         peaksnew(1:size(peaks{l-N},1),2) = peaks{l-N}(:,2) + ac(k).absinds(1)*ones(size(peaks{l-N},1),1);%+toTranslate2(2)*ones(size(peaks{l-N},1),1)
-%         figure(1), hold on
-%         plot(xyall(:,1),xyall(:,2),'*b','markersize',12);
+
     end
 
 
@@ -81,5 +72,9 @@ f2(size(f2,1):size(f1reg_trans,1),:) = 0;%11265:11842
 img2output = cat(3,uint16(f1reg_trans),uint16(f2),zeros(size(f2)));
 imwrite(img2output,'test4mid.tif');
     
-    
-    
+    %%
+    imshow(t(:,:,2),[]); hold on;% 2 - green chanel, 1 - red(4x10)
+plot(xyall(:,1),xyall(:,2),'b*');
+rotmat = mytform.T(1:2,1:2);    
+    newxy = bsxfun(@plus,xyall*rotmat,toTranslate2);
+    plot(newxy(:,1),newxy(:,2),'gs');
