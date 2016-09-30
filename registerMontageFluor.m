@@ -259,14 +259,15 @@ end
 load('registeredDAPI.mat');
 positions = (0:39);
 last = 100;
-trajmin = 60;
+trajmin = 50;
 findata1 = [];
 findata2 = [];
 fr_stim = 16;
 traces = [];
 colormap = customap;%;%
 cdx2todapi = [];
-
+tracesbycol = [];
+binSZ = [0.7 1.1];
 for k=1:size(datatogether,2)   %  loop over colonies
     colSZ = datatogether(k).colony.numOfCells(fr_stim);
     if colSZ>0
@@ -276,6 +277,7 @@ for k=1:size(datatogether,2)   %  loop over colonies
         for h = 1:size(traces{k},2)
             if length(traces{k}(isnan(traces{k}(:,h))==0))>trajmin
                 figure(colSZ), plot(traces{k}(:,h),'-*','color',colormap(k,:,:));hold on
+                %tracesbycol{colSZ} = traces{k}(:,h);
                 
             end
             
@@ -306,12 +308,12 @@ findat = cat(2,cdx2todapi,findata2);
 customap = zeros(size(cdx2todapi,1),3); % rgb
 a = max(cdx2todapi);% max cdx2 value
 %binSZ = a/2 ;
-binSZ = [0.8 1.2];
+binSZ = [0.7 1.1];
 for k=1:size(cdx2todapi,1)
-    if cdx2todapi(k)<binSZ(1)
+    if cdx2todapi(k)<=binSZ(1)
         
         customap(k,3)= 1;
-    else if (binSZ(1)<=cdx2todapi(k)) && (cdx2todapi(k)<=binSZ(2))
+    else if (cdx2todapi(k)>binSZ(1)) && (cdx2todapi(k)<=binSZ(2))
             customap(k,2)= 1;
         else if cdx2todapi(k)>binSZ(2)
                 customap(k,1)= 1;
