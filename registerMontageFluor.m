@@ -258,77 +258,205 @@ end
 %% plot traces with fixed data
 load('registeredDAPI.mat');
 positions = (0:39);
+clear tracesbycol
 last = 100;
-trajmin = 50;
+trajmin = 50;%50
 findata1 = [];
 findata2 = [];
-fr_stim = 16;
+fr_stim = 16;%16
 traces = [];
-colormap = customap;%;%
+cdx2val = [];
+colormap = parula;%;%
 cdx2todapi = [];
-tracesbycol = [];
-binSZ = [0.7 1.1];
+tracesbybin = cell(1,3);% three bins, same colony size
+binSZ = [0.8 1.1];
+q = 1;
+nc = 1;
 for k=1:size(datatogether,2)   %  loop over colonies
     colSZ = datatogether(k).colony.numOfCells(fr_stim);
-    if colSZ>0
+    cdx2todapi(k) = datatogether(k).fixedData(:,3)/datatogether(k).fixedData(:,1);
+    if colSZ == nc && (cdx2todapi(k)< binSZ(1)) 
         traces{k} = datatogether(k).colony.NucSmadRatio;%colonies(j).NucSmadRatio(:)
         traces{k}((traces{k} == 0)) = nan;
-        
+        sz = size(traces{k},2);
         for h = 1:size(traces{k},2)
-            if length(traces{k}(isnan(traces{k}(:,h))==0))>trajmin
-                figure(colSZ), plot(traces{k}(:,h),'-*','color',colormap(k,:,:));hold on
-                %tracesbycol{colSZ} = traces{k}(:,h);
-                
+            if length(traces{k}(isnan(traces{k}(:,h))==0))>trajmin && (traces{k}(3,h))<1.5
+                figure(1), plot(traces{k}(:,h),'-*','color',colormap(k,:));hold on     % here plot the traces
+               
+                tracesbybin{1}(:,q+sz-1) = traces{k}(:,h);      % here store the traces which meat condition
+                cdx2val{1}(:,q+sz-1)= datatogether(k).fixedData(:,3)/datatogether(k).fixedData(:,1);
+                % disp(q+sz-1)
             end
             
         end
-         text(datatogether(k).colony.cells(h).onframes(end),traces{k}(end,h),num2str(datatogether(k).fixedData(:,3)/datatogether(k).fixedData(:,1)),'color',colormap(k,:,:),'fontsize',11);%['mean ColCdx2 ' num2str(colonies2(j).cells(h).fluorData(1,end))]
         
-        figure(colSZ) ,hold on
-        cdx2todapi = [cdx2todapi; datatogether(k).fixedData(:,3)/datatogether(k).fixedData(:,1)];
-%         text(datatogether(k).colony.cells(h).onframes(end)-0.5,traces{k}(end,h)-0.5,num2str(colSZ),'color','m','fontsize',7);%['mean ColCdx2 ' num2str(colonies2(j).cells(h).fluorData(1,end))]
-%         figure(colSZ), hold on
-    
+        q = q+sz;
+         text(datatogether(k).colony.cells(h).onframes(end),traces{k}(end,h),num2str(datatogether(k).fixedData(:,3)/datatogether(k).fixedData(:,1)),'color',colormap(k,:),'fontsize',11);%['mean ColCdx2 ' num2str(colonies2(j).cells(h).fluorData(1,end))]
+        figure(1) ,hold on
     ylim([0 2.5]);
     xlim([0 115])
     ylabel('mean Nuc/Cyto smad4  ');
     xlabel('frames');
-     findata1 = [findata1 ; datatogether(k).fixedData(1,3)/datatogether(k).fixedData(1,1)];
-     findata2 = [findata2; colSZ];
+%     findata1 = [findata1 ; datatogether(k).fixedData(1,3)/datatogether(k).fixedData(1,1)];
+%     findata2 = [findata2; colSZ];
     end
-end
-
-findat = cat(2,cdx2todapi,findata2);
-
-
-%% colorcode the traces by the Cdx2 value and put all of them on the same
-% plot
-% make a custom colormap from Cdx2 values
-
-customap = zeros(size(cdx2todapi,1),3); % rgb
-a = max(cdx2todapi);% max cdx2 value
-%binSZ = a/2 ;
-binSZ = [0.7 1.1];
-for k=1:size(cdx2todapi,1)
-    if cdx2todapi(k)<=binSZ(1)
+    
+    if colSZ == nc && (cdx2todapi(k)< binSZ(2)) && (cdx2todapi(k)> binSZ(1))
+        traces{k} = datatogether(k).colony.NucSmadRatio;%colonies(j).NucSmadRatio(:)
+        traces{k}((traces{k} == 0)) = nan;
+        sz = size(traces{k},2);
+        for h = 1:size(traces{k},2)
+            if length(traces{k}(isnan(traces{k}(:,h))==0))>trajmin && (traces{k}(3,h))<1.5
+                figure(2), plot(traces{k}(:,h),'-*','color',colormap(k,:));hold on     % here plot the traces
+                
+                tracesbybin{2}(:,q+sz-1) = traces{k}(:,h);      %datatogether(k).colony.NucSmadRatio here store the traces which meat condition
+                cdx2val{2}(:,q+sz-1)= datatogether(k).fixedData(:,3)/datatogether(k).fixedData(:,1);
+                %disp(q+sz-1)
+            end
+            
+        end
         
-        customap(k,3)= 1;
-    else if (cdx2todapi(k)>binSZ(1)) && (cdx2todapi(k)<=binSZ(2))
-            customap(k,2)= 1;
-        else if cdx2todapi(k)>binSZ(2)
-                customap(k,1)= 1;
+        q = q+sz;
+         text(datatogether(k).colony.cells(h).onframes(end),traces{k}(end,h),num2str(datatogether(k).fixedData(:,3)/datatogether(k).fixedData(:,1)),'color',colormap(k,:),'fontsize',11);%['mean ColCdx2 ' num2str(colonies2(j).cells(h).fluorData(1,end))]
+        figure(2) ,hold on
+    ylim([0 2.5]);
+    xlim([0 115])
+    ylabel('mean Nuc/Cyto smad4  ');
+    xlabel('frames');
+    end
+    if colSZ == nc && (cdx2todapi(k)> binSZ(2))
+        traces{k} = datatogether(k).colony.NucSmadRatio;%colonies(j).NucSmadRatio(:)
+        traces{k}((traces{k} == 0)) = nan;
+        sz = size(traces{k},2);
+        for h = 1:size(traces{k},2)
+            if length(traces{k}(isnan(traces{k}(:,h))==0))>trajmin && (traces{k}(3,h))<1.5 % to get rid of junk traces
+                figure(3), plot(traces{k}(:,h),'-*','color',colormap(k,:));hold on     % here plot the traces
+                tracesbybin{3}(:,q+sz-1) = traces{k}(:,h);%datatogether(k).colony.NucSmadRatio;                           % here store the traces which meat condition
+                cdx2val{3}(:,q+sz-1)= datatogether(k).fixedData(:,3)/datatogether(k).fixedData(:,1);
+                % disp(q+sz-1)
             end
         end
+        
+        q = q+sz;
+        text(datatogether(k).colony.cells(h).onframes(end),traces{k}(end,h),num2str(datatogether(k).fixedData(:,3)/datatogether(k).fixedData(:,1)),'color',colormap(k,:),'fontsize',11);%['mean ColCdx2 ' num2str(colonies2(j).cells(h).fluorData(1,end))]
+        figure(3) ,hold on
+        ylim([0 2.5]);
+        xlim([0 115])
+        ylabel('mean Nuc/Cyto smad4  ');
+        xlabel('frames');
     end
+    
+    
 end
 
-%% need to average the trajectories that end up with variaous values of Cdx2
+%save('registeredDAPI','tracesbybin','binSZ','-append');%% average the trajectories that end up with variaous values of Cdx2
+%% 
+load('registeredDAPI.mat','tracesbybin','tracesbybin2','binSZ','datatogether');
 
-load('registeredDAPI.mat','findat','cdx2todapi','datatogether');
+% tracesbybin      cell array that contains traces for the one cell
+% colonies but separated into cel arrays according to the final Cdx2 value
+% that they have 
+% binSZ defines the Cdx2 range
+
+%tracesbybin = tracesbybin2;% for the twocellcolonies
+
+vect = (1:100)';
+trajmin = 50;
+binmean = zeros(100,3);
+err =zeros(100,3); 
+
+for j =1:3                  % remove Nans
+for k=1:size(binmean,1)
+    for jj=1:size(tracesbybin{j},2)
+   if (isnan(tracesbybin{j}(k,jj))==1)
+       tracesbybin{j}(k,jj) = 0;
+   end
+    end
+end
+end
+
+ % average over cells
+for j =1:3% loop over the bins;         
+for k=1:size(binmean,1)
+    
+    binmean(k,j) = mean(nonzeros(tracesbybin{j}(k,:)));
+    err(k,j) = std(nonzeros(tracesbybin{j}(k,:)));
+end
+end
+%save('registeredDAPI','binmean','-append');
+%% plot averaged trajectories
+
+colormap = colorcube;
+C = {'b','g','r'};
+b = [0.8 1.1 1.1];
+for j = 1:2:3
+figure(4), errorbar(binmean(:,j),err(:,j),'-.','color',C{j},'linewidth',1.5); hold on%colormap(j+5,:)
+ylim([0.4 2.1]);
+xlim([0 115])
+ylabel('mean Nuc/Cyto smad4  ');
+xlabel('frames');
+text(vect(end)+0.2*j,binmean(end,j)+0.1*j,num2str(b(j)),'color',C{j},'fontsize',20);%['mean ColCdx2 ' num2str(colonies2(j).cells(h).fluorData(1,end))]
+title('One-cell colonies','fontsize',20);
+%title('Two-cell colonies','fontsize',20);
 
 
+figure(3), plot(vect,binmean(:,j),'-.','color',C{j},'linewidth',2); hold on%colormap(j+5,:)
+ylim([0.4 1.8]);
+xlim([0 115])
+ylabel('mean Nuc/Cyto smad4  ');
+xlabel('frames');
+text(vect(end)+0.2*j,binmean(end,j)+0.1*j,num2str(b(j)),'color',C{j},'fontsize',20);%['mean ColCdx2 ' num2str(colonies2(j).cells(h).fluorData(1,end))]
+title('One-cell colonies','fontsize',20);
+%title('Two-cell colonies','fontsize',20);
+
+end
+%% extracs stats from the once cell traces
+
+load('registeredDAPI.mat','tracesbybin','cdx2val','tracesbybin2','binSZ','datatogether');
+base = [];
+meanaft = [];
+jump = [];
+tracesd = [];
+signlast = [];
+fr_stim = 16;
+tresp = 6;
 
 
+for j =1:3% loop over the bins;         
+for k=1:size(tracesbybin{j},2)
+    
+    base(k,j) = mean((tracesbybin{j}(1:fr_stim,k)));
+    meanaft(k,j) = mean((tracesbybin{j}(fr_stim:end,k)));
+    jump(k,j) = abs(tracesbybin{j}(fr_stim+tresp,k)-tracesbybin{j}(fr_stim,k));
+    tracesd(k,j) = std((tracesbybin{j}(fr_stim:end,k)));
+    signlast(k,j)=(tracesbybin{j}(97,k));
+end
+end
+%% plot stats
+load('registeredDAPI.mat','base','cdx2val','meanaft','jump','tracesd','signlast');
+
+C = {'b','g','r'};
+sym = {'.','*','d','s','o'};
+a = 300;
+
+toplot = signlast ;%tracesd base jump signlast;
+
+for k=1:3
+   
+        s =  size(nonzeros(toplot(:,k)),1);
+        v = nonzeros(cdx2val{k}');
+        figure(1),scatter(nonzeros(toplot(:,k)),v(1:s),a,C{k},sym{5});hold on
+        
+        xlim([0 1.8]);
+        ylim([0 1.8]);
+    
+end
+xlabel('Signaling at last time point');%Base level of signaling    mean after
+ylabel('Cdx2');
+box on
+h = figure(1);
+h.Children.FontSize = 18;
+legend('<0.8','btw 0.8 and 1.1','>1.1');
 
 
 
