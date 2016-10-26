@@ -11,9 +11,9 @@ function plotselecteddata(dir,matfile1,matfile2,index1,param1)
 % Sox2)
 
 dapimax =5000;%now used as the area thresh in colony analysis; dapimax is set to max 60000 within the generalized mean function
-chanmax = 60000;
+chanmax = 0.5;
 usemeandapi =[];
-C= {'r','r'};
+C= {'c','r'};
 flag = 0;
 clear rawdata1
 clear totalcells

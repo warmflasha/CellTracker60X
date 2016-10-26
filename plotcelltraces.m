@@ -20,7 +20,7 @@
          if length(nonzeros(dat))>trajmin
              disp(['filter trajectories below' num2str(trajmin)]);
              disp(['use' num2str(length(nonzeros(dat)))]);
-             hold on;figure(j),plot(dat,'-o','color',C{j});hold on% 
+             hold on;figure(j+1),plot(dat,'-o','color',C{j});hold on% 
              %text(traces{j}(:,h)+0.1,num2str(colSZ1(:)));
              ylim([0 2.5]);
              ylabel('mean Nuc/Cyto smad4  ');

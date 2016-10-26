@@ -78,7 +78,7 @@ tracesbybin = cell(1,2);   % two bins, same colony size
 binSZ = [1];               
 C = {'b','r'};
 
-nc = 2;                                                              % colony size to be plotted
+nc = 1;                                                              % colony size to be plotted
 clear dat
 clear jj
 q = 1;
@@ -110,8 +110,8 @@ for k=1:size(datatogether,2)   %  loop over colonies
            end
             
             q = q+sz;
-            xx = datatogether(k).colony.cells(h).onframes(end);
-            yy = traces{k}(end,h);
+            xx = size(dat,1);
+            yy = dat(end);%traces{k}(end,h);
             text(xx,yy,[num2str(cdx2todapi(k)) ', outfile' num2str(datatogether(k).outfiles(end-9:end-8))],'color',C{jj},'fontsize',11);%['mean ColCdx2 ' num2str(colonies2(j).cells(h).fluorData(1,end))]
             figure(jj) ,hold on
             ylim([0 2.5]);
@@ -143,8 +143,8 @@ for k=1:size(datatogether,2)   %  loop over colonies
             end
             
             q = q+sz;
-            xx = datatogether(k).colony.cells(h).onframes(end);
-            yy = traces{k}(end,h);
+            xx = size(dat,1);
+            yy = dat(end);
             text(xx,yy,[num2str(cdx2todapi(k)) ', outfile' num2str(datatogether(k).outfiles(end-9:end-8))],'color',C{jj},'fontsize',11);%display the cdx2 value and the outfile that the trace came from
             figure(jj) ,hold on
             ylim([0 2.5]);

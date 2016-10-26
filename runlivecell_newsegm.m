@@ -1,10 +1,10 @@
 %% get max projetions from the live cell z-images
-direc = ('');
-direc2 = ('');
+direc = ('/Volumes/data2/Anastasiia/LiveCellImagingGFPs4RFPh2b/2015-11-12-ANmicrocoloniesNov12(4)_20151116_102334 AM');
+direc2 = ('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/11-12-2015set/nuc_proj/');
 
-positions = (0:24);
+positions = (0:22);
 tg = 0;
-chan = 2;
+chan = 1;
 Nchoose = [];
 for k=2:size(positions,2)
 pos = positions(k);
@@ -44,9 +44,9 @@ parfor ii = 40%2:length(ff1.p)
     saveLiveCellData(outfile,newmasks,cmask,colonies);
 end
 %% plot cell trajectories
-trajmin = 3;%10
+trajmin = 30;%10
 
-outfile = '39_tile1BGan.mat';% good positions, Feb set[0,1,3,4,5,7,8,9,10,12,14,18,21,22,24,26,27,28,29,31,32,33];
+outfile = '30_outFebsetBGan.mat';% good positions, Feb set[0,1,3,4,5,7,8,9,10,12,14,18,21,22,24,26,27,28,29,31,32,33];
 
 plotcelltraces(outfile,trajmin)
 
