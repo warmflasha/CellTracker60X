@@ -31,10 +31,12 @@ imshow(t(:,:,1),[]); % 2 - green chanel, 1 - red(4x10)
 imcontrast
 %%
 % align the peaks from the old data again
-direc = ('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/2016-07-07-LiveCellTiling_28hr10ngmlBMP4/FinalOutfiles_completeTraces');
+%direc = ('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/2016-07-07-LiveCellTiling_28hr10ngmlBMP4/FinalOutfiles_completeTraces');
+direc = ('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/2016-07-07-LiveCellTiling_28hr10ngmlBMP4/2016-10-17-projections/nuclear/');
+
 ff = dir(direc);
 positions = (0:39);
-strdir = '_40X_imprBGandSegm.mat';
+strdir = '_out.mat';%_40X_imprBGandSegm
 N = 0;
 l = 100;
 xyall = [];
@@ -201,11 +203,13 @@ end
 % all data saved in the  matfile 'registeredDAPI'
 %% get the centroids of the live data
 load('registeredDAPI.mat','colfixall');
-load('align.mat');
+load('alignWithDapi.mat');
 load('tformwithDAPI.mat');
 
-dirlive = ('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/2016-07-07-LiveCellTiling_28hr10ngmlBMP4/FinalOutfiles_completeTraces');
-figure(1), imshow(t(:,:,1),[0 5e3]); hold on;;
+%dirlive = ('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/2016-07-07-LiveCellTiling_28hr10ngmlBMP4/FinalOutfiles_completeTraces');
+dirlive = ('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/2016-07-07-LiveCellTiling_28hr10ngmlBMP4/2016-10-17-projections/new_outfiles_tiling1');
+
+figure(1), imshow(t(:,:,1),[0 5e3]); hold on;
 
 mytform = fitgeotrans(movingPoints, fixedPoints, 'affine');
 toTranslate = [-250,50];    
@@ -214,7 +218,7 @@ rotmat = mytform.T(1:2,1:2);
 
 colormap = prism;
 positions = (0:39);
-strdir = '_40X_imprBGandSegm.mat';
+strdir = '_out.mat';
 N = 0;
 l = 100;
 q = 1;
@@ -225,7 +229,7 @@ for k=1:size(positions,2)
     if ~isempty(colonies)
         for j=1:size(colonies,2)
             posnow = [];
-            for h=1:size(colonies(j).cells,2)
+            for h=2:size(colonies(j).cells,2) % start from second, since the first one is empty , as returned by the new analysis
                 if colonies(j).cells(h).onframes(end) == (100)
                                 %figure(q); hold on;
                     posnow = [posnow; colonies(j).cells(h).position(end,:)];
@@ -256,11 +260,12 @@ end
 
 %save('registeredDAPI','datatogether','-append');
 %% plot traces with fixed data
-load('registeredDAPI.mat');
+load('registeredDAPInewTraces.mat');
+%load('registeredDAPI.mat');
 positions = (0:39);
 clear tracesbycol
 last = 100;
-trajmin = 50;%50
+trajmin = 40;%50
 findata1 = [];
 findata2 = [];
 fr_stim = 16;%16
@@ -268,22 +273,34 @@ traces = [];
 cdx2val = [];
 colormap = parula;%;%
 cdx2todapi = [];
-tracesbybin = cell(1,3);% three bins, same colony size
-binSZ = [0.8 1.1];
+tracesbybin = cell(1,2);% two bins, same colony size
+binSZ = [1];%[0.8 1.1];
 q = 1;
 nc = 1;
+
+clear dat
 for k=1:size(datatogether,2)   %  loop over colonies
-    colSZ = datatogether(k).colony.numOfCells(fr_stim);
+    %colSZ = datatogether(k).colony.numOfCells(fr_stim);            % old segmentation
+   if size(datatogether(k).colony.ncells_actual,1)>fr_stim;          % new 
+    % disp(datatogether(k).colony.ncells_actual);
+       colSZ =datatogether(k).colony.ncells_actual(fr_stim) ;% new segmentation            % new 
     cdx2todapi(k) = datatogether(k).fixedData(:,3)/datatogether(k).fixedData(:,1);
-    if colSZ == nc && (cdx2todapi(k)< binSZ(1)) 
-        traces{k} = datatogether(k).colony.NucSmadRatio;%colonies(j).NucSmadRatio(:)
+    if colSZ == nc && (cdx2todapi(k)<= binSZ(1)) 
+       traces{k} = datatogether(k).colony.NucSmadRatio;%                                   % new 
+       %traces{k} = datatogether(k).colony.NucSmadRatioOld;                                % old
+     
         traces{k}((traces{k} == 0)) = nan;
         sz = size(traces{k},2);
         for h = 1:size(traces{k},2)
-            if length(traces{k}(isnan(traces{k}(:,h))==0))>trajmin && (traces{k}(3,h))<1.5
-                figure(1), plot(traces{k}(:,h),'-*','color',colormap(k,:));hold on     % here plot the traces
+            [r,~] = find(isfinite(traces{k}(:,h)));
+             dat = zeros(size(traces{k},1),1);
+             dat(r,1) = traces{k}(r,h);
+            if length(nonzeros(dat))>trajmin 
+               disp(['filter trajectories below' num2str(trajmin)]);
+               disp(['use' num2str(length(nonzeros(dat)))]);
+               figure(1), plot(dat,'-*','color','b');hold on     % here plot the traces
                
-                tracesbybin{1}(:,q+sz-1) = traces{k}(:,h);      % here store the traces which meat condition
+                tracesbybin{1}(:,q+sz-1) = dat;      % traces{k}(:,h) here store the traces which meat condition
                 cdx2val{1}(:,q+sz-1)= datatogether(k).fixedData(:,3)/datatogether(k).fixedData(:,1);
                 % disp(q+sz-1)
             end
@@ -291,7 +308,7 @@ for k=1:size(datatogether,2)   %  loop over colonies
         end
         
         q = q+sz;
-         text(datatogether(k).colony.cells(h).onframes(end),traces{k}(end,h),num2str(datatogether(k).fixedData(:,3)/datatogether(k).fixedData(:,1)),'color',colormap(k,:),'fontsize',11);%['mean ColCdx2 ' num2str(colonies2(j).cells(h).fluorData(1,end))]
+         text(datatogether(k).colony.cells(h).onframes(end),traces{k}(end,h),num2str(datatogether(k).fixedData(:,3)/datatogether(k).fixedData(:,1)),'color','b','fontsize',11);%['mean ColCdx2 ' num2str(colonies2(j).cells(h).fluorData(1,end))]
         figure(1) ,hold on
     ylim([0 2.5]);
     xlim([0 115])
@@ -301,15 +318,19 @@ for k=1:size(datatogether,2)   %  loop over colonies
 %     findata2 = [findata2; colSZ];
     end
     
-    if colSZ == nc && (cdx2todapi(k)< binSZ(2)) && (cdx2todapi(k)> binSZ(1))
-        traces{k} = datatogether(k).colony.NucSmadRatio;%colonies(j).NucSmadRatio(:)
+    if colSZ == nc && (cdx2todapi(k)> binSZ(1))
+       traces{k} = datatogether(k).colony.NucSmadRatio;                                     % new
+       %traces{k} = datatogether(k).colony.NucSmadRatioOld;
         traces{k}((traces{k} == 0)) = nan;
         sz = size(traces{k},2);
         for h = 1:size(traces{k},2)
-            if length(traces{k}(isnan(traces{k}(:,h))==0))>trajmin && (traces{k}(3,h))<1.5
-                figure(2), plot(traces{k}(:,h),'-*','color',colormap(k,:));hold on     % here plot the traces
+            [r,~] = find(isfinite(traces{k}(:,h)));
+             dat = zeros(size(traces{k},1),1);
+             dat(r,1) = traces{k}(r,h);
+            if length(nonzeros(dat))>trajmin 
+                figure(2), plot(dat,'-*','color','r');hold on     % here plot the traces
                 
-                tracesbybin{2}(:,q+sz-1) = traces{k}(:,h);      %datatogether(k).colony.NucSmadRatio here store the traces which meat condition
+                tracesbybin{2}(:,q+sz-1) = dat;      %datatogether(k).colony.NucSmadRatio here store the traces which meat condition
                 cdx2val{2}(:,q+sz-1)= datatogether(k).fixedData(:,3)/datatogether(k).fixedData(:,1);
                 %disp(q+sz-1)
             end
@@ -317,41 +338,22 @@ for k=1:size(datatogether,2)   %  loop over colonies
         end
         
         q = q+sz;
-         text(datatogether(k).colony.cells(h).onframes(end),traces{k}(end,h),num2str(datatogether(k).fixedData(:,3)/datatogether(k).fixedData(:,1)),'color',colormap(k,:),'fontsize',11);%['mean ColCdx2 ' num2str(colonies2(j).cells(h).fluorData(1,end))]
+         text(datatogether(k).colony.cells(h).onframes(end),traces{k}(end,h),num2str(datatogether(k).fixedData(:,3)/datatogether(k).fixedData(:,1)),'color','r','fontsize',11);%['mean ColCdx2 ' num2str(colonies2(j).cells(h).fluorData(1,end))]
         figure(2) ,hold on
     ylim([0 2.5]);
     xlim([0 115])
     ylabel('mean Nuc/Cyto smad4  ');
     xlabel('frames');
     end
-    if colSZ == nc && (cdx2todapi(k)> binSZ(2))
-        traces{k} = datatogether(k).colony.NucSmadRatio;%colonies(j).NucSmadRatio(:)
-        traces{k}((traces{k} == 0)) = nan;
-        sz = size(traces{k},2);
-        for h = 1:size(traces{k},2)
-            if length(traces{k}(isnan(traces{k}(:,h))==0))>trajmin && (traces{k}(3,h))<1.5 % to get rid of junk traces
-                figure(3), plot(traces{k}(:,h),'-*','color',colormap(k,:));hold on     % here plot the traces
-                tracesbybin{3}(:,q+sz-1) = traces{k}(:,h);%datatogether(k).colony.NucSmadRatio;                           % here store the traces which meat condition
-                cdx2val{3}(:,q+sz-1)= datatogether(k).fixedData(:,3)/datatogether(k).fixedData(:,1);
-                % disp(q+sz-1)
-            end
-        end
-        
-        q = q+sz;
-        text(datatogether(k).colony.cells(h).onframes(end),traces{k}(end,h),num2str(datatogether(k).fixedData(:,3)/datatogether(k).fixedData(:,1)),'color',colormap(k,:),'fontsize',11);%['mean ColCdx2 ' num2str(colonies2(j).cells(h).fluorData(1,end))]
-        figure(3) ,hold on
-        ylim([0 2.5]);
-        xlim([0 115])
-        ylabel('mean Nuc/Cyto smad4  ');
-        xlabel('frames');
-    end
+   
     
-    
+  end                                      % new 
 end
 
 %save('registeredDAPI','tracesbybin','binSZ','-append');%% average the trajectories that end up with variaous values of Cdx2
 %% 
-load('registeredDAPI.mat','tracesbybin','tracesbybin2','binSZ','datatogether');
+%load('registeredDAPI.mat','tracesbybin','tracesbybin2','binSZ','datatogether');
+load('registeredDAPInewTraces.mat','tracesbybin2','binSZ','datatogether');
 
 % tracesbybin      cell array that contains traces for the one cell
 % colonies but separated into cel arrays according to the final Cdx2 value
@@ -361,14 +363,14 @@ load('registeredDAPI.mat','tracesbybin','tracesbybin2','binSZ','datatogether');
 %tracesbybin = tracesbybin2;% for the twocellcolonies
 
 vect = (1:100)';
-trajmin = 50;
-binmean = zeros(100,3);
-err =zeros(100,3); 
+%trajmin = 50;
+binmean = zeros(100,2);
+err =zeros(100,2); 
 
-for j =1:3                  % remove Nans
+for j =1:2                  % remove Nans
 for k=1:size(binmean,1)
     for jj=1:size(tracesbybin{j},2)
-   if (isnan(tracesbybin{j}(k,jj))==1)
+   if (isfinite(tracesbybin{j}(k,jj))==0) || tracesbybin{j}(k,jj)>1.55  % to remove the noie due to very hugh signal probably in junk that was floting around at least trajmin
        tracesbybin{j}(k,jj) = 0;
    end
     end
@@ -376,7 +378,7 @@ end
 end
 
  % average over cells
-for j =1:3% loop over the bins;         
+for j =1:2% loop over the bins;         
 for k=1:size(binmean,1)
     
     binmean(k,j) = mean(nonzeros(tracesbybin{j}(k,:)));
@@ -385,27 +387,30 @@ end
 end
 %save('registeredDAPI','binmean','-append');
 %% plot averaged trajectories
-
+vect = (1:100)';
 colormap = colorcube;
-C = {'b','g','r'};
-b = [0.8 1.1 1.1];
-for j = 1:2:3
-figure(4), errorbar(binmean(:,j),err(:,j),'-.','color',C{j},'linewidth',1.5); hold on%colormap(j+5,:)
-ylim([0.4 2.1]);
-xlim([0 115])
+C = {'c','r'};
+label = {'CDX2 below','CDX2 above'};
+b = [1];
+%binmean = binmean2;
+%err = err2;
+for j = 1:2
+figure(5), errorbar(binmean(:,j),err(:,j),'-.','color',C{j},'linewidth',1.5); hold on%colormap(j+5,:)
+ylim([0 2.5]);
+xlim([0 105])
 ylabel('mean Nuc/Cyto smad4  ');
 xlabel('frames');
-text(vect(end)+0.2*j,binmean(end,j)+0.1*j,num2str(b(j)),'color',C{j},'fontsize',20);%['mean ColCdx2 ' num2str(colonies2(j).cells(h).fluorData(1,end))]
+text(vect(end)+0.2*j,binmean(end,j)+0.1*j,[ label(j) num2str(b(1))],'color',C{j},'fontsize',20);%['mean ColCdx2 ' num2str(colonies2(j).cells(h).fluorData(1,end))]
 title('One-cell colonies','fontsize',20);
 %title('Two-cell colonies','fontsize',20);
 
 
-figure(3), plot(vect,binmean(:,j),'-.','color',C{j},'linewidth',2); hold on%colormap(j+5,:)
+figure(6), plot(vect,binmean(:,j),'-.','color',C{j},'linewidth',2); hold on%colormap(j+5,:)
 ylim([0.4 1.8]);
 xlim([0 115])
 ylabel('mean Nuc/Cyto smad4  ');
 xlabel('frames');
-text(vect(end)+0.2*j,binmean(end,j)+0.1*j,num2str(b(j)),'color',C{j},'fontsize',20);%['mean ColCdx2 ' num2str(colonies2(j).cells(h).fluorData(1,end))]
+text(vect(end)+0.2*j,binmean(end,j)+0.1*j,[ label(j) num2str(b(1))],'color',C{j},'fontsize',20);%['mean ColCdx2 ' num2str(colonies2(j).cells(h).fluorData(1,end))]
 title('One-cell colonies','fontsize',20);
 %title('Two-cell colonies','fontsize',20);
 
