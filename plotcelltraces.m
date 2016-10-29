@@ -1,7 +1,7 @@
  % plot cell tracesfor the specific outfile
  
  function plotcelltraces(outfile,trajmin)
- %colormap = prism;
+ colormap = prism;
  C = {'b','r','g','m','b','c','g','r','b','g','m'};
  load(outfile,'colonies');
  % tps = length(peaks);

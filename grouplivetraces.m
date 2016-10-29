@@ -3,16 +3,16 @@
 % new figure for each new colony size ( data drawn from multiple .mat
 % files)
 
-fr_stim = 22;        %22(jan8data)  %38    %16 (feb16 and     july7 data)   july 26 data (fr_stim = 12)
+fr_stim = 16;        %22(jan8data)  %38    %16 (feb16 and     july7 data)   july 26 data (fr_stim = 12)
 delta_t = 17;%15       % 12 min                 15min           17min        (17min)
 p = fr_stim*delta_t/60;
 trajmin = 30;%30
-tpt = 99;%81 99 83
-strdir = '*_out.mat';%_outFebsetBGan
+tpt = 83;%81 99 83
+strdir = '*_outFebsetBGan.mat';%_outFebsetBGan
 ff = dir(strdir);%'*_60X_testparam_allT.mat'ff = dir('*60Xjan8_R*.mat');
-C = {'b','r'};
+C = {'c','r'};
 signalbin = [];
-signthresh = 1;
+signthresh =1;
 clear traces
 clear traces_one
 clear traces_two
@@ -20,7 +20,7 @@ clear traces_three
 clear a
 totalcol = zeros(6,1);
 q = 1;
-nc = 1;                       % look at nc-cell colonies
+nc = 2;                       % look at nc-cell colonies
 N = 20;                       % how many last time point to average in order to sort into beans
 for k=1:length(ff)
     outfile = ff(k).name; %nms{k};
@@ -32,11 +32,13 @@ for k=1:length(ff)
     traces = cell(1,numcol);
     
     for j = 1:numcol
-        if size(colonies(j).ncells_actual,1)>fr_stim  %&& (any(colonies(j).onframes) == tpt)             % new segmentation
-            colSZ =colonies(j).ncells_actual(fr_stim) ;
+        if size(colonies(j).ncells_actual,1)>fr_stim  %&& (colonies(j).ncells_actual(82-N))             % new segmentation
+            colSZ1 =colonies(j).ncells_actual(fr_stim) ;
+            colSZ2 =colonies(j).ncells_actual(end-1) ;   % check what was the colony size at the last timepoint
+
             % new segmentation
             %colSZ =colonies(j).numOfCells(timecolSZ-1) ;                                                      % for old mat files analysis
-            if colSZ == nc
+            if colSZ1 == nc ||  colSZ1 == nc+1  %&& (colSZ2 == nc)
                 jj =1;
                 
                 traces{j} = colonies(j).NucSmadRatio;                                                        % colonies(j).NucSmadRatio(:)
@@ -46,7 +48,7 @@ for k=1:length(ff)
                     [r,~] = find(isfinite(traces{j}(:,h)));                  %
                     dat = zeros(tpt,1);
                     dat(r,1) = traces{j}(r,h);
-                    s = mean(nonzeros(dat(end-N:end)));                       % take the mean of the last chunk of N time points
+                    s = mean(nonzeros(dat(end-N:(end-1))));                       % take the mean of the last chunk of N time points
                     if length(nonzeros(dat))>trajmin && (s < signthresh);      % mean(nonzeros(dat(end-15:end))))  FILTER OUT SHORT TRAJECTORIES  and select the ones that end low in signaling
                         jj =1;
                         disp(['filter trajectories below' num2str(trajmin)]);
@@ -56,7 +58,7 @@ for k=1:length(ff)
                         % disp(q+sz-1)
                         xx = size(dat,1)-1;
                         yy = dat(end-1);%traces{k}(end,h);
-                        text(xx,yy,[num2str(s)],'color','m','fontsize',11);%
+                        text(xx,yy,[num2str(s) ',pos' num2str(outfile(1:2))],'color','m','fontsize',11);%
                         figure(jj) ,hold on
                         ylim([0 2.5]);
                         xlim([0 (tpt+10)]);
@@ -72,7 +74,7 @@ for k=1:length(ff)
                         % disp(q+sz-1)
                         xx = size(dat,1)-1;
                         yy = dat(end-1);%traces{k}(end,h);
-                        text(xx,yy,[num2str(s)],'color','m','fontsize',11);%
+                        text(xx,yy,[num2str(s) ',pos' num2str(outfile(1:2))],'color','m','fontsize',11);%
                        figure(jj) ,hold on
                        ylim([0 2.5]);
                        xlim([0 (tpt+10)]);
@@ -93,11 +95,11 @@ end
 % ylabel('totla colonies','fontsize',20);
 % title('colony size distribution','fontsize',20)
 %% average those trajectoris
-
+tpt = tpt-1;
 vect = (1:tpt)';
-binmean = zeros(tpt,2);
-err =zeros(tpt,2); 
-for j =1:2                  % remove Nans
+binmean = zeros(tpt,size(signalbin,2));
+err =zeros(tpt,size(signalbin,2)); 
+for j =1:size(binmean,2)                  % remove Nans
 for k=1:size(binmean,1)
     for jj=1:size(signalbin{j},2)
    if (isfinite(signalbin{j}(k,jj))==0) || signalbin{j}(k,jj)< 0.5 || signalbin{j}(k,jj)>1.85 % to remove signaling values that come from long-traced junk
@@ -107,7 +109,7 @@ for k=1:size(binmean,1)
 end
 end
 % average over cells
-for j =1:2% loop over the bins;         
+for j =1:size(binmean,2)% loop over the bins;         
 for k=1:size(binmean,1)
     binmean(k,j) = mean(nonzeros(signalbin{j}(k,:)));   % mean over nonzero values of signaling at each time point
     err(k,j) = std(nonzeros(signalbin{j}(k,:)));
@@ -120,7 +122,7 @@ C = {'c','r'};
 label = {'signal below','signal above'};
 b = [signthresh];
 
-for j = 1:2
+for j = 1:size(binmean,2)
 figure(11), errorbar(binmean(:,j),err(:,j),'-.','color',C{j},'linewidth',1.5); hold on%colormap(j+5,:)
 ylim([0.3 1.8]);
 xlim([0 105])

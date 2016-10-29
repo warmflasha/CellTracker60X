@@ -202,7 +202,7 @@ end
 end
 % all data saved in the  matfile 'registeredDAPI'
 %% get the centroids of the live data
-load('registeredDAPI.mat','colfixall');
+load('registeredDAPI.mat','colfixall','xyall','fluordata');
 load('alignWithDapi.mat');
 load('tformwithDAPI.mat');
 
@@ -258,7 +258,7 @@ for k=1:size(positions,2)
     
 end
 
-%save('registeredDAPI','datatogether','-append');
+%save('registeredDAPInewTraces','datatogether','-append');
 %% plot traces with fixed data
 load('registeredDAPInewTraces.mat');
 %load('registeredDAPI.mat');
@@ -387,13 +387,17 @@ end
 end
 %save('registeredDAPI','binmean','-append');
 %% plot averaged trajectories
+load('registeredDAPInewTraces.mat','tracesbybin','tracesbybin2','binmean','binmean2','err','err2','binSZ','datatogether');
 vect = (1:100)';
 colormap = colorcube;
 C = {'c','r'};
 label = {'CDX2 below','CDX2 above'};
-b = [1];
-%binmean = binmean2;
-%err = err2;
+b = [binSZ];
+nc = 1;
+if nc == 2
+    binmean = binmean2;
+    err = err2;
+end
 for j = 1:2
 figure(5), errorbar(binmean(:,j),err(:,j),'-.','color',C{j},'linewidth',1.5); hold on%colormap(j+5,:)
 ylim([0 2.5]);
@@ -402,7 +406,9 @@ ylabel('mean Nuc/Cyto smad4  ');
 xlabel('frames');
 text(vect(end)+0.2*j,binmean(end,j)+0.1*j,[ label(j) num2str(b(1))],'color',C{j},'fontsize',20);%['mean ColCdx2 ' num2str(colonies2(j).cells(h).fluorData(1,end))]
 title('One-cell colonies','fontsize',20);
-%title('Two-cell colonies','fontsize',20);
+if nc == 2
+title('Two-cell colonies','fontsize',20);
+end
 
 
 figure(6), plot(vect,binmean(:,j),'-.','color',C{j},'linewidth',2); hold on%colormap(j+5,:)
@@ -412,12 +418,16 @@ ylabel('mean Nuc/Cyto smad4  ');
 xlabel('frames');
 text(vect(end)+0.2*j,binmean(end,j)+0.1*j,[ label(j) num2str(b(1))],'color',C{j},'fontsize',20);%['mean ColCdx2 ' num2str(colonies2(j).cells(h).fluorData(1,end))]
 title('One-cell colonies','fontsize',20);
-%title('Two-cell colonies','fontsize',20);
+if nc == 2
+title('Two-cell colonies','fontsize',20);
+end
 
 end
 %% extracs stats from the once cell traces
 
-load('registeredDAPI.mat','tracesbybin','cdx2val','tracesbybin2','binSZ','datatogether');
+%load('registeredDAPI.mat','tracesbybin','cdx2val','tracesbybin2','binSZ','datatogether');
+load('registeredDAPInewTraces.mat','tracesbybin','tracesbybin2','binmean','binmean2','err','err2','binSZ','datatogether','cdx2val');
+
 base = [];
 meanaft = [];
 jump = [];
@@ -425,20 +435,20 @@ tracesd = [];
 signlast = [];
 fr_stim = 16;
 tresp = 6;
+last = [100:100];
 
-
-for j =1:3% loop over the bins;         
+for j =1:size(binmean,2)% loop over the bins;         
 for k=1:size(tracesbybin{j},2)
     
     base(k,j) = mean((tracesbybin{j}(1:fr_stim,k)));
     meanaft(k,j) = mean((tracesbybin{j}(fr_stim:end,k)));
     jump(k,j) = abs(tracesbybin{j}(fr_stim+tresp,k)-tracesbybin{j}(fr_stim,k));
     tracesd(k,j) = std((tracesbybin{j}(fr_stim:end,k)));
-    signlast(k,j)=(tracesbybin{j}(97,k));
+    signlast(k,j)=(tracesbybin{j}(last(1),k));
 end
 end
 %% plot stats
-load('registeredDAPI.mat','base','cdx2val','meanaft','jump','tracesd','signlast');
+%load('registeredDAPI.mat','base','cdx2val','meanaft','jump','tracesd','signlast');
 
 C = {'b','g','r'};
 sym = {'.','*','d','s','o'};
@@ -446,7 +456,7 @@ a = 300;
 
 toplot = signlast ;%tracesd base jump signlast;
 
-for k=1:3
+for k=1:size(binmean,2)
    
         s =  size(nonzeros(toplot(:,k)),1);
         v = nonzeros(cdx2val{k}');
@@ -461,7 +471,7 @@ ylabel('Cdx2');
 box on
 h = figure(1);
 h.Children.FontSize = 18;
-legend('<0.8','btw 0.8 and 1.1','>1.1');
+legend(['<' num2str(binSZ)],['>' num2str(binSZ)]);
 
 
 

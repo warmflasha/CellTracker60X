@@ -1,5 +1,5 @@
 
-function plotselecteddata(dir,matfile1,matfile2,index1,param1)
+function plotselecteddata(dir,matfile1,matfile2,index1,param1,chanmax)
 
 % dir = directory with the outfile
 % matfile1 = string name of the mat file with the plate1 data
@@ -11,7 +11,7 @@ function plotselecteddata(dir,matfile1,matfile2,index1,param1)
 % Sox2)
 
 dapimax =5000;%now used as the area thresh in colony analysis; dapimax is set to max 60000 within the generalized mean function
-chanmax = 0.5;
+
 usemeandapi =[];
 C= {'c','r'};
 flag = 0;
