@@ -336,6 +336,7 @@ for k=1:size(datatogether,2)   %  loop over colonies
             end
             
         end
+
         
         q = q+sz;
          text(datatogether(k).colony.cells(h).onframes(end),traces{k}(end,h),num2str(datatogether(k).fixedData(:,3)/datatogether(k).fixedData(:,1)),'color','r','fontsize',11);%['mean ColCdx2 ' num2str(colonies2(j).cells(h).fluorData(1,end))]
