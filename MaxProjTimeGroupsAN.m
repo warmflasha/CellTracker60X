@@ -13,6 +13,7 @@ nz = size(ff.z,2);
 filename = cell(1,nz);
 imgs = cell(1,nz);
 for xx = 1:size(tg,2)
+%xx = 0;
 for j=1:nz
     if isempty(ff.t)
         filename{j} = getAndorFileName(ff,pos,[],ff.z(j),ff.w(chan));

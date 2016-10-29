@@ -280,7 +280,7 @@ for k=1:length(ff)
                         
                         traces{j}(isnan(traces{j})==1) = 0;
                         d =  size(traces{j},2);
-                        if colSZ == 1
+                        if colSZ == 1 
                             traces_one{q}= dat;%dat
                         end
                         if colSZ == 2

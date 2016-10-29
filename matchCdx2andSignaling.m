@@ -66,7 +66,7 @@ end
 %% plot traces with fixed data
 close all
 %load('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/2016-07-07-LiveCellTiling_28hr10ngmlBMP4/registeredDAPInewTraces.mat');
-load('/Volumes/data2/Anastasiia/LiveCellImagingGFPs4RFPh2b/2016-07-07-LiveCellTiling_28hr10ngmlBMP4/registeredDAPInewTraces.mat');
+%load('/Volumes/data2/Anastasiia/LiveCellImagingGFPs4RFPh2b/2016-07-07-LiveCellTiling_28hr10ngmlBMP4/registeredDAPInewTraces.mat');
 positions = (0:39);
 clear tracesbycol
 trajmin = 40; % 
@@ -74,15 +74,15 @@ fr_stim = 16; % needed to check the colony size at this point
 traces = [];  % initialize
 cdx2val = []; % initialize for Cdx2 values
 cdx2todapi = [];
+finsign=[];
 tracesbybin = cell(1,2);   % two bins, same colony size
 binSZ = [1];               
 C = {'b','r'};
-
-nc = 2;                                                              % colony size to be plotted
+nc = 1;                                                              % colony size to be plotted
 clear dat
 clear jj
 q = 1;
-
+N = 15;
 for k=1:size(datatogether,2)   %  loop over colonies
     
     if size(datatogether(k).colony.ncells_actual,1)>fr_stim;          % if the cell traced at least untill stimulation
@@ -104,14 +104,15 @@ for k=1:size(datatogether,2)   %  loop over colonies
                     figure(jj), plot(dat,'-*','color','b');hold on         % here plot the traces that met the condition
                     tracesbybin{jj}(:,q+sz-1) = dat;                      % here store the traces which meat condition
                     cdx2val{jj}(:,q+sz-1)= datatogether(k).fixedData(:,3)/datatogether(k).fixedData(:,1); % here store the cdx2todapi values which meat condition
+                    finsign{jj}(:,q+sz-1) = mean(nonzeros(dat((end-N):end)));
                     % disp(q+sz-1)
                 end
                 
            end
             
             q = q+sz;
-            xx = datatogether(k).colony.cells(h).onframes(end);
-            yy = traces{k}(end,h);
+            xx = size(dat,1);
+            yy = dat(end);%traces{k}(end,h);
             text(xx,yy,[num2str(cdx2todapi(k)) ', outfile' num2str(datatogether(k).outfiles(end-9:end-8))],'color',C{jj},'fontsize',11);%['mean ColCdx2 ' num2str(colonies2(j).cells(h).fluorData(1,end))]
             figure(jj) ,hold on
             ylim([0 2.5]);
@@ -137,14 +138,15 @@ for k=1:size(datatogether,2)   %  loop over colonies
                     
                     tracesbybin{jj}(:,q+sz-1) = dat;                      % here store the traces which meat condition
                     cdx2val{jj}(:,q+sz-1)= datatogether(k).fixedData(:,3)/datatogether(k).fixedData(:,1); % here store the cdx2todapi values which meat condition
+                    finsign{jj}(:,q+sz-1) = mean(nonzeros(dat((end-N):end)));
                     % disp(q+sz-1)
                 end
                 
             end
             
             q = q+sz;
-            xx = datatogether(k).colony.cells(h).onframes(end);
-            yy = traces{k}(end,h);
+            xx = size(dat,1);
+            yy = dat(end);
             text(xx,yy,[num2str(cdx2todapi(k)) ', outfile' num2str(datatogether(k).outfiles(end-9:end-8))],'color',C{jj},'fontsize',11);%display the cdx2 value and the outfile that the trace came from
             figure(jj) ,hold on
             ylim([0 2.5]);
@@ -158,13 +160,13 @@ for k=1:size(datatogether,2)   %  loop over colonies
 end
 if nc == 2
     tracesbybin2 = tracesbybin;
-    save('registeredDAPInewTraces','tracesbybin2','-append');%% save the
+   % save('registeredDAPInewTraces','tracesbybin2','-append');%% save the
     %data for the two-cell clonies
 
 end
 %save('registeredDAPInewTraces','tracesbybin','binSZ','cdx2val','-append');%% average the trajectories that end up with variaous values of Cdx2
 %% get the mean trajectories corresponding to each CDX2 bin, if run only this section, need to set variable nc
-load('/Volumes/data2/Anastasiia/LiveCellImagingGFPs4RFPh2b/2016-07-07-LiveCellTiling_28hr10ngmlBMP4/registeredDAPInewTraces.mat','tracesbybin','tracesbybin2','binSZ','datatogether');
+%load('/Volumes/data2/Anastasiia/LiveCellImagingGFPs4RFPh2b/2016-07-07-LiveCellTiling_28hr10ngmlBMP4/registeredDAPInewTraces.mat','tracesbybin','tracesbybin2','binSZ','datatogether');
 
 %load('registeredDAPI.mat','tracesbybin','tracesbybin2','binSZ','datatogether');
 %load('/Users/warmflashlab/Desktop/A_NEMASHKALO_Data_and_stuff/9_LiveCllImaging/2016-07-07-LiveCellTiling_28hr10ngmlBMP4/registeredDAPInewTraces.mat','tracesbybin','binSZ','datatogether','cdx2val');
@@ -173,7 +175,7 @@ load('/Volumes/data2/Anastasiia/LiveCellImagingGFPs4RFPh2b/2016-07-07-LiveCellTi
                   % colonies but separated into cell arrays according to the final Cdx2 value
                   
 % binSZ             defines the Cdx2 range
-
+nc = 1;
 if nc == 2
 tracesbybin = tracesbybin2; % for the twocellcolonies
 end
@@ -202,12 +204,14 @@ end
 if nc == 2
     binmean2 = binmean;
     err2 = err;
-    save('registeredDAPInewTraces','binmean2','err2','-append');
+   % save('registeredDAPInewTraces','binmean2','err2','-append');
 end
 %save('registeredDAPInewTraces','binmean','err','-append');
 %% plot averaged trajectories corresponding to each CDX2 bin, if run only this section, need to set variable nc
-load('/Volumes/data2/Anastasiia/LiveCellImagingGFPs4RFPh2b/2016-07-07-LiveCellTiling_28hr10ngmlBMP4/registeredDAPInewTraces.mat','binmean','err','binmean2','err2');
+%load('/Volumes/data2/Anastasiia/LiveCellImagingGFPs4RFPh2b/2016-07-07-LiveCellTiling_28hr10ngmlBMP4/registeredDAPInewTraces.mat','binmean','err','binmean2','err2');
+%load('registeredDAPInewTraces.mat','tracesbybin','tracesbybin2','binmean','binmean2','err','err2','binSZ','datatogether');
 
+nc = 2;
 vect = (1:100)';
 colormap = colorcube;
 C = {'c','r'};
